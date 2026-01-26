@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Manager | Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#0f172a] text-white flex items-center justify-center min-h-screen p-6">
+
+    <div class="bg-[#1e293b] w-full max-w-lg rounded-3xl shadow-2xl p-10 border border-gray-700">
+        <h1 class="text-3xl font-black text-blue-400 mb-8 tracking-tighter">Inventory Manager</h1>
+        
+        <div class="space-y-6">
+            <div>
+                <label class="text-[10px] font-bold uppercase text-gray-500 ml-2">Admin Secret Key</label>
+                <input type="password" id="adminKey" class="w-full bg-[#334155] p-4 rounded-xl outline-none focus:ring-2 ring-blue-500 transition">
+            </div>
+
+            <div>
+                <label class="text-[10px] font-bold uppercase text-gray-500 ml-2">Account Type</label>
+                <select id="accName" class="w-full bg-[#334155] p-4 rounded-xl outline-none">
+                    <option>Outlier AI</option>
+                    <option>Crowdgen Appen</option>
+                    <option>Prolific</option>
+                    <option>Remotasks</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="text-[10px] font-bold uppercase text-gray-500 ml-2">Location (e.g. USA, UK)</label>
+                <input type="text" id="accLocation" class="w-full bg-[#334155] p-4 rounded-xl outline-none">
+            </div>
+
+            <div>
+                <label class="text-[10px] font-bold uppercase text-gray-500 ml-2">Price (USD)</label>
+                <input type="number" id="accPrice" class="w-full bg-[#334155] p-4 rounded-xl outline-none">
+            </div>
+
+            <button onclick="uploadItem()" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-black text-sm transition-all shadow-lg shadow-blue-900/20">
+                List Account to Marketplace
+            </button>
+            
+            <p id="statusMsg" class="text-center text-xs font-bold uppercase tracking-widest mt-4"></p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE",
+            authDomain: "remoteworkingacess.firebaseapp.com",
+            projectId: "remoteworkingacess",
+            storageBucket: "remoteworkingacess.firebasestorage.app",
+            messagingSenderId: "953179052891",
+            appId: "1:953179052891:web:8126924e32e9fb62f4987e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.uploadItem = async () => {
+            const btn = document.getElementById('submitBtn');
+            const msg = document.getElementById('statusMsg');
+            const key = document.getElementById('adminKey').value;
+            
+            // SECURITY CHECK (Ensure this matches your chosen key)
+            if(key !== "1234") {
+                msg.innerText = "Invalid Admin Key!";
+                msg.className = "text-center text-xs font-bold text-red-500 mt-4";
+                return;
+            }
+
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            try {
+                await addDoc(collection(db, "accounts"), {
+                    name: document.getElementById('accName').value,
+                    location: document.getElementById('accLocation').value.toUpperCase(),
+                    price: document.getElementById('accPrice').value,
+                    timestamp: new Date()
+                });
+                
+                msg.innerText = "Success! Account is now Live.";
+                msg.className = "text-center text-xs font-bold text-green-500 mt-4";
+                btn.innerText = "List Account to Marketplace";
+                btn.disabled = false;
+                
+                // Clear fields
+                document.getElementById('accLocation').value = "";
+                document.getElementById('accPrice').value = "";
+                
+            } catch (error) {
+                console.error(error);
+                msg.innerText = "Error: " + error.message;
+                msg.className = "text-center text-xs font-bold text-red-500 mt-4";
+                btn.disabled = false;
+                btn.innerText = "Retry Listing";
+            }
+        };
+    </script>
+</body>
+</html>
