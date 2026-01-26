@@ -9,12 +9,15 @@
 <body class="bg-[#0f172a] text-white flex items-center justify-center min-h-screen p-6">
 
     <div class="bg-[#1e293b] w-full max-w-lg rounded-3xl shadow-2xl p-10 border border-gray-700">
-        <h1 class="text-3xl font-black text-blue-400 mb-8 tracking-tighter">Inventory Manager</h1>
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-black text-blue-400 tracking-tighter">Inventory Manager</h1>
+            <a href="index.html" class="text-[10px] font-bold uppercase text-gray-400 hover:text-white transition">Exit Admin</a>
+        </div>
         
         <div class="space-y-6">
             <div>
                 <label class="text-[10px] font-bold uppercase text-gray-500 ml-2">Admin Secret Key</label>
-                <input type="password" id="adminKey" class="w-full bg-[#334155] p-4 rounded-xl outline-none focus:ring-2 ring-blue-500 transition">
+                <input type="password" id="adminKey" placeholder="Enter SRC Key" class="w-full bg-[#334155] p-4 rounded-xl outline-none focus:ring-2 ring-blue-500 transition">
             </div>
 
             <div>
@@ -45,12 +48,12 @@
 
             <div>
                 <label class="text-[10px] font-bold uppercase text-gray-500 ml-2">Location (e.g. USA, UK)</label>
-                <input type="text" id="accLocation" class="w-full bg-[#334155] p-4 rounded-xl outline-none">
+                <input type="text" id="accLocation" placeholder="e.g. USA" class="w-full bg-[#334155] p-4 rounded-xl outline-none">
             </div>
 
             <div>
                 <label class="text-[10px] font-bold uppercase text-gray-500 ml-2">Price (USD)</label>
-                <input type="number" id="accPrice" class="w-full bg-[#334155] p-4 rounded-xl outline-none">
+                <input type="number" id="accPrice" placeholder="0.00" class="w-full bg-[#334155] p-4 rounded-xl outline-none">
             </div>
 
             <button onclick="uploadItem()" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-black text-sm transition-all shadow-lg shadow-blue-900/20">
@@ -63,6 +66,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -75,14 +79,21 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // 🔒 SECURITY GUARD
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "login.html";
+            }
+        });
 
         window.uploadItem = async () => {
             const btn = document.getElementById('submitBtn');
             const msg = document.getElementById('statusMsg');
             const key = document.getElementById('adminKey').value;
             
-            // SECURITY CHECK (Ensure this matches your chosen key)
             if(key !== "SRC3838") {
                 msg.innerText = "Invalid Admin Key!";
                 msg.className = "text-center text-xs font-bold text-red-500 mt-4";
@@ -93,9 +104,10 @@
             btn.disabled = true;
 
             try {
-                await addDoc(collection(db, "accounts"), {
+                // Changed from 'accounts' to 'products' to match index.html
+                await addDoc(collection(db, "products"), {
                     name: document.getElementById('accName').value,
-                    location: document.getElementById('accLocation').value.toUpperCase(),
+                    description: `Verified account in ${document.getElementById('accLocation').value.toUpperCase()}`,
                     price: document.getElementById('accPrice').value,
                     timestamp: new Date()
                 });

@@ -5,41 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile | Working Remote</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hero-bg {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), 
+                        url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .profile-card {
+            background: rgba(255, 255, 255, 1);
+            backdrop-filter: blur(10px);
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="hero-bg min-h-screen flex items-center justify-center p-6 text-gray-800 font-sans">
 
-    <nav class="bg-white shadow p-4">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <a href="index.html" class="font-bold text-blue-700">← Back to Store</a>
-            <button onclick="logout()" class="text-sm text-red-500 font-bold">Logout</button>
+    <div class="profile-card w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden p-10 border border-white/20">
+        <div class="text-center mb-8">
+            <div class="w-24 h-24 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center border-4 border-blue-50">
+                <span id="user-initial" class="text-4xl font-black text-blue-700 uppercase">?</span>
+            </div>
+            <h1 class="text-2xl font-black text-blue-800 uppercase italic tracking-tighter">User Profile</h1>
+            <p class="text-gray-400 font-bold text-[10px] uppercase tracking-[0.2em] mt-2">Account Settings</p>
         </div>
-    </nav>
 
-    <main class="max-w-4xl mx-auto p-6">
-        <div class="bg-white rounded-2xl shadow-sm p-8 mb-8 border border-gray-100">
-            <div class="flex items-center gap-4">
-                <div class="bg-blue-100 p-4 rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-black">Customer Profile</h1>
-                    <p id="user-email" class="text-gray-500 font-medium italic">Loading...</p>
-                </div>
+        <div class="space-y-6">
+            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                <label class="text-[10px] font-black uppercase text-gray-400 block mb-1">Registered Email</label>
+                <p id="user-email" class="font-bold text-gray-700 truncate text-sm italic">Loading...</p>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                <label class="text-[10px] font-black uppercase text-gray-400 block mb-1">Account Status</label>
+                <p class="font-bold text-green-600 text-sm uppercase italic tracking-widest">● Verified Member</p>
+            </div>
+
+            <div class="flex flex-col gap-3">
+                <a href="index.html" class="w-full bg-blue-700 text-white py-4 rounded-2xl text-center font-black text-xs hover:bg-black transition-all uppercase italic tracking-widest">
+                    Back to Marketplace
+                </a>
+                <button onclick="handleLogout()" class="w-full bg-gray-100 text-gray-400 py-4 rounded-2xl font-black text-xs hover:bg-red-50 hover:text-red-600 transition-all uppercase italic tracking-widest">
+                    Log Out
+                </button>
             </div>
         </div>
-
-        <h2 class="text-xl font-bold mb-4">My Purchase History</h2>
-        <div id="order-list" class="space-y-4">
-            <p class="text-gray-400 italic">No orders found. Once your WhatsApp purchase is verified, your accounts will appear here.</p>
-        </div>
-    </main>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE",
@@ -52,47 +67,25 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
 
-        // Check if user is logged in
+        // 🔒 SECURITY GUARD
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('user-email').innerText = user.email;
-                loadOrders(user.uid);
-            } else {
-                // Not logged in? Send to login page
+            if (!user || !user.emailVerified) {
                 window.location.href = "login.html";
+            } else {
+                document.getElementById('user-email').innerText = user.email;
+                document.getElementById('user-initial').innerText = user.email.charAt(0);
             }
         });
 
-        // Load specific orders for this user
-        async function loadOrders(uid) {
-            const orderList = document.getElementById('order-list');
-            const q = query(collection(db, "orders"), where("userId", "==", uid));
-            const snap = await getDocs(q);
-
-            if (!snap.empty) {
-                orderList.innerHTML = "";
-                snap.forEach(d => {
-                    const order = d.data();
-                    orderList.innerHTML += `
-                        <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-blue-500 uppercase">Order Verified</span>
-                                <span class="text-xs text-gray-400">${order.date || 'Recent'}</span>
-                            </div>
-                            <h3 class="font-bold text-gray-800">${order.itemName}</h3>
-                            <div class="mt-3 p-3 bg-gray-50 rounded border border-dashed border-gray-300">
-                                <p class="text-xs text-gray-500 mb-1 font-bold uppercase tracking-widest">Account Credentials:</p>
-                                <p class="text-sm font-mono text-blue-700 select-all">${order.credentials || 'Processing via WhatsApp...'}</p>
-                            </div>
-                        </div>`;
-                });
+        // Logout Logic
+        window.handleLogout = async () => {
+            try {
+                await signOut(auth);
+                window.location.href = "login.html";
+            } catch (error) {
+                alert("Logout Error: " + error.message);
             }
-        }
-
-        window.logout = () => {
-            signOut(auth).then(() => { window.location.href = "login.html"; });
         };
     </script>
 </body>
