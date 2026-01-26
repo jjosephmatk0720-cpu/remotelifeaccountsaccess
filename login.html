@@ -71,7 +71,8 @@
             signInWithEmailAndPassword, 
             createUserWithEmailAndPassword, 
             sendEmailVerification, 
-            sendPasswordResetEmail 
+            sendPasswordResetEmail,
+            onAuthStateChanged
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -88,7 +89,13 @@
 
         let isLoginMode = true;
 
-        // UI Toggle Logic
+        // AUTH STATE OBSERVER - Sends verified users to the shop
+        onAuthStateChanged(auth, (user) => {
+            if (user && user.emailVerified) {
+                window.location.href = "shop.html"; 
+            }
+        });
+
         window.switchMode = () => {
             isLoginMode = !isLoginMode;
             document.getElementById('form-title').innerText = isLoginMode ? "Sign In to Your Account" : "Join the Community";
@@ -99,13 +106,11 @@
             document.getElementById('msg').innerText = "";
         };
 
-        // Eye Icon Toggle Logic
         window.togglePassword = () => {
             const passInput = document.getElementById('pass');
             passInput.type = passInput.type === 'password' ? 'text' : 'password';
         };
 
-        // Main Auth Function (Certification Included)
         window.handleAuth = async () => {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('pass').value;
@@ -123,22 +128,17 @@
             try {
                 if (isLoginMode) {
                     const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-                    
-                    // CHECK FOR CERTIFICATION (Email Verification)
                     if (!userCredential.user.emailVerified) {
-                        msg.innerText = "Error: Please verify your email link first!";
+                        msg.innerText = "Error: Please verify your email first!";
                         msg.className = "mt-6 text-center text-[10px] font-bold uppercase text-orange-500";
                         return;
                     }
-                    
-                    window.location.href = "index.html";
+                    window.location.href = "shop.html";
                 } else {
-                    // CREATE ACCOUNT & SEND CERTIFICATION LINK
                     const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
                     await sendEmailVerification(userCredential.user);
-                    
-                    alert("Certification link sent! Check your inbox to verify your account.");
-                    switchMode(); // Move back to login so they can sign in after verifying
+                    alert("Verification link sent! Check your inbox.");
+                    switchMode();
                 }
             } catch (error) {
                 msg.innerText = "Error: " + error.message;
@@ -146,14 +146,12 @@
             }
         };
 
-        // Forgot Password Logic
         window.forgotPassword = async () => {
             const email = document.getElementById('email').value;
             if(!email) return alert("Enter your email address first!");
-            
             try {
                 await sendPasswordResetEmail(auth, email);
-                alert("Password reset link sent! Check your inbox.");
+                alert("Password reset link sent!");
             } catch (error) {
                 alert(error.message);
             }
