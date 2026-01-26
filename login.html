@@ -89,10 +89,9 @@
 
         let isLoginMode = true;
 
-        // AUTH STATE OBSERVER - Sends verified users to the shop
         onAuthStateChanged(auth, (user) => {
             if (user && user.emailVerified) {
-                window.location.href = "shop.html"; 
+                window.location.href = "index.html"; 
             }
         });
 
@@ -133,7 +132,7 @@
                         msg.className = "mt-6 text-center text-[10px] font-bold uppercase text-orange-500";
                         return;
                     }
-                    window.location.href = "shop.html";
+                    window.location.href = "index.html";
                 } else {
                     const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
                     await sendEmailVerification(userCredential.user);
