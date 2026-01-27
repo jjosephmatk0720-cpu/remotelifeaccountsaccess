@@ -137,10 +137,11 @@
             const message = `Hello, I want to buy: ${items}. My email is: ${auth.currentUser.email}`;
             
             // OPTION: Redirect to WhatsApp (Replace with your number)
-            window.open(`https://wa.me/254XXXXXXXXX?text=${encodeURIComponent(message)}`, '_blank');
+            window.open(`https://wa.me/18608968455?text=${encodeURIComponent(message)}`, '_blank');
         };
 
         window.logout = () => { signOut(auth).then(() => { window.location.href = "index.html"; }); };
     </script>
 </body>
 </html>
+
