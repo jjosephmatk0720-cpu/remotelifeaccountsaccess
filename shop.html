@@ -11,7 +11,6 @@
                         url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80');
             background-size: cover; background-position: center; background-attachment: fixed;
         }
-        /* Compact card styling */
         .blur-card { 
             background: rgba(255, 255, 255, 0.98); 
             backdrop-filter: blur(10px); 
@@ -43,12 +42,38 @@
         <section class="mt-16 mb-10">
             <h2 class="text-center text-white text-xl font-black uppercase italic tracking-widest mb-8">Verified Feedback</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                
                 <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
                     <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
                     <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Fast transfer, legit UK outlier account."</p>
-                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Verified Buyer</p>
+                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— David K.</p>
                 </div>
+
+                <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
+                    <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
+                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Bought 2 accounts, got 10% off. Data annotations tasks. Smooth!"</p>
+                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Jeruto M.</p>
                 </div>
+
+                <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
+                    <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
+                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Excellent support for US tasks, very fast."</p>
+                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Musyoka D.</p>
+                </div>
+
+                <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
+                    <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
+                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Crowdgen working great for US transcriptions, very reliable."</p>
+                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Njeri R.</p>
+                </div>
+
+                <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
+                    <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
+                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Quick email verification,account transfer & easy access."</p>
+                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Mikel K.</p>
+                </div>
+
+            </div>
         </section>
     </main>
 
@@ -61,6 +86,7 @@
         <div id="checkout-options" class="hidden border-t pt-4 mt-4 space-y-2">
             <button onclick="processOrder('whatsapp')" class="w-full bg-green-600 text-white py-3 rounded-xl font-black text-[10px] uppercase italic tracking-widest">WhatsApp</button>
             <button onclick="processOrder('tawk')" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase italic tracking-widest">Live Chat</button>
+            <button onclick="resetCheckout()" class="w-full text-[8px] font-bold text-gray-400 uppercase text-center pt-2">Back</button>
         </div>
         <div id="cart-footer" class="border-t pt-4 mt-4">
             <div id="discount-tag" class="hidden bg-green-100 text-green-700 text-[9px] font-black uppercase p-1.5 rounded mb-2 text-center">-10% Applied</div>
@@ -108,23 +134,19 @@
             grid.innerHTML = "";
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
-                // We add the "Tasks" logic here. You can add a field in Firestore called 'tasks' or 'details'
                 const details = data.details || "Ready for immediate transfer. High trust score.";
-                const tasks = data.tasks || "AI Training • Translation • Evaluation";
-
+                const tasks = data.tasks || "AI TRAINING • TRANSLATION • EVALUATION";
                 grid.innerHTML += `
                     <div class="blur-card p-5 rounded-3xl border border-white/50 shadow-md">
-                        <h3 class="text-lg font-black uppercase italic tracking-tighter text-blue-900">${data.name}</h3>
-                        <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-2">${data.description}</p>
-                        
+                        <h3 class="text-lg font-black uppercase italic tracking-tighter text-blue-900 leading-tight">${data.name}</h3>
+                        <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-2">Verified Account: ${data.description || 'Global'}</p>
                         <div class="bg-gray-50 p-2 rounded-xl mb-4 border border-gray-100">
                             <p class="text-[10px] font-bold text-gray-600 leading-tight mb-1">${details}</p>
                             <p class="text-[9px] font-black text-blue-800 uppercase italic opacity-70">${tasks}</p>
                         </div>
-
                         <div class="flex justify-between items-center pt-3 border-t border-gray-100">
                             <span class="text-xl font-black text-black tracking-tighter">$${data.price}</span>
-                            <button onclick="addToCart('${doc.id}', '${data.name}', ${data.price})" class="bg-blue-700 text-white px-4 py-2 rounded-lg font-black text-[9px] uppercase italic tracking-widest hover:bg-black transition shadow-md">Buy Now</button>
+                            <button onclick="addToCart('${doc.id}', '${data.name}', ${data.price})" class="bg-blue-700 text-white px-4 py-2 rounded-lg font-black text-[9px] uppercase italic hover:bg-black transition">Buy Now</button>
                         </div>
                     </div>`;
             });
