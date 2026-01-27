@@ -45,6 +45,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE",
@@ -57,9 +58,14 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Capture Referral ID from URL if present
+        const urlParams = new URLSearchParams(window.location.search);
+        const referralId = urlParams.get('ref');
+
         let isLogin = true;
 
-        // Toggle Password Visibility
         window.togglePasswordVisibility = () => {
             const pwdInput = document.getElementById('password');
             const eyeIcon = document.getElementById('eye-icon');
@@ -82,6 +88,7 @@
         window.handleAuth = async () => {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+
             if(!email || !password) return alert("Please fill all fields");
 
             try {
@@ -90,12 +97,23 @@
                     if (userCredential.user.emailVerified) {
                         window.location.href = "shop.html";
                     } else {
-                        alert("Please verify your email! We sent a link to " + email);
+                        alert("Verify your email! We sent a link to " + email);
                     }
                 } else {
+                    // REGISTER LOGIC WITH REFERRAL TRACKING
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    await sendEmailVerification(userCredential.user);
-                    alert("Account created! Check your inbox for the verification link.");
+                    const user = userCredential.user;
+
+                    // Save the new user and who referred them into Firestore
+                    await setDoc(doc(db, "users", user.uid), {
+                        email: user.email,
+                        referredBy: referralId || "none",
+                        role: "recruit",
+                        joinedAt: new Date()
+                    });
+
+                    await sendEmailVerification(user);
+                    alert("Account created! Verification link sent. Activate it to login.");
                     toggleAuth();
                 }
             } catch (error) {
