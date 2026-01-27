@@ -11,84 +11,61 @@
                         url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80');
             background-size: cover; background-position: center; background-attachment: fixed;
         }
-        .blur-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); }
+        /* Compact card styling */
+        .blur-card { 
+            background: rgba(255, 255, 255, 0.98); 
+            backdrop-filter: blur(10px); 
+            transition: transform 0.2s ease;
+        }
+        .blur-card:hover { transform: translateY(-5px); }
         body { opacity: 0; transition: opacity 0.5s; }
         #cart-sidebar { transition: transform 0.3s ease-in-out; }
     </style>
 </head>
 <body id="main-body" class="hero-bg min-h-screen text-gray-900 font-sans">
 
-    <nav class="p-6 flex justify-between items-center max-w-7xl mx-auto relative z-10">
-        <h1 class="text-2xl font-black text-white italic tracking-tighter uppercase">Working Remote</h1>
-        <div class="flex items-center space-x-6">
-            <button onclick="toggleCart()" class="relative text-white group">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                <span id="cart-count" class="absolute -top-2 -right-2 bg-blue-600 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+    <nav class="p-4 flex justify-between items-center max-w-[1600px] mx-auto relative z-10">
+        <h1 class="text-xl font-black text-white italic tracking-tighter uppercase">Working Remote</h1>
+        <div class="flex items-center space-x-4">
+            <button onclick="toggleCart()" class="relative text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-blue-600 text-[9px] font-bold px-1.5 py-0.5 rounded-full">0</span>
             </button>
-            <a href="profile.html" class="text-white text-xs font-bold uppercase tracking-widest hover:text-blue-400">Profile</a>
-            <button onclick="logout()" class="bg-red-600 text-white px-5 py-2 rounded-full text-xs font-black uppercase italic hover:bg-black transition">Logout</button>
+            <a href="/profile" class="text-white text-[10px] font-black uppercase tracking-widest hover:text-blue-400">Profile</a>
+            <button onclick="logout()" class="bg-red-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase italic hover:bg-black transition">Logout</button>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto p-6">
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-10">
+    <main class="max-w-[1600px] mx-auto p-4">
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-4">
             </div>
 
-        <section class="mt-24 mb-20">
-            <h2 class="text-center text-white text-3xl font-black uppercase italic tracking-widest mb-12">Verified Buyer Reviews</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
-                <div class="blur-card p-6 rounded-3xl border border-white/30 shadow-xl">
-                    <div class="flex text-yellow-500 mb-2">★★★★★</div>
-                    <p class="text-sm font-bold italic text-gray-800">"Got my Outlier UK account in 10 minutes. The Live Agent on Tawk.to was super fast with the transfer details. Legit!"</p>
-                    <p class="mt-4 text-[10px] font-black uppercase text-blue-600">— David K. (Verified Buyer)</p>
+        <section class="mt-16 mb-10">
+            <h2 class="text-center text-white text-xl font-black uppercase italic tracking-widest mb-8">Verified Feedback</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
+                    <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
+                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Fast transfer, legit UK outlier account."</p>
+                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Verified Buyer</p>
                 </div>
-
-                <div class="blur-card p-6 rounded-3xl border border-white/30 shadow-xl">
-                    <div class="flex text-yellow-500 mb-2">★★★★★</div>
-                    <p class="text-sm font-bold italic text-gray-800">"Was skeptical at first but the WhatsApp support cleared my doubts. Bought 2 accounts and got the 10% discount automatically. Thanks!"</p>
-                    <p class="mt-4 text-[10px] font-black uppercase text-blue-600">— Sarah M. (Verified Buyer)</p>
                 </div>
-
-                <div class="blur-card p-6 rounded-3xl border border-white/30 shadow-xl">
-                    <div class="flex text-yellow-500 mb-2">★★★★★</div>
-                    <p class="text-sm font-bold italic text-gray-800">"Respondent account works perfectly in the US. Best marketplace for remote workers. Highly recommended."</p>
-                    <p class="mt-4 text-[10px] font-black uppercase text-blue-600">— Jeruto M. (Verified Buyer)</p>
-                </div>
-
-                <div class="blur-card p-6 rounded-3xl border border-white/30 shadow-xl">
-                    <div class="flex text-yellow-500 mb-2">★★★★★</div>
-                    <p class="text-sm font-bold italic text-gray-800">"The payment process was secure and the transfer instructions were very clear. No issues at all."</p>
-                    <p class="mt-4 text-[10px] font-black uppercase text-blue-600">— Njeri R. (Verified Buyer)</p>
-                </div>
-
-                <div class="blur-card p-6 rounded-3xl border border-white/30 shadow-xl">
-                    <div class="flex text-yellow-500 mb-2">★★★★★</div>
-                    <p class="text-sm font-bold italic text-gray-800">"Finally a place that actually delivers. Verification was easy and the shop is very user friendly."</p>
-                    <p class="mt-4 text-[10px] font-black uppercase text-blue-600">— Mikel M. (Verified Buyer)</p>
-                </div>
-
-            </div>
         </section>
     </main>
 
-    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 transform translate-x-full p-8 flex flex-col">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-xl font-black uppercase italic tracking-tighter text-blue-900">Your Order</h2>
-            <button onclick="toggleCart()" class="text-gray-400 hover:text-black text-2xl">✕</button>
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-72 bg-white shadow-2xl z-50 transform translate-x-full p-6 flex flex-col">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-lg font-black uppercase italic text-blue-900">Checkout</h2>
+            <button onclick="toggleCart()" class="text-gray-400">✕</button>
         </div>
-        <div id="cart-items" class="flex-grow overflow-y-auto space-y-4"></div>
-        <div id="checkout-options" class="hidden border-t pt-6 mt-6 space-y-3">
-            <p class="text-[10px] font-black uppercase text-gray-400 text-center mb-2 tracking-widest">Select Transfer Method</p>
-            <button onclick="processOrder('whatsapp')" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black text-[10px] uppercase italic tracking-widest hover:bg-black transition">Order via WhatsApp</button>
-            <button onclick="processOrder('tawk')" class="w-full bg-blue-700 text-white py-4 rounded-2xl font-black text-[10px] uppercase italic tracking-widest hover:bg-black transition">Chat with Live Agent</button>
-            <button onclick="resetCheckout()" class="w-full text-[9px] font-bold text-gray-400 uppercase tracking-widest pt-2">Back to Summary</button>
+        <div id="cart-items" class="flex-grow overflow-y-auto space-y-3"></div>
+        <div id="checkout-options" class="hidden border-t pt-4 mt-4 space-y-2">
+            <button onclick="processOrder('whatsapp')" class="w-full bg-green-600 text-white py-3 rounded-xl font-black text-[10px] uppercase italic tracking-widest">WhatsApp</button>
+            <button onclick="processOrder('tawk')" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase italic tracking-widest">Live Chat</button>
         </div>
-        <div id="cart-footer" class="border-t pt-6 mt-6">
-            <div id="discount-tag" class="hidden bg-green-100 text-green-700 text-[10px] font-black uppercase p-2 rounded-lg text-center mb-4 italic tracking-widest">🎉 10% Bundle Discount Applied!</div>
-            <div class="flex justify-between font-bold mb-1 uppercase text-xs text-gray-400"><span>Subtotal</span><span id="cart-subtotal">$0</span></div>
-            <div class="flex justify-between font-black mb-6 uppercase tracking-tight text-lg text-blue-900"><span>Total</span><span id="cart-total">$0</span></div>
-            <button id="initial-checkout-btn" onclick="showOptions()" class="w-full bg-black text-white py-4 rounded-2xl font-black text-xs uppercase italic tracking-widest hover:bg-blue-700 transition">Proceed to Checkout</button>
+        <div id="cart-footer" class="border-t pt-4 mt-4">
+            <div id="discount-tag" class="hidden bg-green-100 text-green-700 text-[9px] font-black uppercase p-1.5 rounded mb-2 text-center">-10% Applied</div>
+            <div class="flex justify-between font-black uppercase text-sm text-blue-900"><span>Total</span><span id="cart-total">$0</span></div>
+            <button onclick="showOptions()" class="w-full bg-black text-white py-3 mt-4 rounded-xl font-black text-[10px] uppercase tracking-widest">Proceed</button>
         </div>
     </div>
 
@@ -96,10 +73,8 @@
         var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
         (function(){
             var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-            s1.async=true;
-            s1.src='https://embed.tawk.to/697549464a0f82197e621807/1jfp2cf6e';
-            s1.charset='UTF-8';
-            s1.setAttribute('crossorigin','*');
+            s1.async=true; s1.src='https://embed.tawk.to/697549464a0f82197e621807/1jfp2cf6e';
+            s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
             s0.parentNode.insertBefore(s1,s0);
         })();
     </script>
@@ -117,7 +92,6 @@
             messagingSenderId: "953179052891",
             appId: "1:953179052891:web:8126924e32e9fb62f4987e"
         };
-
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -134,13 +108,23 @@
             grid.innerHTML = "";
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
+                // We add the "Tasks" logic here. You can add a field in Firestore called 'tasks' or 'details'
+                const details = data.details || "Ready for immediate transfer. High trust score.";
+                const tasks = data.tasks || "AI Training • Translation • Evaluation";
+
                 grid.innerHTML += `
-                    <div class="blur-card p-8 rounded-[2.5rem] shadow-2xl transition-all border border-white/50">
-                        <h3 class="text-2xl font-black uppercase italic tracking-tighter mb-1 text-blue-900">${data.name}</h3>
-                        <p class="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-6">${data.description}</p>
-                        <div class="flex justify-between items-center pt-5 border-t border-gray-100">
-                            <span class="text-3xl font-black text-black tracking-tighter">$${data.price}</span>
-                            <button onclick="addToCart('${doc.id}', '${data.name}', ${data.price})" class="bg-blue-700 text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase italic tracking-widest hover:bg-black transition">Buy Now</button>
+                    <div class="blur-card p-5 rounded-3xl border border-white/50 shadow-md">
+                        <h3 class="text-lg font-black uppercase italic tracking-tighter text-blue-900">${data.name}</h3>
+                        <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-2">${data.description}</p>
+                        
+                        <div class="bg-gray-50 p-2 rounded-xl mb-4 border border-gray-100">
+                            <p class="text-[10px] font-bold text-gray-600 leading-tight mb-1">${details}</p>
+                            <p class="text-[9px] font-black text-blue-800 uppercase italic opacity-70">${tasks}</p>
+                        </div>
+
+                        <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+                            <span class="text-xl font-black text-black tracking-tighter">$${data.price}</span>
+                            <button onclick="addToCart('${doc.id}', '${data.name}', ${data.price})" class="bg-blue-700 text-white px-4 py-2 rounded-lg font-black text-[9px] uppercase italic tracking-widest hover:bg-black transition shadow-md">Buy Now</button>
                         </div>
                     </div>`;
             });
@@ -156,21 +140,19 @@
 
         window.updateCartUI = () => {
             const container = document.getElementById('cart-items');
-            const subtotalEl = document.getElementById('cart-subtotal');
             const totalEl = document.getElementById('cart-total');
             const discountTag = document.getElementById('discount-tag');
             document.getElementById('cart-count').innerText = cart.length;
-            container.innerHTML = cart.map((item, index) => `<div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100"><div><p class="font-black text-[10px] uppercase italic text-blue-900">${item.name}</p><p class="font-black text-sm">$${item.price}</p></div><button onclick="removeFromCart(${index})" class="text-red-500 font-bold text-[9px] uppercase hover:underline">Remove</button></div>`).join('');
+            container.innerHTML = cart.map((item, index) => `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100"><div><p class="font-black text-[9px] uppercase text-blue-900">${item.name}</p><p class="font-black text-xs">$${item.price}</p></div><button onclick="removeFromCart(${index})" class="text-red-500 font-bold text-[8px] uppercase">Remove</button></div>`).join('');
             const subtotal = cart.reduce((acc, curr) => acc + Number(curr.price), 0);
             let finalTotal = subtotal;
             if (cart.length >= 2) { finalTotal = subtotal * 0.90; discountTag.classList.remove('hidden'); } 
             else { discountTag.classList.add('hidden'); }
-            subtotalEl.innerText = `$${subtotal}`;
             totalEl.innerText = `$${finalTotal.toFixed(2)}`;
         };
 
         window.showOptions = () => {
-            if (cart.length === 0) return alert("Add items to your order first!");
+            if (cart.length === 0) return alert("Cart empty!");
             document.getElementById('checkout-options').classList.remove('hidden');
             document.getElementById('cart-footer').classList.add('hidden');
         };
@@ -181,12 +163,11 @@
         };
 
         window.processOrder = (method) => {
-            const items = cart.map(i => `${i.name} ($${i.price})`).join(', ');
+            const items = cart.map(i => `${i.name}`).join(', ');
             const finalPrice = document.getElementById('cart-total').innerText;
-            const message = `ORDER REQUEST: ${items}. FINAL TOTAL: ${finalPrice}. USER: ${auth.currentUser.email}`;
+            const message = `ORDER: ${items}. TOTAL: ${finalPrice}. USER: ${auth.currentUser.email}`;
             if (method === 'whatsapp') { window.open(`https://wa.me/18608968455?text=${encodeURIComponent(message)}`, '_blank'); } 
-            else { if (typeof Tawk_API !== "undefined") { Tawk_API.maximize(); Tawk_API.sendMessage(message); toggleCart(); } 
-            else { window.open('https://tawk.to/chat/697549464a0f82197e621807/1jfp2cf6e', '_blank'); } }
+            else { if (typeof Tawk_API !== "undefined") { Tawk_API.maximize(); Tawk_API.sendMessage(message); toggleCart(); } }
         };
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
