@@ -11,38 +11,32 @@
                         url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
         }
         .profile-card {
-            background: rgba(255, 255, 255, 1);
-            backdrop-filter: blur(10px);
+            background: white;
+            border-radius: 2.5rem;
         }
     </style>
 </head>
 <body class="hero-bg min-h-screen flex items-center justify-center p-6 text-gray-800 font-sans">
 
-    <div class="profile-card w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden p-10 border border-white/20">
+    <div class="profile-card w-full max-w-md shadow-2xl p-10 border border-white/20">
         <div class="text-center mb-8">
             <div class="w-24 h-24 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center border-4 border-blue-50">
                 <span id="user-initial" class="text-4xl font-black text-blue-700 uppercase">?</span>
             </div>
-            <h1 class="text-2xl font-black text-blue-800 uppercase italic tracking-tighter">User Profile</h1>
-            <p class="text-gray-400 font-bold text-[10px] uppercase tracking-[0.2em] mt-2">Account Settings</p>
+            <h1 class="text-2xl font-black text-blue-800 uppercase italic tracking-tighter">Account Profile</h1>
+            <p class="text-gray-400 font-bold text-[10px] uppercase tracking-[0.2em] mt-2">Verified Member</p>
         </div>
 
         <div class="space-y-6">
             <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                <label class="text-[10px] font-black uppercase text-gray-400 block mb-1">Registered Email</label>
+                <label class="text-[10px] font-black uppercase text-gray-400 block mb-1">Email Address</label>
                 <p id="user-email" class="font-bold text-gray-700 truncate text-sm italic">Loading...</p>
             </div>
 
-            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                <label class="text-[10px] font-black uppercase text-gray-400 block mb-1">Account Status</label>
-                <p class="font-bold text-green-600 text-sm uppercase italic tracking-widest">● Verified Member</p>
-            </div>
-
             <div class="flex flex-col gap-3">
-                <a href="index.html" class="w-full bg-blue-700 text-white py-4 rounded-2xl text-center font-black text-xs hover:bg-black transition-all uppercase italic tracking-widest">
+                <a href="shop.html" class="w-full bg-blue-700 text-white py-4 rounded-2xl text-center font-black text-xs hover:bg-black transition-all uppercase italic tracking-widest">
                     Back to Marketplace
                 </a>
                 <button onclick="handleLogout()" class="w-full bg-gray-100 text-gray-400 py-4 rounded-2xl font-black text-xs hover:bg-red-50 hover:text-red-600 transition-all uppercase italic tracking-widest">
@@ -68,10 +62,11 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // 🔒 SECURITY GUARD
+        // 🔒 THE SECURITY GUARD
         onAuthStateChanged(auth, (user) => {
             if (!user || !user.emailVerified) {
-                window.location.href = "login.html";
+                // If not logged in, send to the NEW index.html (Login)
+                window.location.href = "index.html";
             } else {
                 document.getElementById('user-email').innerText = user.email;
                 document.getElementById('user-initial').innerText = user.email.charAt(0);
@@ -82,7 +77,7 @@
         window.handleLogout = async () => {
             try {
                 await signOut(auth);
-                window.location.href = "login.html";
+                window.location.href = "index.html";
             } catch (error) {
                 alert("Logout Error: " + error.message);
             }
