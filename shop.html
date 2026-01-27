@@ -35,7 +35,7 @@
             </button>
             
             <a href="profile.html" class="text-white text-[10px] font-black uppercase tracking-widest hover:text-blue-400">Profile</a>
-            <button onclick="logout()" class="bg-red-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase italic hover:bg-black transition">Logout</button>
+            <button onclick="logout()" class="bg-red-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase italic hover:bg-black transition shadow-lg">Logout</button>
         </div>
     </nav>
 
@@ -49,26 +49,26 @@
                 <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
                     <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
                     <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Fast transfer, legit UK outlier account."</p>
-                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Veronica K.</p>
+                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— David K.</p>
                 </div>
                 <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
                     <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
-                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Bought 2 Crowdgen accounts, got 10% off. Smooth! training"</p>
-                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Jeruto C.</p>
+                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Bought 2 accounts, got 10% off. Smooth!"</p>
+                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Njeri M.</p>
                 </div>
                 <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
                     <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
-                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Excellent support for US tasks, Very Training Data annotations tasks."</p>
+                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Excellent support for US tasks, very fast."</p>
                     <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Musyoka D.</p>
                 </div>
                 <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
                     <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
-                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Working great for US tasks, very reliable$ kiswahili live trainer."</p>
-                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Njeri R.</p>
+                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Working great for US tasks, very reliable."</p>
+                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Jeruto C.</p>
                 </div>
                 <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
                     <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
-                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Quick email verification, easy access transcriptons."</p>
+                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Quick email verification, easy access."</p>
                     <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Mikel K.</p>
                 </div>
             </div>
@@ -79,12 +79,13 @@
         <div class="blur-card max-w-lg w-full p-8 rounded-[2.5rem] border border-white/20 relative">
             <button onclick="toggleTraining()" class="absolute top-6 right-6 text-gray-400 hover:text-black font-bold">✕</button>
             <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-2">Skill Up Center</h2>
-            <p class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-6">Master the Tasks Before You Buy</p>
+            <p class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-6 text-center">Master the Tasks Before You Buy</p>
+            
             <div class="space-y-4">
-                <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100">
-                    <p class="text-xs font-black text-blue-900 uppercase italic">Live Training Session</p>
-                    <p class="text-[10px] text-gray-600 mb-3 italic">Join our Google Meet to see live AI Training demos.</p>
-                    <a href="https://meet.google.com/your-code" target="_blank" class="inline-block bg-blue-700 text-white px-4 py-2 rounded-xl text-[9px] font-black uppercase">Join Google Meet</a>
+                <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100 text-center">
+                    <p class="text-xs font-black text-blue-900 uppercase italic mb-2">Need a Live Demo?</p>
+                    <p class="text-[10px] text-gray-600 mb-4">Click to alert an admin. We will send you a Google Meet link in the live chat bubble immediately.</p>
+                    <button onclick="requestMeeting()" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition shadow-md">Request Live Meeting Link</button>
                 </div>
                 <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                     <p class="text-xs font-black text-gray-800 uppercase italic">Training Resources</p>
@@ -94,25 +95,24 @@
                     </ul>
                 </div>
             </div>
-            <p class="mt-6 text-center text-[9px] font-black uppercase text-gray-400 italic">Questions? Ask in the Live Chat</p>
         </div>
     </div>
 
     <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-72 bg-white shadow-2xl z-50 transform translate-x-full p-6 flex flex-col">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-lg font-black uppercase italic text-blue-900 leading-none">Your Order</h2>
+            <h2 class="text-lg font-black uppercase italic text-blue-900">Checkout</h2>
             <button onclick="toggleCart()" class="text-gray-400">✕</button>
         </div>
         <div id="cart-items" class="flex-grow overflow-y-auto space-y-3"></div>
         <div id="checkout-options" class="hidden border-t pt-4 mt-4 space-y-2">
             <button onclick="processOrder('whatsapp')" class="w-full bg-green-600 text-white py-3 rounded-xl font-black text-[10px] uppercase italic tracking-widest">Order via WhatsApp</button>
-            <button onclick="processOrder('tawk')" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase italic tracking-widest">Talk to Agent</button>
+            <button onclick="processOrder('tawk')" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase italic tracking-widest">Live Chat Agent</button>
             <button onclick="resetCheckout()" class="w-full text-[8px] font-bold text-gray-400 uppercase text-center pt-2">Back</button>
         </div>
         <div id="cart-footer" class="border-t pt-4 mt-4">
-            <div id="discount-tag" class="hidden bg-green-100 text-green-700 text-[9px] font-black uppercase p-1.5 rounded mb-2 text-center">-10% Bundle Discount</div>
+            <div id="discount-tag" class="hidden bg-green-100 text-green-700 text-[9px] font-black uppercase p-1.5 rounded mb-2 text-center">-10% Applied</div>
             <div class="flex justify-between font-black uppercase text-sm text-blue-900"><span>Total</span><span id="cart-total">$0</span></div>
-            <button onclick="showOptions()" class="w-full bg-black text-white py-3 mt-4 rounded-xl font-black text-[10px] uppercase tracking-widest">Proceed to Checkout</button>
+            <button onclick="showOptions()" class="w-full bg-black text-white py-3 mt-4 rounded-xl font-black text-[10px] uppercase tracking-widest">Proceed to Order</button>
         </div>
     </div>
 
@@ -155,25 +155,35 @@
             grid.innerHTML = "";
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
-                const details = data.details || "Ready for immediate transfer. High trust score.";
-                const tasks = data.tasks || "AI TRAINING • TRANSLATION • EVALUATION";
                 grid.innerHTML += `
                     <div class="blur-card p-5 rounded-3xl border border-white/50 shadow-md">
                         <h3 class="text-lg font-black uppercase italic tracking-tighter text-blue-900 leading-tight">${data.name}</h3>
-                        <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-2">Verified: ${data.description || 'US/UK'}</p>
+                        <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-2">Verified Account: ${data.description || 'Global'}</p>
                         <div class="bg-gray-50 p-2 rounded-xl mb-4 border border-gray-100">
-                            <p class="text-[10px] font-bold text-gray-600 leading-tight mb-1">${details}</p>
-                            <p class="text-[9px] font-black text-blue-800 uppercase italic opacity-70">${tasks}</p>
+                            <p class="text-[10px] font-bold text-gray-600 leading-tight mb-1">${data.details || 'High trust score.'}</p>
+                            <p class="text-[9px] font-black text-blue-800 uppercase italic opacity-70">${data.tasks || 'AI TRAINING'}</p>
                         </div>
                         <div class="flex justify-between items-center pt-3 border-t border-gray-100">
                             <span class="text-xl font-black text-black tracking-tighter">$${data.price}</span>
-                            <button onclick="addToCart('${doc.id}', '${data.name}', ${data.price})" class="bg-blue-700 text-white px-4 py-2 rounded-lg font-black text-[9px] uppercase italic hover:bg-black transition">Buy Now</button>
+                            <button onclick="addToCart('${doc.id}', '${data.name}', ${data.price})" class="bg-blue-700 text-white px-4 py-2 rounded-lg font-black text-[9px] uppercase italic hover:bg-black transition shadow-md">Buy Now</button>
                         </div>
                     </div>`;
             });
         }
 
         window.toggleTraining = () => document.getElementById('training-modal').classList.toggle('hidden');
+        
+        window.requestMeeting = () => {
+            const userEmail = auth.currentUser ? auth.currentUser.email : "Unknown";
+            const message = `🚨 TRAINING REQUEST: ${userEmail} is waiting for a Live Meeting link!`;
+            if (typeof Tawk_API !== "undefined") {
+                Tawk_API.maximize();
+                Tawk_API.sendMessage(message);
+            }
+            alert("Request Sent! Admin will paste the link in the live chat bubble below.");
+            toggleTraining();
+        };
+
         window.addToCart = (id, name, price) => { cart.push({id, name, price}); updateCartUI(); toggleCart(true); };
         window.removeFromCart = (index) => { cart.splice(index, 1); updateCartUI(); if(cart.length === 0) resetCheckout(); };
         window.toggleCart = (f) => document.getElementById('cart-sidebar').classList[f===true?'remove':'toggle']('translate-x-full');
