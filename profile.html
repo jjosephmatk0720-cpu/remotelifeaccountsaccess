@@ -3,52 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile | Working Remote</title>
+    <title>Account Settings | Working Remote</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hero-bg {
             background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), 
                         url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
+            background-size: cover; background-position: center; background-attachment: fixed;
         }
-        .profile-card {
-            background: white;
-            border-radius: 2.5rem;
-        }
+        .blur-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); }
+        body { opacity: 0; transition: opacity 0.5s; }
     </style>
 </head>
-<body class="hero-bg min-h-screen flex items-center justify-center p-6 text-gray-800 font-sans">
+<body id="main-body" class="hero-bg min-h-screen text-gray-900 font-sans">
 
-    <div class="profile-card w-full max-w-md shadow-2xl p-10 border border-white/20">
-        <div class="text-center mb-8">
-            <div class="w-24 h-24 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center border-4 border-blue-50">
-                <span id="user-initial" class="text-4xl font-black text-blue-700 uppercase">?</span>
+    <nav class="p-6 flex justify-between items-center max-w-7xl mx-auto relative z-10">
+        <h1 class="text-xl font-black text-white italic tracking-tighter uppercase">Working Remote</h1>
+        <div class="flex items-center space-x-6">
+            <a href="shop.html" class="text-white text-[10px] font-black uppercase tracking-widest hover:text-blue-400">Back to Shop</a>
+            <button onclick="logout()" class="bg-red-600 text-white px-5 py-2 rounded-full text-[10px] font-black uppercase italic hover:bg-black transition">Logout</button>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto p-6 space-y-6">
+        
+        <div class="blur-card p-8 rounded-[2.5rem] shadow-2xl border border-white/50">
+            <h2 class="text-2xl font-black uppercase italic tracking-tighter text-blue-900 mb-6">Account Settings</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <p class="text-[10px] font-black uppercase text-gray-400 tracking-widest">Refer & Earn Bonus</p>
+                    <p class="text-xs font-bold text-gray-600 italic">Share your link to recruit new members and earn 5% commission on their first purchase.</p>
+                    <div class="flex items-center bg-gray-100 p-3 rounded-2xl border border-gray-200">
+                        <input type="text" id="referral-link" readonly class="bg-transparent border-none text-[11px] font-bold w-full outline-none text-blue-800" value="https://remotelifeaccountsaccessrc.vercel.app/index.html?ref=USER_ID">
+                        <button onclick="copyReferral()" class="bg-blue-700 text-white px-4 py-2 rounded-xl text-[9px] font-black uppercase hover:bg-black transition">Copy</button>
+                    </div>
+                    <p id="copy-msg" class="text-[9px] font-black text-green-600 uppercase hidden">Link copied to clipboard!</p>
+                </div>
+
+                <div class="space-y-4">
+                    <p class="text-[10px] font-black uppercase text-gray-400 tracking-widest">Update Password</p>
+                    <input type="password" id="new-password" placeholder="New Password" class="w-full p-4 bg-gray-100 rounded-2xl border-none font-bold text-xs outline-none focus:ring-2 focus:ring-blue-500">
+                    <button onclick="updatePasswordUI()" class="w-full bg-black text-white py-3 rounded-2xl font-black text-[10px] uppercase italic tracking-widest hover:bg-blue-700 transition">Update Account</button>
+                </div>
             </div>
-            <h1 class="text-2xl font-black text-blue-800 uppercase italic tracking-tighter">Account Profile</h1>
-            <p class="text-gray-400 font-bold text-[10px] uppercase tracking-[0.2em] mt-2">Verified Member</p>
         </div>
 
-        <div class="space-y-6">
-            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                <label class="text-[10px] font-black uppercase text-gray-400 block mb-1">Email Address</label>
-                <p id="user-email" class="font-bold text-gray-700 truncate text-sm italic">Loading...</p>
+        <div class="blur-card p-8 rounded-[2.5rem] shadow-2xl border border-white/50">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-black uppercase italic text-blue-900">User Profile</h3>
+                <span class="bg-green-100 text-green-700 text-[9px] font-black px-3 py-1 rounded-full uppercase">Verified Recruit</span>
             </div>
-
-            <div class="flex flex-col gap-3">
-                <a href="shop.html" class="w-full bg-blue-700 text-white py-4 rounded-2xl text-center font-black text-xs hover:bg-black transition-all uppercase italic tracking-widest">
-                    Back to Marketplace
-                </a>
-                <button onclick="handleLogout()" class="w-full bg-gray-100 text-gray-400 py-4 rounded-2xl font-black text-xs hover:bg-red-50 hover:text-red-600 transition-all uppercase italic tracking-widest">
-                    Log Out
-                </button>
+            <div class="space-y-2">
+                <p class="text-xs font-bold text-gray-500">EMAIL: <span id="user-email" class="text-black">...</span></p>
+                <p class="text-xs font-bold text-gray-500">USER ID: <span id="user-id" class="text-black">...</span></p>
             </div>
         </div>
-    </div>
+
+    </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE",
@@ -62,26 +78,45 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // 🔒 THE SECURITY GUARD
         onAuthStateChanged(auth, (user) => {
             if (!user || !user.emailVerified) {
-                // If not logged in, send to the NEW index.html (Login)
                 window.location.href = "index.html";
             } else {
+                document.getElementById('main-body').style.opacity = "1";
                 document.getElementById('user-email').innerText = user.email;
-                document.getElementById('user-initial').innerText = user.email.charAt(0);
+                document.getElementById('user-id').innerText = user.uid;
+                
+                // Set Referral Link with Unique User ID
+                const baseUrl = window.location.origin;
+                document.getElementById('referral-link').value = `${baseUrl}/index.html?ref=${user.uid}`;
             }
         });
 
-        // Logout Logic
-        window.handleLogout = async () => {
+        window.copyReferral = () => {
+            const copyText = document.getElementById("referral-link");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+            
+            const msg = document.getElementById('copy-msg');
+            msg.classList.remove('hidden');
+            setTimeout(() => msg.classList.add('hidden'), 2000);
+        };
+
+        window.updatePasswordUI = async () => {
+            const newPwd = document.getElementById('new-password').value;
+            if (newPwd.length < 6) return alert("Password must be at least 6 characters");
+            
             try {
-                await signOut(auth);
-                window.location.href = "index.html";
+                await updatePassword(auth.currentUser, newPwd);
+                alert("Password updated successfully!");
+                document.getElementById('new-password').value = "";
             } catch (error) {
-                alert("Logout Error: " + error.message);
+                alert("For security, please logout and log back in before changing your password.");
             }
         };
+
+        window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
     </script>
 </body>
 </html>
