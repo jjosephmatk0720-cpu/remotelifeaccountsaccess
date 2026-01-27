@@ -3,38 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Access | Working Remote</title>
+    <title>Login | Working Remote</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hero-bg {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), 
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), 
                         url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80');
             background-size: cover; background-position: center;
         }
-        .glass-card { background: white; backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="hero-bg min-h-screen flex items-center justify-center p-6 text-gray-800 font-sans">
-    <div class="glass-card w-full max-w-md rounded-[2.5rem] shadow-2xl p-10 border border-white/20">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-black text-blue-800 uppercase italic tracking-tighter">Working Remote</h1>
-            <p id="form-title" class="text-gray-400 font-bold text-[10px] uppercase tracking-[0.2em] mt-2">Sign In to Your Account</p>
+<body class="hero-bg min-h-screen flex items-center justify-center p-6 text-gray-900 font-sans">
+
+    <div class="bg-white/95 backdrop-blur-md w-full max-w-md p-10 rounded-[2.5rem] shadow-2xl border border-white/20">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-black text-blue-900 uppercase italic tracking-tighter">Working Remote</h1>
+            <p id="auth-title" class="text-[10px] font-black uppercase text-gray-400 tracking-[0.3em] mt-2">Sign In</p>
         </div>
-        <div class="space-y-5">
-            <input type="email" id="email" placeholder="Email Address" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none focus:border-blue-500 font-medium">
-            <input type="password" id="pass" placeholder="Password" class="w-full bg-gray-50 p-4 rounded-2xl border border-gray-100 outline-none focus:border-blue-500 font-medium">
-            <button id="main-btn" onclick="handleAuth()" class="w-full bg-blue-700 text-white py-4 rounded-2xl font-black text-xs hover:bg-black shadow-xl transition-all uppercase italic tracking-widest">Login</button>
-            <div class="text-center">
-                <p id="toggle-text" class="text-xs text-gray-500 font-medium">Don't have an account?</p>
-                <button id="toggle-btn" onclick="switchMode()" class="text-xs font-black text-blue-700 uppercase tracking-wider mt-1 hover:underline">Create Account</button>
+
+        <div class="space-y-4">
+            <input type="email" id="email" placeholder="Email Address" class="w-full p-4 bg-gray-100 rounded-2xl border-none font-bold text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            
+            <div class="relative">
+                <input type="password" id="password" placeholder="Password" class="w-full p-4 bg-gray-100 rounded-2xl border-none font-bold text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <button type="button" onclick="togglePasswordVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 transition">
+                    <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.644C3.399 8.049 7.21 5 12 5c4.791 0 8.601 3.049 9.964 6.678a1.012 1.012 0 010 .644C20.601 15.951 16.79 19 12 19c-4.791 0-8.601-3.049-9.964-6.678z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </button>
+            </div>
+            
+            <button id="main-btn" onclick="handleAuth()" class="w-full bg-black text-white py-4 rounded-2xl font-black text-xs uppercase italic tracking-widest hover:bg-blue-700 transition-all shadow-lg">Login</button>
+            
+            <div class="text-center mt-6">
+                <button onclick="toggleAuth()" id="toggle-btn" class="text-[10px] font-black uppercase text-blue-700 tracking-widest hover:underline">Create Account</button>
             </div>
         </div>
-        <p id="msg" class="mt-6 text-center text-[10px] font-bold uppercase tracking-tight"></p>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE",
@@ -44,35 +54,53 @@
             messagingSenderId: "953179052891",
             appId: "1:953179052891:web:8126924e32e9fb62f4987e"
         };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        let isLogin = true;
 
-        onAuthStateChanged(auth, (user) => {
-            if (user && user.emailVerified) { window.location.href = "shop.html"; }
-        });
+        // Toggle Password Visibility
+        window.togglePasswordVisibility = () => {
+            const pwdInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.822 7.822L21 21m-2.278-2.278L15.071 15.07M12 15a3 3 0 110-6 3 3 0 010 6z" />';
+            } else {
+                pwdInput.type = 'password';
+                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.644C3.399 8.049 7.21 5 12 5c4.791 0 8.601 3.049 9.964 6.678a1.012 1.012 0 010 .644C20.601 15.951 16.79 19 12 19c-4.791 0-8.601-3.049-9.964-6.678z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />';
+            }
+        };
 
-        let isLoginMode = true;
-        window.switchMode = () => {
-            isLoginMode = !isLoginMode;
-            document.getElementById('form-title').innerText = isLoginMode ? "Sign In" : "Join the Community";
-            document.getElementById('main-btn').innerText = isLoginMode ? "Login" : "Create Account";
+        window.toggleAuth = () => {
+            isLogin = !isLogin;
+            document.getElementById('auth-title').innerText = isLogin ? "Sign In" : "Register New Account";
+            document.getElementById('main-btn').innerText = isLogin ? "Login" : "Create Account";
+            document.getElementById('toggle-btn').innerText = isLogin ? "Create Account" : "Back to Login";
         };
 
         window.handleAuth = async () => {
             const email = document.getElementById('email').value;
-            const pass = document.getElementById('pass').value;
+            const password = document.getElementById('password').value;
+            if(!email || !password) return alert("Please fill all fields");
+
             try {
-                if (isLoginMode) {
-                    const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-                    if (!userCredential.user.emailVerified) return alert("Verify your email first!");
-                    window.location.href = "shop.html";
+                if (isLogin) {
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    if (userCredential.user.emailVerified) {
+                        window.location.href = "shop.html";
+                    } else {
+                        alert("Please verify your email! We sent a link to " + email);
+                    }
                 } else {
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     await sendEmailVerification(userCredential.user);
-                    alert("Verification link sent!");
-                    switchMode();
+                    alert("Account created! Check your inbox for the verification link.");
+                    toggleAuth();
                 }
-            } catch (error) { alert(error.message); }
+            } catch (error) {
+                alert(error.message);
+            }
         };
     </script>
 </body>
