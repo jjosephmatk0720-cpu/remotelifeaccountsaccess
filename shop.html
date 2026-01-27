@@ -11,23 +11,45 @@
                         url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80');
             background-size: cover; background-position: center; background-attachment: fixed;
         }
-        .blur-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); }
-        body { opacity: 0; } /* Hide shop until auth is confirmed */
+        .blur-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); }
+        body { opacity: 0; transition: opacity 0.5s; }
+        #cart-sidebar { transition: transform 0.3s ease-in-out; }
     </style>
 </head>
 <body id="main-body" class="hero-bg min-h-screen text-gray-900 font-sans">
-    <nav class="p-6 flex justify-between items-center max-w-7xl mx-auto">
+
+    <nav class="p-6 flex justify-between items-center max-w-7xl mx-auto relative z-10">
         <h1 class="text-2xl font-black text-white italic tracking-tighter uppercase">Working Remote</h1>
-        <div class="space-x-4">
+        <div class="flex items-center space-x-6">
+            <button onclick="toggleCart()" class="relative text-white group">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-blue-600 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+            </button>
             <a href="profile.html" class="text-white text-xs font-bold uppercase tracking-widest hover:text-blue-400">Profile</a>
-            <button onclick="logout()" class="bg-red-600 text-white px-5 py-2 rounded-full text-xs font-black uppercase italic hover:bg-black transition">Logout</button>
+            <button onclick="logout()" class="bg-red-600 text-white px-5 py-2 rounded-full text-xs font-black uppercase italic hover:bg-black">Logout</button>
         </div>
     </nav>
+
     <main class="max-w-7xl mx-auto p-6">
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-20">
-            <p class="text-white font-bold">Connecting to secure database...</p>
-        </div>
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-10">
+            </div>
     </main>
+
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 transform translate-x-full p-8 flex flex-col">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-xl font-black uppercase italic tracking-tighter">Your Cart</h2>
+            <button onclick="toggleCart()" class="text-gray-400 hover:text-black">✕</button>
+        </div>
+        <div id="cart-items" class="flex-grow overflow-y-auto space-y-4">
+            </div>
+        <div class="border-t pt-6 mt-6">
+            <div class="flex justify-between font-black mb-4 uppercase">
+                <span>Total</span>
+                <span id="cart-total">$0</span>
+            </div>
+            <button onclick="checkout()" class="w-full bg-blue-700 text-white py-4 rounded-2xl font-black text-xs uppercase italic tracking-widest hover:bg-black transition">Complete Purchase</button>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -46,12 +68,12 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        let cart = [];
+
         onAuthStateChanged(auth, (user) => {
             if (!user || !user.emailVerified) { window.location.href = "index.html"; }
             else { document.getElementById('main-body').style.opacity = "1"; loadProducts(); }
         });
-
-        window.logout = () => { signOut(auth).then(() => { window.location.href = "index.html"; }); };
 
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
@@ -59,17 +81,66 @@
             grid.innerHTML = "";
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
+                const id = doc.id;
                 grid.innerHTML += `
-                    <div class="blur-card p-8 rounded-[2rem] shadow-2xl">
+                    <div class="blur-card p-8 rounded-[2rem] shadow-2xl transition-transform hover:scale-[1.02]">
                         <h3 class="text-2xl font-black uppercase italic tracking-tighter mb-2 text-blue-800">${data.name}</h3>
                         <p class="text-gray-600 text-sm font-bold mb-6">${data.description}</p>
                         <div class="flex justify-between items-center pt-4 border-t border-gray-100">
                             <span class="text-2xl font-black text-black">$${data.price}</span>
-                            <button class="bg-blue-700 text-white px-6 py-3 rounded-xl font-black text-xs uppercase italic tracking-widest hover:bg-black transition">Buy Now</button>
+                            <button onclick="addToCart('${id}', '${data.name}', ${data.price})" class="bg-blue-700 text-white px-6 py-3 rounded-xl font-black text-xs uppercase italic tracking-widest hover:bg-black transition">Buy Now</button>
                         </div>
                     </div>`;
             });
         }
+
+        window.addToCart = (id, name, price) => {
+            cart.push({id, name, price});
+            updateCartUI();
+            toggleCart(true); // Open cart automatically
+        };
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items');
+            const count = document.getElementById('cart-count');
+            const total = document.getElementById('cart-total');
+            
+            count.innerText = cart.length;
+            container.innerHTML = cart.map((item, index) => `
+                <div class="flex justify-between items-center bg-gray-50 p-4 rounded-xl">
+                    <div>
+                        <p class="font-black text-xs uppercase tracking-tight">${item.name}</p>
+                        <p class="text-blue-600 font-bold">$${item.price}</p>
+                    </div>
+                    <button onclick="removeFromCart(${index})" class="text-red-500 font-bold text-xs">REMOVE</button>
+                </div>
+            `).join('');
+            
+            const sum = cart.reduce((acc, curr) => acc + Number(curr.price), 0);
+            total.innerText = `$${sum}`;
+        }
+
+        window.removeFromCart = (index) => {
+            cart.splice(index, 1);
+            updateCartUI();
+        };
+
+        window.toggleCart = (forceOpen = false) => {
+            const sidebar = document.getElementById('cart-sidebar');
+            if (forceOpen) sidebar.classList.remove('translate-x-full');
+            else sidebar.classList.toggle('translate-x-full');
+        };
+
+        window.checkout = () => {
+            if (cart.length === 0) return alert("Cart is empty!");
+            const items = cart.map(i => `${i.name} ($${i.price})`).join(', ');
+            const message = `Hello, I want to buy: ${items}. My email is: ${auth.currentUser.email}`;
+            
+            // OPTION: Redirect to WhatsApp (Replace with your number)
+            window.open(`https://wa.me/254XXXXXXXXX?text=${encodeURIComponent(message)}`, '_blank');
+        };
+
+        window.logout = () => { signOut(auth).then(() => { window.location.href = "index.html"; }); };
     </script>
 </body>
 </html>
