@@ -37,21 +37,21 @@
 
     <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-50 transform translate-x-full p-8 flex flex-col">
         <div class="flex justify-between items-center mb-8">
-            <h2 class="text-xl font-black uppercase italic tracking-tighter">Your Order</h2>
-            <button onclick="toggleCart()" class="text-gray-400 hover:text-black">✕</button>
+            <h2 class="text-xl font-black uppercase italic tracking-tighter text-blue-900">Your Order</h2>
+            <button onclick="toggleCart()" class="text-gray-400 hover:text-black text-2xl">✕</button>
         </div>
         
         <div id="cart-items" class="flex-grow overflow-y-auto space-y-4"></div>
 
         <div id="checkout-options" class="hidden border-t pt-6 mt-6 space-y-3">
-            <p class="text-[10px] font-black uppercase text-gray-400 text-center mb-2">Select Transfer Method</p>
-            <button onclick="processOrder('whatsapp')" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black text-xs uppercase italic tracking-widest hover:bg-black transition">
+            <p class="text-[10px] font-black uppercase text-gray-400 text-center mb-2 tracking-widest">Select Transfer Method</p>
+            <button onclick="processOrder('whatsapp')" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black text-[10px] uppercase italic tracking-widest hover:bg-black transition">
                 Order via WhatsApp
             </button>
-            <button onclick="processOrder('tawk')" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-xs uppercase italic tracking-widest hover:bg-black transition">
+            <button onclick="processOrder('tawk')" class="w-full bg-blue-700 text-white py-4 rounded-2xl font-black text-[10px] uppercase italic tracking-widest hover:bg-black transition">
                 Chat with Live Agent
             </button>
-            <button onclick="resetCheckout()" class="w-full text-[9px] font-bold text-gray-400 uppercase pt-2">Back to Summary</button>
+            <button onclick="resetCheckout()" class="w-full text-[9px] font-bold text-gray-400 uppercase tracking-widest pt-2">Back to Summary</button>
         </div>
 
         <div id="cart-footer" class="border-t pt-6 mt-6">
@@ -62,15 +62,27 @@
                 <span>Subtotal</span>
                 <span id="cart-subtotal">$0</span>
             </div>
-            <div class="flex justify-between font-black mb-4 uppercase text-lg text-blue-900">
+            <div class="flex justify-between font-black mb-6 uppercase tracking-tight text-lg text-blue-900">
                 <span>Total</span>
                 <span id="cart-total">$0</span>
             </div>
-            <button id="initial-btn" onclick="showOptions()" class="w-full bg-black text-white py-4 rounded-2xl font-black text-xs uppercase italic tracking-widest hover:bg-blue-700 transition">
+            <button id="initial-checkout-btn" onclick="showOptions()" class="w-full bg-black text-white py-4 rounded-2xl font-black text-xs uppercase italic tracking-widest hover:bg-blue-700 transition">
                 Proceed to Checkout
             </button>
         </div>
     </div>
+
+    <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        (function(){
+            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+            s1.async=true;
+            s1.src='https://embed.tawk.to/697549464a0f82197e621807/1jfp2cf6e';
+            s1.charset='UTF-8';
+            s1.setAttribute('crossorigin','*');
+            s0.parentNode.insertBefore(s1,s0);
+        })();
+    </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -85,10 +97,10 @@
             messagingSenderId: "953179052891",
             appId: "1:953179052891:web:8126924e32e9fb62f4987e"
         };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
         let cart = [];
 
         onAuthStateChanged(auth, (user) => {
@@ -103,12 +115,12 @@
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
                 grid.innerHTML += `
-                    <div class="blur-card p-8 rounded-[2.5rem] shadow-2xl border border-white/50">
+                    <div class="blur-card p-8 rounded-[2.5rem] shadow-2xl transition-all hover:scale-[1.02] border border-white/50">
                         <h3 class="text-2xl font-black uppercase italic tracking-tighter mb-1 text-blue-900">${data.name}</h3>
                         <p class="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-6">${data.description}</p>
                         <div class="flex justify-between items-center pt-5 border-t border-gray-100">
-                            <span class="text-3xl font-black text-black">$${data.price}</span>
-                            <button onclick="addToCart('${doc.id}', '${data.name}', ${data.price})" class="bg-blue-700 text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase italic hover:bg-black transition">Buy Now</button>
+                            <span class="text-3xl font-black text-black tracking-tighter">$${data.price}</span>
+                            <button onclick="addToCart('${doc.id}', '${data.name}', ${data.price})" class="bg-blue-700 text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase italic tracking-widest hover:bg-black transition">Buy Now</button>
                         </div>
                     </div>`;
             });
@@ -127,18 +139,17 @@
             const subtotalEl = document.getElementById('cart-subtotal');
             const totalEl = document.getElementById('cart-total');
             const discountTag = document.getElementById('discount-tag');
-            
             document.getElementById('cart-count').innerText = cart.length;
+            
             container.innerHTML = cart.map((item, index) => `
                 <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                    <div><p class="font-black text-[10px] uppercase text-blue-900">${item.name}</p><p class="font-black text-sm">$${item.price}</p></div>
-                    <button onclick="removeFromCart(${index})" class="text-red-500 font-bold text-[9px] uppercase">Remove</button>
+                    <div><p class="font-black text-[10px] uppercase italic text-blue-900">${item.name}</p><p class="font-black text-sm">$${item.price}</p></div>
+                    <button onclick="removeFromCart(${index})" class="text-red-500 font-bold text-[9px] uppercase tracking-widest hover:underline">Remove</button>
                 </div>`).join('');
             
             const subtotal = cart.reduce((acc, curr) => acc + Number(curr.price), 0);
-            
-            // 💰 DISCOUNT ALGORITHM: If items >= 2, apply 10% off
             let finalTotal = subtotal;
+
             if (cart.length >= 2) {
                 finalTotal = subtotal * 0.90;
                 discountTag.classList.remove('hidden');
@@ -151,41 +162,37 @@
         };
 
         window.showOptions = () => {
-            if (cart.length === 0) return alert("Cart is empty!");
+            if (cart.length === 0) return alert("Add items to your order first!");
             document.getElementById('checkout-options').classList.remove('hidden');
             document.getElementById('cart-footer').classList.add('hidden');
+            document.getElementById('cart-items').classList.add('opacity-30');
         };
 
         window.resetCheckout = () => {
             document.getElementById('checkout-options').classList.add('hidden');
             document.getElementById('cart-footer').classList.remove('hidden');
+            document.getElementById('cart-items').classList.remove('opacity-30');
         };
 
         window.processOrder = (method) => {
             const items = cart.map(i => `${i.name} ($${i.price})`).join(', ');
             const finalPrice = document.getElementById('cart-total').innerText;
-            const message = `ORDER REQUEST: ${items}. TOTAL PRICE: ${finalPrice}. USER: ${auth.currentUser.email}`;
+            const message = `ORDER REQUEST: ${items}. FINAL TOTAL: ${finalPrice}. USER: ${auth.currentUser.email}`;
 
             if (method === 'whatsapp') {
                 window.open(`https://wa.me/18608968455?text=${encodeURIComponent(message)}`, '_blank');
             } else {
-                window.open('https://tawk.to/chat/697549464a0f82197e621807/1jfp2cf6e', '_blank');
+                if (typeof Tawk_API !== "undefined") {
+                    Tawk_API.maximize();
+                    Tawk_API.sendMessage(message);
+                    toggleCart();
+                } else {
+                    window.open('https://tawk.to/chat/697549464a0f82197e621807/1jfp2cf6e', '_blank');
+                }
             }
         };
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
     </script>
-    <script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/697549464a0f82197e621807/1jfp2cf6e';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
 </body>
 </html>
-
