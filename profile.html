@@ -40,7 +40,7 @@
         </div>
 
         <div class="bg-gray-50 p-6 rounded-3xl border border-gray-100 mb-8">
-            <p class="text-[9px] font-black uppercase text-gray-400 mb-3 tracking-wider text-center italic">Recruiter Syke Calculator</p>
+            <p class="text-[9px] font-black uppercase text-gray-400 mb-3 tracking-wider text-center italic">Recruiter earnings Calculator</p>
             <div class="flex items-center justify-between gap-4">
                 <input type="number" id="calc-input" placeholder="Referrals?" class="w-1/2 p-2 bg-white rounded-xl border border-gray-200 text-xs font-black outline-none focus:ring-1 focus:ring-blue-500">
                 <div class="text-right">
@@ -115,7 +115,7 @@
             }
         }
 
-        // SYKE CALCULATOR LOGIC ($5 per referral assumption)
+        // EARNINGS CALCULATOR LOGIC ($5 per referral assumption)
         document.getElementById('calc-input').addEventListener('input', (e) => {
             const val = e.target.value;
             const estimate = val * 5; 
@@ -133,3 +133,4 @@
     </script>
 </body>
 </html>
+
