@@ -41,6 +41,13 @@
                 <h2 class="text-sm font-black uppercase tracking-widest text-purple-400 mb-6 italic">💸 Pending Withdrawals</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-[9px] font-black uppercase text-gray-500 border-b border-white/10">
+                                <th class="pb-4 px-2">User & Wallet</th>
+                                <th class="pb-4 px-2">Amount</th>
+                                <th class="pb-4 px-2 text-right">Action</th>
+                            </tr>
+                        </thead>
                         <tbody id="withdrawal-list" class="divide-y divide-white/5"></tbody>
                     </table>
                 </div>
@@ -63,23 +70,27 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, getDocs, deleteDoc, doc, addDoc, setDoc, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, addDoc, setDoc, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const ADMIN_KEY = "11223344";
+        
+        const ADMIN_KEY = "SRC3838";
 
         onAuthStateChanged(auth, (user) => {
-            if (!user) { window.location.href = "index.html"; }
-            else {
+            if (!user) { 
+                window.location.href = "index.html"; 
+            } else {
                 const access = prompt("ENTER ADMIN ACCESS KEY:");
-                if (access !== ADMIN_KEY) { window.location.href = "shop.html"; }
-                else { 
+                if (access === ADMIN_KEY) { 
                     document.getElementById('main-body').style.opacity = "1"; 
                     loadLeaderboard(); 
                     loadWithdrawals(); 
+                } else {
+                    alert("Unauthorized!");
+                    window.location.href = "shop.html"; 
                 }
             }
         });
@@ -92,16 +103,17 @@
             } catch (e) { alert(e.message); }
         };
 
-        async function loadWithdrawals() {
+        window.loadWithdrawals = async () => {
             const list = document.getElementById('withdrawal-list');
             const q = query(collection(db, "withdrawals"), where("status", "==", "pending"));
             const snap = await getDocs(q);
-            list.innerHTML = snap.empty ? `<p class="text-[10px] text-gray-500 py-4 italic">No pending requests.</p>` : "";
+            list.innerHTML = "";
+            if(snap.empty) list.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-gray-500 text-[10px]">No pending withdrawals.</td></tr>`;
             snap.forEach((d) => {
                 const data = d.data();
                 list.innerHTML += `
                 <tr class="text-[10px] font-bold">
-                    <td class="py-4 px-2">${data.email}<br><span class="text-gray-500 select-all">${data.wallet}</span></td>
+                    <td class="py-4 px-2">${data.email}<br><span class="text-blue-400 select-all font-mono">${data.wallet}</span></td>
                     <td class="py-4 px-2 text-green-400 font-black">${data.amount}</td>
                     <td class="py-4 px-2 text-right space-x-1">
                         <button onclick="handleWithdrawal('${d.id}', 'approved')" class="bg-green-600 px-2 py-1 rounded text-[8px] uppercase">Approve</button>
@@ -109,12 +121,16 @@
                     </td>
                 </tr>`;
             });
-        }
+        };
 
         window.handleWithdrawal = async (id, status) => {
             if(confirm(`Mark request as ${status}?`)) {
-                await updateDoc(doc(db, "withdrawals", id), { status: status });
-                alert("Updated!"); loadWithdrawals();
+                try {
+                    const docRef = doc(db, "withdrawals", id);
+                    await updateDoc(docRef, { status: status });
+                    alert("Success!");
+                    window.loadWithdrawals();
+                } catch (e) { alert(e.message); }
             }
         };
 
@@ -122,16 +138,30 @@
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
             if(!name || !price) return alert("Fill Name/Price");
-            await addDoc(collection(db, "products"), { name, price, description: document.getElementById('p-desc').value, tasks: document.getElementById('p-tasks').value, details: document.getElementById('p-details').value, createdAt: new Date() });
+            await addDoc(collection(db, "products"), { 
+                name, 
+                price, 
+                description: document.getElementById('p-desc').value, 
+                tasks: document.getElementById('p-tasks').value, 
+                details: document.getElementById('p-details').value, 
+                createdAt: new Date() 
+            });
             alert("Product Added!");
         };
 
         async function loadLeaderboard() {
             const snap = await getDocs(collection(db, "users"));
             const counts = {};
-            snap.forEach(d => { if(d.data().referredBy && d.data().referredBy !== "none") counts[d.data().referredBy] = (counts[d.data().referredBy] || 0) + 1; });
+            snap.forEach(d => { 
+                const ref = d.data().referredBy;
+                if(ref && ref !== "none") counts[ref] = (counts[ref] || 0) + 1; 
+            });
             const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-            document.getElementById('leaderboard').innerHTML = sorted.map(([id, c]) => `<div class="flex justify-between p-3 bg-white/5 rounded-xl"><span>ID: ...${id.slice(-6)}</span><span class="text-blue-400 font-black">${c} RECRUITS</span></div>`).join('');
+            document.getElementById('leaderboard').innerHTML = sorted.map(([id, c]) => `
+                <div class="flex justify-between p-3 bg-white/5 rounded-xl">
+                    <span class="text-gray-400">ID: ...${id.slice(-6)}</span>
+                    <span class="text-blue-400 font-black">${c} RECRUITS</span>
+                </div>`).join('');
         }
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
