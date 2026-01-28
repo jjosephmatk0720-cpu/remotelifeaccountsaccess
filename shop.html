@@ -17,9 +17,25 @@
             transition: transform 0.2s ease;
         }
         .blur-card:hover { transform: translateY(-5px); }
-        body { opacity: 0; transition: opacity 0.5s; }
+        body { opacity: 0; transition: opacity 0.5s; overflow-x: hidden; }
         #cart-sidebar { transition: transform 0.3s ease-in-out; }
         .modal-bg { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); }
+        
+        /* Ticker Styles */
+        #activity-ticker {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(100px);
+            opacity: 0;
+        }
+        .ticker-visible {
+            transform: translateY(0) !important;
+            opacity: 1 !important;
+        }
     </style>
 </head>
 <body id="main-body" class="hero-bg min-h-screen text-gray-900 font-sans">
@@ -31,154 +47,152 @@
     <nav class="p-4 flex justify-between items-center max-w-[1600px] mx-auto relative z-10">
         <h1 class="text-xl font-black text-white italic tracking-tighter uppercase">Working Remote</h1>
         <div class="flex items-center space-x-4">
-            <button onclick="toggleTraining()" class="text-yellow-400 text-[10px] font-black uppercase tracking-widest border border-yellow-400/40 px-4 py-1.5 rounded-full hover:bg-yellow-400 hover:text-black transition">Training</button>
-            
+            <button onclick="toggleModal('training-modal')" class="text-yellow-400 text-[10px] font-black uppercase tracking-widest border border-yellow-400/40 px-4 py-1.5 rounded-full hover:bg-yellow-400 hover:text-black transition">Training</button>
             <button onclick="toggleCart()" class="relative text-white group">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                 <span id="cart-count" class="absolute -top-2 -right-2 bg-blue-600 text-[9px] font-bold px-1.5 py-0.5 rounded-full">0</span>
             </button>
-            
             <a href="profile.html" class="text-white text-[10px] font-black uppercase tracking-widest hover:text-blue-400">Profile</a>
             <button onclick="logout()" class="bg-red-600 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase italic hover:bg-black transition shadow-lg">Logout</button>
         </div>
     </nav>
 
     <main class="max-w-[1600px] mx-auto p-4">
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-4">
-            </div>
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-4"></div>
 
-        <section class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="blur-card p-6 rounded-[2rem] border border-white/30 shadow-xl">
-                <h3 class="text-blue-700 font-black uppercase tracking-widest text-[10px] italic mb-3">About Our Agency</h3>
-                <p class="text-gray-600 text-[11px] leading-relaxed font-bold">
-                    Working Remote is a premier digital solutions agency dedicated to connecting skilled professionals with high-tier AI training and data evaluation platforms. We bridge the gap between global talent and the world’s leading AI developers.
-                </p>
-            </div>
-
-            <div class="blur-card p-6 rounded-[2rem] border border-white/30 shadow-xl">
-                <h3 class="text-blue-700 font-black uppercase tracking-widest text-[10px] italic mb-3">Terms & Policies</h3>
-                <ul class="space-y-2 text-[10px] text-gray-600 font-black uppercase tracking-tight">
-                    <li class="flex items-start gap-2"><span class="text-blue-600">✓</span> <span>Min. 10 recruits for withdrawal.</span></li>
-                    <li class="flex items-start gap-2"><span class="text-blue-600">✓</span> <span>TRC20 Payouts: 24-48 Hours.</span></li>
-                    <li class="flex items-start gap-2"><span class="text-blue-600">✓</span> <span>All digital account sales are final.</span></li>
-                </ul>
-            </div>
-
-            <div class="blur-card p-6 rounded-[2rem] border border-white/30 shadow-xl">
-                <h3 class="text-blue-700 font-black uppercase tracking-widest text-[10px] italic mb-3">Contact Us</h3>
-                <div class="text-[10px] text-gray-600 font-bold space-y-2">
-                    <p class="flex items-center gap-2">✉ supportremotelifeaccess@gmail.com</p>
-                    <p class="flex items-center gap-2">🕒 Mon – Fri: 08:00 - 20:00 (GMT)</p>
-                    <p class="text-blue-600 italic text-[9px] mt-2">Use Live Chat for instant status updates.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="mt-16 mb-10">
+        <section class="mt-20 mb-10">
             <h2 class="text-center text-white text-xl font-black uppercase italic tracking-widest mb-8">Verified Feedback</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
                 <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
                     <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
-                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Fast transfer, legit UK outlier account transcriptions training."</p>
+                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Fast transfer, legit UK outlier account training."</p>
                     <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— David K.</p>
                 </div>
                 <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
                     <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
-                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Bought 2 Crowdgen accounts, got 10% off. Smooth trainer!"</p>
-                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Njeri M.</p>
-                </div>
-                <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
-                    <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
-                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Excellent support for US tasks, data annotations tasks very fast."</p>
-                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Musyoka D.</p>
-                </div>
-                <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
-                    <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
-                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Working great for US tasks, very reliable & kiswahili translation."</p>
-                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Jeruto C.</p>
-                </div>
-                <div class="blur-card p-4 rounded-2xl border border-white/30 shadow-lg">
-                    <div class="flex text-yellow-500 text-[10px] mb-1">★★★★★</div>
-                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Quick email verification, legit transfer & easy access."</p>
-                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Mikel K.</p>
+                    <p class="text-[11px] font-bold italic leading-tight text-gray-700">"Smooth payout to my TRC20 wallet. Highly professional."</p>
+                    <p class="mt-2 text-[9px] font-black uppercase text-blue-600">— Sarah J.</p>
                 </div>
             </div>
         </section>
 
-        <footer class="text-center pb-10">
-            <p class="text-[9px] font-black uppercase tracking-[0.5em] text-white/40">© 2026 Working Remote Agency</p>
+        <footer class="mt-20 border-t border-white/10 pt-10 pb-20 text-center">
+            <div class="flex flex-wrap justify-center gap-6 mb-8">
+                <button onclick="toggleModal('about-modal')" class="text-white text-[10px] font-black uppercase tracking-widest hover:text-yellow-400 transition">About Us</button>
+                <button onclick="toggleModal('terms-modal')" class="text-white text-[10px] font-black uppercase tracking-widest hover:text-yellow-400 transition">Terms & Policies</button>
+                <button onclick="toggleModal('contact-modal')" class="text-white text-[10px] font-black uppercase tracking-widest hover:text-yellow-400 transition">Contact Us</button>
+            </div>
+            <p class="text-[9px] font-black uppercase tracking-[0.5em] text-white/30">© 2026 Working Remote Agency</p>
         </footer>
     </main>
 
-    <div id="training-modal" class="fixed inset-0 modal-bg z-[70] hidden flex items-center justify-center p-4">
-        <div class="blur-card max-w-lg w-full p-8 rounded-[2.5rem] border border-white/20 relative">
-            <button onclick="toggleTraining()" class="absolute top-6 right-6 text-gray-400 hover:text-black font-bold">✕</button>
-            <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-2">Skill Up Center</h2>
-            <p class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-6 text-center">Master the Tasks Before You Buy</p>
-            <div class="space-y-4">
-                <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100 text-center">
-                    <p class="text-xs font-black text-blue-900 uppercase italic mb-2">Need a Live Demo?</p>
-                    <p class="text-[10px] text-gray-600 mb-4">Click to alert an admin. We will send you a Google Meet link in the live chat bubble immediately.</p>
-                    <button onclick="requestMeeting()" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition shadow-md">Request Live Meeting Link</button>
-                </div>
+    <div id="activity-ticker">
+        <div class="blur-card p-3 rounded-2xl border border-blue-500/30 shadow-2xl flex items-center gap-3">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <p id="ticker-text" class="text-[10px] font-black uppercase tracking-tight text-blue-900 italic"></p>
+        </div>
+    </div>
+
+    <div id="about-modal" class="fixed inset-0 modal-bg z-[100] hidden flex items-center justify-center p-4">
+        <div class="blur-card max-w-md w-full p-8 rounded-[2.5rem] relative">
+            <button onclick="toggleModal('about-modal')" class="absolute top-6 right-6 text-gray-400 font-bold">✕</button>
+            <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-4">About Us</h2>
+            <p class="text-[12px] text-gray-600 leading-relaxed font-bold">
+                Working Remote is a premier digital agency empowering professionals globally. We specialize in providing high-trust account access for AI training platforms and data evaluation. We bridge the gap between global talent and the world’s leading technology developers.
+            </p>
+        </div>
+    </div>
+
+    <div id="terms-modal" class="fixed inset-0 modal-bg z-[100] hidden flex items-center justify-center p-4">
+        <div class="blur-card max-w-md w-full p-8 rounded-[2.5rem] relative">
+            <button onclick="toggleModal('terms-modal')" class="absolute top-6 right-6 text-gray-400 font-bold">✕</button>
+            <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-4 text-center">Policies</h2>
+            <ul class="space-y-4 text-[10px] text-gray-700 font-black uppercase tracking-tight">
+                <li class="flex gap-3"><span class="text-blue-600">01</span> <span>Minimum of 10 verified recruits required to unlock withdrawals.</span></li>
+                <li class="flex gap-3"><span class="text-blue-600">02</span> <span>Payouts are processed via Crypto TRC20 within 24-48 business hours.</span></li>
+                <li class="flex gap-3"><span class="text-blue-600">03</span> <span>All account sales are final once credentials have been issued.</span></li>
+                <li class="flex gap-3"><span class="text-blue-600">04</span> <span>Users must follow platform security guidelines to prevent flags.</span></li>
+                <li class="flex gap-3"><span class="text-blue-600">05</span> <span>Referral fraud or self-referring will lead to permanent bans.</span></li>
+                <li class="flex gap-3"><span class="text-blue-600">06</span> <span>Support is available only for accounts purchased directly from us.</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="contact-modal" class="fixed inset-0 modal-bg z-[100] hidden flex items-center justify-center p-4">
+        <div class="blur-card max-w-md w-full p-8 rounded-[2.5rem] relative">
+            <button onclick="toggleModal('contact-modal')" class="absolute top-6 right-6 text-gray-400 font-bold">✕</button>
+            <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-4">Support</h2>
+            <div class="space-y-4 text-[11px] font-bold text-gray-600">
+                <p class="bg-gray-50 p-3 rounded-xl border border-gray-100">✉ support@remotelifeaccess.com</p>
+                <p class="bg-gray-50 p-3 rounded-xl border border-gray-100">🕒 Mon – Fri: 08:00 - 20:00 (GMT)</p>
+                <button onclick="Tawk_API.maximize(); toggleModal('contact-modal')" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black uppercase tracking-widest text-[10px]">Open Live Chat Agent</button>
             </div>
         </div>
     </div>
 
-    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-72 bg-white shadow-2xl z-50 transform translate-x-full p-6 flex flex-col">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-lg font-black uppercase italic text-blue-900">Checkout</h2>
-            <button onclick="toggleCart()" class="text-gray-400">✕</button>
-        </div>
-        <div id="cart-items" class="flex-grow overflow-y-auto space-y-3"></div>
-        <div id="checkout-options" class="hidden border-t pt-4 mt-4 space-y-2">
-            <button onclick="processOrder('whatsapp')" class="w-full bg-green-600 text-white py-3 rounded-xl font-black text-[10px] uppercase italic tracking-widest">Order via WhatsApp</button>
-            <button onclick="processOrder('tawk')" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase italic tracking-widest">Live Chat Agent</button>
-            <button onclick="resetCheckout()" class="w-full text-[8px] font-bold text-gray-400 uppercase text-center pt-2">Back</button>
-        </div>
-        <div id="cart-footer" class="border-t pt-4 mt-4">
-            <div id="discount-tag" class="hidden bg-green-100 text-green-700 text-[9px] font-black uppercase p-1.5 rounded mb-2 text-center">-10% Applied</div>
-            <div class="flex justify-between font-black uppercase text-sm text-blue-900"><span>Total</span><span id="cart-total">$0</span></div>
-            <button onclick="showOptions()" class="w-full bg-black text-white py-3 mt-4 rounded-xl font-black text-[10px] uppercase tracking-widest">Proceed to Order</button>
+    <div id="training-modal" class="fixed inset-0 modal-bg z-[100] hidden flex items-center justify-center p-4">
+        <div class="blur-card max-w-lg w-full p-8 rounded-[2.5rem] relative">
+            <button onclick="toggleModal('training-modal')" class="absolute top-6 right-6 text-gray-400 font-bold">✕</button>
+            <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-2">Skill Up Center</h2>
+            <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100 text-center mt-4">
+                <p class="text-xs font-black text-blue-900 uppercase italic mb-2">Live Training Link</p>
+                <button onclick="requestMeeting()" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase shadow-md">Request Meeting via Chat</button>
+            </div>
         </div>
     </div>
 
-    <script type="text/javascript">
-        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-        (function(){
-            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-            s1.async=true; s1.src='https://embed.tawk.to/697549464a0f82197e621807/1jfp2cf6e';
-            s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
-            s0.parentNode.insertBefore(s1,s0);
-        })();
-    </script>
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-72 bg-white shadow-2xl z-[150] transform translate-x-full p-6 flex flex-col">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-lg font-black uppercase italic text-blue-900">Cart</h2>
+            <button onclick="toggleCart()" class="text-gray-400">✕</button>
+        </div>
+        <div id="cart-items" class="flex-grow overflow-y-auto space-y-3"></div>
+        <div id="cart-footer" class="border-t pt-4 mt-4">
+            <div class="flex justify-between font-black uppercase text-sm text-blue-900 mb-4"><span>Total</span><span id="cart-total">$0</span></div>
+            <button onclick="showOptions()" class="w-full bg-black text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest">Order Now</button>
+        </div>
+        <div id="checkout-options" class="hidden border-t pt-4 mt-4 space-y-2">
+            <button onclick="processOrder('whatsapp')" class="w-full bg-green-600 text-white py-3 rounded-xl font-black text-[10px] uppercase">WhatsApp Order</button>
+            <button onclick="processOrder('tawk')" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase">Live Chat Order</button>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, getDocs, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE",
-            authDomain: "remoteworkingacess.firebaseapp.com",
-            projectId: "remoteworkingacess",
-            storageBucket: "remoteworkingacess.firebasestorage.app",
-            messagingSenderId: "953179052891",
-            appId: "1:953179052891:web:8126924e32e9fb62f4987e"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         let cart = [];
 
         onAuthStateChanged(auth, (user) => {
-            if (!user || !user.emailVerified) { window.location.href = "index.html"; }
-            else { 
-                document.getElementById('main-body').style.opacity = "1"; 
-                loadProducts(); 
-                listenForAnnouncement();
-            }
+            if (!user) { window.location.href = "index.html"; }
+            else { document.getElementById('main-body').style.opacity = "1"; loadProducts(); listenForAnnouncement(); }
         });
+
+        async function loadProducts() {
+            const grid = document.getElementById('product-grid');
+            const snap = await getDocs(collection(db, "products"));
+            grid.innerHTML = "";
+            snap.forEach((doc) => {
+                const data = doc.data();
+                grid.innerHTML += `
+                <div class="blur-card p-5 rounded-3xl border border-white/50 shadow-md flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-black uppercase italic tracking-tighter text-blue-900 leading-tight">${data.name}</h3>
+                        <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-2">${data.description}</p>
+                        <p class="text-[10px] text-gray-500 font-bold mb-4">${data.details}</p>
+                    </div>
+                    <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+                        <span class="text-xl font-black text-black">$${data.price}</span>
+                        <button onclick="addToCart('${doc.id}', '${data.name}', ${data.price})" class="bg-blue-700 text-white px-4 py-2 rounded-lg font-black text-[9px] uppercase italic">Buy Now</button>
+                    </div>
+                </div>`;
+            });
+        }
 
         function listenForAnnouncement() {
             onSnapshot(doc(db, "settings", "announcement"), (d) => {
@@ -186,71 +200,50 @@
                 if (data && data.active) {
                     document.getElementById('banner-text').innerText = data.text;
                     document.getElementById('flash-banner').classList.remove('hidden');
-                } else {
-                    document.getElementById('flash-banner').classList.add('hidden');
-                }
+                } else { document.getElementById('flash-banner').classList.add('hidden'); }
             });
         }
 
-        async function loadProducts() {
-            const grid = document.getElementById('product-grid');
-            const querySnapshot = await getDocs(collection(db, "products"));
-            grid.innerHTML = "";
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                grid.innerHTML += `
-                    <div class="blur-card p-5 rounded-3xl border border-white/50 shadow-md">
-                        <h3 class="text-lg font-black uppercase italic tracking-tighter text-blue-900 leading-tight">${data.name}</h3>
-                        <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-2">Verified Account: ${data.description || 'Global'}</p>
-                        <div class="bg-gray-50 p-2 rounded-xl mb-4 border border-gray-100">
-                            <p class="text-[10px] font-bold text-gray-600 leading-tight mb-1">${data.details || 'High trust score.'}</p>
-                            <p class="text-[9px] font-black text-blue-800 uppercase italic opacity-70">${data.tasks || 'AI TRAINING'}</p>
-                        </div>
-                        <div class="flex justify-between items-center pt-3 border-t border-gray-100">
-                            <span class="text-xl font-black text-black tracking-tighter">$${data.price}</span>
-                            <button onclick="addToCart('${doc.id}', '${data.name}', ${data.price})" class="bg-blue-700 text-white px-4 py-2 rounded-lg font-black text-[9px] uppercase italic hover:bg-black transition shadow-md">Buy Now</button>
-                        </div>
-                    </div>`;
-            });
+        // TICKER LOGIC
+        const names = ["Amos K.", "Sarah W.", "John D.", "Njeri G.", "David L.", "Fatuma H.", "Kevin O."];
+        const actions = ["just earned $5.00 commission!", "reached 10 recruits!", "verified a new account!", "unlocked a withdrawal!"];
+        function showActivity() {
+            const ticker = document.getElementById('activity-ticker');
+            const text = document.getElementById('ticker-text');
+            text.innerText = `${names[Math.floor(Math.random() * names.length)]} ${actions[Math.floor(Math.random() * actions.length)]}`;
+            ticker.classList.add('ticker-visible');
+            setTimeout(() => ticker.classList.remove('ticker-visible'), 4000);
         }
+        setInterval(showActivity, 15000);
 
-        window.toggleTraining = () => document.getElementById('training-modal').classList.toggle('hidden');
-        window.requestMeeting = () => {
-            const userEmail = auth.currentUser ? auth.currentUser.email : "Unknown";
-            const message = `🚨 TRAINING REQUEST: ${userEmail}`;
-            if (typeof Tawk_API !== "undefined") { Tawk_API.maximize(); Tawk_API.sendMessage(message); }
-            alert("Request Sent!");
-            toggleTraining();
-        };
-
+        window.toggleModal = (id) => document.getElementById(id).classList.toggle('hidden');
         window.addToCart = (id, name, price) => { cart.push({id, name, price}); updateCartUI(); toggleCart(true); };
-        window.removeFromCart = (index) => { cart.splice(index, 1); updateCartUI(); if(cart.length === 0) resetCheckout(); };
         window.toggleCart = (f) => document.getElementById('cart-sidebar').classList[f===true?'remove':'toggle']('translate-x-full');
-
         window.updateCartUI = () => {
-            const container = document.getElementById('cart-items');
-            const totalEl = document.getElementById('cart-total');
-            const discountTag = document.getElementById('discount-tag');
             document.getElementById('cart-count').innerText = cart.length;
-            container.innerHTML = cart.map((item, index) => `<div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100"><div><p class="font-black text-[9px] uppercase text-blue-900">${item.name}</p><p class="font-black text-xs">$${item.price}</p></div><button onclick="removeFromCart(${index})" class="text-red-500 font-bold text-[8px] uppercase">Remove</button></div>`).join('');
             const subtotal = cart.reduce((acc, curr) => acc + Number(curr.price), 0);
-            let finalTotal = cart.length >= 2 ? subtotal * 0.90 : subtotal;
-            if (cart.length >= 2) discountTag.classList.remove('hidden'); else discountTag.classList.add('hidden');
-            totalEl.innerText = `$${finalTotal.toFixed(2)}`;
+            document.getElementById('cart-total').innerText = `$${subtotal}`;
+            document.getElementById('cart-items').innerHTML = cart.map(item => `<div class="bg-gray-50 p-2 rounded-lg text-[10px] font-bold flex justify-between"><span>${item.name}</span><span>$${item.price}</span></div>`).join('');
         };
-
         window.showOptions = () => { if(cart.length > 0) { document.getElementById('checkout-options').classList.remove('hidden'); document.getElementById('cart-footer').classList.add('hidden'); } };
-        window.resetCheckout = () => { document.getElementById('checkout-options').classList.add('hidden'); document.getElementById('cart-footer').classList.remove('hidden'); };
-
+        window.requestMeeting = () => { Tawk_API.maximize(); Tawk_API.sendMessage(`🚨 TRAINING REQUEST: ${auth.currentUser.email}`); toggleModal('training-modal'); };
         window.processOrder = (method) => {
             const items = cart.map(i => i.name).join(', ');
-            const finalPrice = document.getElementById('cart-total').innerText;
-            const message = `ORDER: ${items}. TOTAL: ${finalPrice}. USER: ${auth.currentUser.email}`;
-            if (method === 'whatsapp') window.open(`https://wa.me/18608968455?text=${encodeURIComponent(message)}`, '_blank');
-            else if (typeof Tawk_API !== "undefined") { Tawk_API.maximize(); Tawk_API.sendMessage(message); toggleCart(); }
+            const msg = `ORDER: ${items}. TOTAL: ${document.getElementById('cart-total').innerText}. USER: ${auth.currentUser.email}`;
+            if (method === 'whatsapp') window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
+            else { Tawk_API.maximize(); Tawk_API.sendMessage(msg); toggleCart(); }
         };
-
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
+    </script>
+
+    <script type="text/javascript">
+        var Tawk_API=Tawk_API||{};
+        (function(){
+            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+            s1.async=true; s1.src='https://embed.tawk.to/697549464a0f82197e621807/1jfp2cf6e';
+            s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
+            s0.parentNode.insertBefore(s1,s0);
+        })();
     </script>
 </body>
 </html>
