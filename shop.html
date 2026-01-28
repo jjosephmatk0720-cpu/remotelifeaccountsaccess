@@ -115,9 +115,6 @@
                 <li class="flex gap-3"><span class="text-blue-600 font-bold">01</span> <span>Minimum of 10 verified recruits required to unlock withdrawals.</span></li>
                 <li class="flex gap-3"><span class="text-blue-600 font-bold">02</span> <span>Payouts are processed via Crypto TRC20 within 24-48 business hours.</span></li>
                 <li class="flex gap-3"><span class="text-blue-600 font-bold">03</span> <span>All account sales are final once credentials have been issued.</span></li>
-                <li class="flex gap-3"><span class="text-blue-600 font-bold">04</span> <span>Users must follow platform security guidelines to prevent flags.</span></li>
-                <li class="flex gap-3"><span class="text-blue-600 font-bold">05</span> <span>Referral fraud or self-referring will lead to permanent bans.</span></li>
-                <li class="flex gap-3"><span class="text-blue-600 font-bold">06</span> <span>Support is available only for accounts purchased directly from us.</span></li>
             </ul>
         </div>
     </div>
@@ -128,7 +125,6 @@
             <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-4">Support</h2>
             <div class="space-y-4 text-[11px] font-bold text-gray-600">
                 <p class="bg-gray-50 p-3 rounded-xl border border-gray-100">✉ supportremotelifeaccess@gmail.com</p>
-                <p class="bg-gray-50 p-3 rounded-xl border border-gray-100">🕒 Mon – Sun: 08:00 - 00:00 (GMT$UTC)</p>
                 <button onclick="Tawk_API.maximize(); toggleModal('contact-modal')" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black uppercase tracking-widest text-[10px]">Open Live Chat Agent</button>
             </div>
         </div>
@@ -151,13 +147,18 @@
             <button onclick="toggleCart()" class="text-gray-400">✕</button>
         </div>
         <div id="cart-items" class="flex-grow overflow-y-auto space-y-3"></div>
+        
         <div id="cart-footer" class="border-t pt-4 mt-4">
-            <div class="flex justify-between font-black uppercase text-sm text-blue-900 mb-4"><span>Total</span><span id="cart-total">$0</span></div>
+            <div id="cart-total-display" class="font-black uppercase text-sm text-blue-900 mb-4">
+                <div class="flex justify-between"><span>Total</span><span id="cart-total">$0</span></div>
+            </div>
             <button onclick="showOptions()" class="w-full bg-black text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest">Order Now</button>
         </div>
+
         <div id="checkout-options" class="hidden border-t pt-4 mt-4 space-y-2">
             <button onclick="processOrder('whatsapp')" class="w-full bg-green-600 text-white py-3 rounded-xl font-black text-[10px] uppercase italic">WhatsApp Order</button>
             <button onclick="processOrder('tawk')" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase italic">Live Chat Order</button>
+            <button onclick="hideOptions()" class="w-full text-[9px] font-bold text-gray-400 uppercase py-2">Back to cart</button>
         </div>
     </div>
 
@@ -186,8 +187,8 @@
                 grid.innerHTML += `<div class="blur-card p-5 rounded-3xl border border-white/50 shadow-md flex flex-col justify-between">
                     <div>
                         <h3 class="text-lg font-black uppercase italic tracking-tighter text-blue-900 leading-tight">${data.name}</h3>
-                        <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-2">${data.description}</p>
-                        <p class="text-[10px] text-gray-500 font-bold mb-4">${data.details}</p>
+                        <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-2">${data.description || ''}</p>
+                        <p class="text-[10px] text-gray-500 font-bold mb-4">${data.details || ''}</p>
                     </div>
                     <div class="flex justify-between items-center pt-3 border-t border-gray-100">
                         <span class="text-xl font-black text-black tracking-tighter">$${data.price}</span>
@@ -196,6 +197,73 @@
                 </div>`;
             });
         }
+
+        window.addToCart = (id, name, price) => { 
+            cart.push({id, name, price}); 
+            updateCartUI(); 
+            toggleCart(true); 
+            hideOptions(); // Reset checkout buttons if they add more
+        };
+
+        window.updateCartUI = () => {
+            document.getElementById('cart-count').innerText = cart.length;
+            const subtotal = cart.reduce((acc, curr) => acc + Number(curr.price), 0);
+            
+            // --- 10% DISCOUNT LOGIC ---
+            let finalTotal = subtotal;
+            let discountHtml = '';
+            if (cart.length >= 2) {
+                const discount = subtotal * 0.10;
+                finalTotal = subtotal - discount;
+                discountHtml = `<div class="flex justify-between text-[10px] text-green-600 font-black italic"><span>Bulk Discount (10% OFF)</span><span>-$${discount.toFixed(2)}</span></div>`;
+            }
+
+            document.getElementById('cart-total-display').innerHTML = `
+                ${discountHtml}
+                <div class="flex justify-between"><span>Total</span><span>$${finalTotal.toFixed(2)}</span></div>
+            `;
+
+            document.getElementById('cart-items').innerHTML = cart.map((item, idx) => `
+                <div class="bg-gray-50 p-2 rounded-lg text-[10px] font-bold flex justify-between group">
+                    <span>${item.name}</span>
+                    <div class="flex gap-2">
+                        <span>$${item.price}</span>
+                        <button onclick="removeFromCart(${idx})" class="text-red-500 opacity-0 group-hover:opacity-100 transition">✕</button>
+                    </div>
+                </div>`).join('');
+        };
+
+        window.removeFromCart = (idx) => { cart.splice(idx, 1); updateCartUI(); };
+        window.toggleCart = (f) => document.getElementById('cart-sidebar').classList[f===true?'remove':'toggle']('translate-x-full');
+        window.showOptions = () => { if(cart.length > 0) { document.getElementById('checkout-options').classList.remove('hidden'); document.getElementById('cart-footer').classList.add('hidden'); } };
+        window.hideOptions = () => { document.getElementById('checkout-options').classList.add('hidden'); document.getElementById('cart-footer').classList.remove('hidden'); };
+
+        window.processOrder = async (method) => {
+            const subtotal = cart.reduce((acc, curr) => acc + Number(curr.price), 0);
+            const total = cart.length >= 2 ? (subtotal * 0.90).toFixed(2) : subtotal.toFixed(2);
+            const items = cart.map(i => i.name).join(', ');
+            const msg = `ORDER: ${items}. FINAL TOTAL: $${total}. USER: ${auth.currentUser.email}`;
+            
+            // Send to Admin Notification Feed
+            await addDoc(collection(db, "notifications"), {
+                type: "SALE_ATTEMPT",
+                method: method,
+                items: items,
+                total: `$${total}`,
+                user: auth.currentUser.email,
+                time: serverTimestamp()
+            });
+
+            if (method === 'whatsapp') window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
+            else { Tawk_API.maximize(); Tawk_API.sendMessage(msg); toggleCart(); }
+        };
+
+        window.requestMeeting = async () => {
+            const msg = `🚨 TRAINING REQUEST: ${auth.currentUser.email}`;
+            Tawk_API.maximize(); Tawk_API.sendMessage(msg);
+            await addDoc(collection(db, "notifications"), { type: "TRAINING", user: auth.currentUser.email, time: serverTimestamp() });
+            toggleModal('training-modal');
+        };
 
         function listenForAnnouncement() {
             onSnapshot(doc(db, "settings", "announcement"), (d) => {
@@ -207,58 +275,17 @@
             });
         }
 
-        // --- 50+ LIVE ACTIVITY ENTRIES ---
-        const names = ["Amos K.", "Sarah W.", "John D.", "Njeri G.", "David L.", "Fatuma H.", "Kevin O.", "Mikel P.", "Grace A.", "Samuel T.", "Joy R.", "Peter S.", "Linda B.", "Chris M.", "Anita Q.", "Wilson J.", "Mercy F.", "Isaac V.", "Hellen N.", "Jeruto E.", "Stacy Z.", "Victor U.", "Faith O.", "Dennis W.", "Lydia K.", "Robert G.", "Martha Y.", "Caleb I.", "Olelenku M.", "George H.", "Nancy P.", "Kamau D.", "Emily L.", "Alex J.", "Diana B.", "Paul K.", "Alice C.", "Mark X.", "Brenda S.", "Timothy V.", "Agnes T.", "Felix R.", "Ruth N.", "Joshua Z.", "Priscila E.", "Oscar M.", "Teresa G.", "Collins W.", "Sharon L.", "Benson Q."];
-        const actions = ["just earned $5.00 commission!", "reached 10 recruits!", "verified a new account!", "unlocked a withdrawal!", "received TRC20 payment!", "started account training!", "invited a new team member!", "successfully linked wallet!"];
-        
-        function showActivity() {
+        // --- ACTIVITY TICKER ---
+        const names = ["Amos K.", "Sarah W.", "John D.", "Njeri G.", "David L.", "Fatuma H.", "Kevin O.", "Mikel P.", "Grace A.", "Samuel T."];
+        const actions = ["just earned $5.00 commission!", "reached 10 recruits!", "verified a new account!", "unlocked a withdrawal!", "received TRC20 payment!"];
+        setInterval(() => {
             const ticker = document.getElementById('activity-ticker');
-            const text = document.getElementById('ticker-text');
-            const randName = names[Math.floor(Math.random() * names.length)];
-            const randAction = actions[Math.floor(Math.random() * actions.length)];
-            text.innerText = `${randName} ${randAction}`;
+            document.getElementById('ticker-text').innerText = `${names[Math.floor(Math.random()*names.length)]} ${actions[Math.floor(Math.random()*actions.length)]}`;
             ticker.classList.add('ticker-visible');
             setTimeout(() => ticker.classList.remove('ticker-visible'), 4000);
-        }
-        setInterval(showActivity, 10000); // Pops up every 10 seconds
+        }, 12000);
 
         window.toggleModal = (id) => document.getElementById(id).classList.toggle('hidden');
-        window.addToCart = (id, name, price) => { cart.push({id, name, price}); updateCartUI(); toggleCart(true); };
-        window.toggleCart = (f) => document.getElementById('cart-sidebar').classList[f===true?'remove':'toggle']('translate-x-full');
-        window.updateCartUI = () => {
-            document.getElementById('cart-count').innerText = cart.length;
-            const subtotal = cart.reduce((acc, curr) => acc + Number(curr.price), 0);
-            document.getElementById('cart-total').innerText = `$${subtotal}`;
-            document.getElementById('cart-items').innerHTML = cart.map(item => `<div class="bg-gray-50 p-2 rounded-lg text-[10px] font-bold flex justify-between"><span>${item.name}</span><span>$${item.price}</span></div>`).join('');
-        };
-        window.showOptions = () => { if(cart.length > 0) { document.getElementById('checkout-options').classList.remove('hidden'); document.getElementById('cart-footer').classList.add('hidden'); } };
-        
-        window.requestMeeting = () => {
-            const msg = `🚨 TRAINING REQUEST: ${auth.currentUser.email}`;
-            Tawk_API.maximize(); Tawk_API.sendMessage(msg);
-            addDoc(collection(db, "notifications"), { type: "TRAINING", user: auth.currentUser.email, time: serverTimestamp() });
-            toggleModal('training-modal');
-        };
-
-        window.processOrder = async (method) => {
-            const items = cart.map(i => i.name).join(', ');
-            const total = document.getElementById('cart-total').innerText;
-            const msg = `ORDER: ${items}. TOTAL: ${total}. USER: ${auth.currentUser.email}`;
-            
-            // ADMIN NOTIFICATION (Check your Firebase collection 'notifications')
-            await addDoc(collection(db, "notifications"), {
-                type: "SALE_ATTEMPT",
-                method: method,
-                items: items,
-                total: total,
-                user: auth.currentUser.email,
-                time: serverTimestamp()
-            });
-
-            if (method === 'whatsapp') window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
-            else { Tawk_API.maximize(); Tawk_API.sendMessage(msg); toggleCart(); }
-        };
-
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
     </script>
 
@@ -273,4 +300,3 @@
     </script>
 </body>
 </html>
-
