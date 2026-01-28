@@ -9,59 +9,73 @@
         .admin-bg { background: #0f172a; color: white; }
         .glass-panel { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
         body { opacity: 0; transition: opacity 0.5s; }
-        input, textarea { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; }
+        input, textarea { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; font-size: 10px !important; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body id="main-body" class="admin-bg min-h-screen font-sans p-6">
+<body id="main-body" class="admin-bg min-h-screen font-sans p-4">
 
-    <nav class="max-w-7xl mx-auto flex justify-between items-center mb-10">
-        <h1 class="text-2xl font-black italic uppercase tracking-tighter">Admin <span class="text-blue-500">Panel</span></h1>
-        <div class="flex space-x-4">
-            <a href="shop.html" class="text-[10px] font-black uppercase tracking-widest py-2 px-4 border border-white/20 rounded-full hover:bg-white hover:text-black transition">View Shop</a>
-            <button onclick="logout()" class="text-[10px] font-black uppercase tracking-widest py-2 px-4 bg-red-600 rounded-full">Logout</button>
+    <nav class="max-w-7xl mx-auto flex justify-between items-center mb-6">
+        <h1 class="text-xl font-black italic uppercase tracking-tighter">Admin <span class="text-blue-500">Panel</span></h1>
+        <div class="flex space-x-2">
+            <a href="shop.html" class="text-[9px] font-black uppercase tracking-widest py-2 px-3 border border-white/20 rounded-full hover:bg-white hover:text-black transition">Shop</a>
+            <button onclick="logout()" class="text-[9px] font-black uppercase tracking-widest py-2 px-3 bg-red-600 rounded-full">Logout</button>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div class="lg:col-span-1 space-y-6">
-            <div class="glass-panel p-6 rounded-[2rem] border-yellow-500/30">
-                <h2 class="text-sm font-black uppercase tracking-widest text-yellow-400 mb-4 italic">📣 Flash Sale Banner</h2>
-                <input type="text" id="announcement-msg" placeholder="e.g. 20% OFF TODAY!" class="w-full p-3 rounded-xl text-xs font-bold outline-none mb-3">
-                <button onclick="postAnnouncement()" class="w-full bg-yellow-500 text-black font-black uppercase italic py-3 rounded-xl text-[10px] tracking-widest transition">Update Shop Banner</button>
+    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4">
+        
+        <div class="lg:col-span-3 space-y-4">
+            <div class="glass-panel p-4 rounded-3xl border-yellow-500/30">
+                <h2 class="text-[10px] font-black uppercase tracking-widest text-yellow-400 mb-3 italic">📣 Shop Banner</h2>
+                <input type="text" id="announcement-msg" placeholder="Sale text..." class="w-full p-2 rounded-lg outline-none mb-2">
+                <button onclick="postAnnouncement()" class="w-full bg-yellow-500 text-black font-black uppercase italic py-2 rounded-lg text-[9px] tracking-widest">Update</button>
             </div>
 
-            <div class="glass-panel p-6 rounded-[2rem]">
-                <h2 class="text-sm font-black uppercase tracking-widest text-blue-400 mb-6 italic">🏆 Top Recruiters</h2>
-                <div id="leaderboard" class="space-y-4 text-[10px]"></div>
+            <div class="glass-panel p-4 rounded-3xl">
+                <h2 class="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-3 italic">🏆 Top Recruiters</h2>
+                <div id="leaderboard" class="space-y-2 max-h-[200px] overflow-y-auto pr-2"></div>
             </div>
         </div>
 
-        <div class="lg:col-span-2 space-y-6">
-            <div class="glass-panel p-8 rounded-[2rem] border-purple-500/30">
-                <h2 class="text-sm font-black uppercase tracking-widest text-purple-400 mb-6 italic">💸 Pending Withdrawals</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="text-[9px] font-black uppercase text-gray-500 border-b border-white/10">
-                                <th class="pb-4 px-2">User & Wallet</th>
-                                <th class="pb-4 px-2">Amount</th>
-                                <th class="pb-4 px-2 text-right">Action</th>
-                            </tr>
-                        </thead>
+        <div class="lg:col-span-6 space-y-4">
+            <div class="glass-panel p-5 rounded-3xl border-purple-500/30">
+                <h2 class="text-[10px] font-black uppercase tracking-widest text-purple-400 mb-3 italic">💸 Pending Withdrawals</h2>
+                <div class="max-h-[250px] overflow-y-auto pr-2">
+                    <table class="w-full text-left text-[9px]">
                         <tbody id="withdrawal-list" class="divide-y divide-white/5"></tbody>
                     </table>
                 </div>
             </div>
 
-            <div class="glass-panel p-8 rounded-[2rem]">
-                <h2 class="text-sm font-black uppercase tracking-widest text-blue-400 mb-6 italic">➕ List New Account</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" id="p-name" placeholder="Account Name" class="p-3 rounded-xl text-xs font-bold outline-none">
-                    <input type="number" id="p-price" placeholder="Price (USD)" class="p-3 rounded-xl text-xs font-bold outline-none">
-                    <input type="text" id="p-desc" placeholder="Region (UK/US)" class="p-3 rounded-xl text-xs font-bold outline-none">
-                    <input type="text" id="p-tasks" placeholder="Tasks (AI TRAINING)" class="p-3 rounded-xl text-xs font-bold outline-none">
-                    <textarea id="p-details" placeholder="Details..." class="md:col-span-2 p-3 rounded-xl text-xs font-bold h-20 outline-none"></textarea>
-                    <button onclick="addProduct()" class="md:col-span-2 bg-blue-600 text-white font-black uppercase italic py-3 rounded-xl text-[10px] tracking-widest transition">Post to Marketplace</button>
+            <div class="glass-panel p-5 rounded-3xl border-green-500/20">
+                <h2 class="text-[10px] font-black uppercase tracking-widest text-green-400 mb-3 italic">📦 Inventory Management</h2>
+                <div class="max-h-[300px] overflow-y-auto pr-2">
+                    <table class="w-full text-left text-[9px]">
+                        <thead>
+                            <tr class="text-gray-500 uppercase border-b border-white/10">
+                                <th class="pb-2">Account</th>
+                                <th class="pb-2">Price</th>
+                                <th class="pb-2 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-list" class="divide-y divide-white/5"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-3">
+            <div class="glass-panel p-5 rounded-3xl sticky top-4">
+                <h2 class="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-4 italic">➕ Add Account</h2>
+                <div class="space-y-3">
+                    <input type="text" id="p-name" placeholder="Name" class="w-full p-2 rounded-lg">
+                    <input type="number" id="p-price" placeholder="Price $" class="w-full p-2 rounded-lg">
+                    <input type="text" id="p-desc" placeholder="Region" class="w-full p-2 rounded-lg">
+                    <input type="text" id="p-tasks" placeholder="Task Type" class="w-full p-2 rounded-lg">
+                    <textarea id="p-details" placeholder="Details..." class="w-full p-2 rounded-lg h-16"></textarea>
+                    <button onclick="addProduct()" class="w-full bg-blue-600 text-white font-black uppercase italic py-2.5 rounded-lg text-[9px] tracking-widest">Post Item</button>
                 </div>
             </div>
         </div>
@@ -70,7 +84,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, addDoc, setDoc, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, addDoc, setDoc, query, where, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
         const app = initializeApp(firebaseConfig);
@@ -80,88 +94,78 @@
         const ADMIN_KEY = "SRC3838";
 
         onAuthStateChanged(auth, (user) => {
-            if (!user) { 
-                window.location.href = "index.html"; 
-            } else {
-                const access = prompt("ENTER ADMIN ACCESS KEY:");
+            if (!user) { window.location.href = "index.html"; }
+            else {
+                const access = prompt("ADMIN KEY:");
                 if (access === ADMIN_KEY) { 
                     document.getElementById('main-body').style.opacity = "1"; 
-                    loadLeaderboard(); 
-                    loadWithdrawals(); 
-                } else {
-                    alert("Unauthorized!");
-                    window.location.href = "shop.html"; 
-                }
+                    refreshData();
+                } else { window.location.href = "shop.html"; }
             }
         });
 
-        window.postAnnouncement = async () => {
-            const msg = document.getElementById('announcement-msg').value;
-            try {
-                await setDoc(doc(db, "settings", "announcement"), { text: msg, active: msg !== "" });
-                alert("Shop Banner Updated!");
-            } catch (e) { alert(e.message); }
-        };
+        async function refreshData() {
+            loadLeaderboard();
+            loadWithdrawals();
+            loadInventory();
+        }
 
-        window.loadWithdrawals = async () => {
+        // LOAD WITHDRAWALS
+        async function loadWithdrawals() {
             const list = document.getElementById('withdrawal-list');
             const q = query(collection(db, "withdrawals"), where("status", "==", "pending"));
             const snap = await getDocs(q);
-            list.innerHTML = "";
-            if(snap.empty) list.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-gray-500 text-[10px]">No pending withdrawals.</td></tr>`;
+            list.innerHTML = snap.empty ? `<tr><td class="py-4 text-gray-500 italic text-center">None</td></tr>` : "";
             snap.forEach((d) => {
                 const data = d.data();
-                list.innerHTML += `
-                <tr class="text-[10px] font-bold">
-                    <td class="py-4 px-2">${data.email}<br><span class="text-blue-400 select-all font-mono">${data.wallet}</span></td>
-                    <td class="py-4 px-2 text-green-400 font-black">${data.amount}</td>
-                    <td class="py-4 px-2 text-right space-x-1">
-                        <button onclick="handleWithdrawal('${d.id}', 'approved')" class="bg-green-600 px-2 py-1 rounded text-[8px] uppercase">Approve</button>
-                        <button onclick="handleWithdrawal('${d.id}', 'declined')" class="bg-red-600 px-2 py-1 rounded text-[8px] uppercase">Decline</button>
-                    </td>
-                </tr>`;
+                list.innerHTML += `<tr class="font-bold border-b border-white/5"><td class="py-3">${data.email}<br><span class="text-blue-400 select-all font-mono">${data.wallet}</span></td><td class="text-green-400">$${data.amount}</td><td class="text-right space-x-1"><button onclick="handleWithdrawal('${d.id}', 'approved')" class="bg-green-600 px-2 py-1 rounded text-[7px] uppercase">Paid</button></td></tr>`;
             });
-        };
+        }
+
+        // RESTORED: LOAD INVENTORY
+        async function loadInventory() {
+            const list = document.getElementById('inventory-list');
+            const snap = await getDocs(collection(db, "products"));
+            list.innerHTML = "";
+            snap.forEach((d) => {
+                const data = d.data();
+                list.innerHTML += `<tr class="border-b border-white/5"><td class="py-3 font-bold">${data.name}</td><td class="text-blue-400 font-bold">$${data.price}</td><td class="text-right"><button onclick="deleteProduct('${d.id}')" class="bg-red-900/50 text-red-400 border border-red-900 px-2 py-1 rounded text-[7px] uppercase hover:bg-red-600 hover:text-white transition">Delete Sold</button></td></tr>`;
+            });
+        }
+
+        window.deleteProduct = async (id) => {
+            if(confirm("Permanently remove this account from shop?")) {
+                await deleteDoc(doc(db, "products", id));
+                loadInventory();
+            }
+        }
 
         window.handleWithdrawal = async (id, status) => {
-            if(confirm(`Mark request as ${status}?`)) {
-                try {
-                    const docRef = doc(db, "withdrawals", id);
-                    await updateDoc(docRef, { status: status });
-                    alert("Success!");
-                    window.loadWithdrawals();
-                } catch (e) { alert(e.message); }
-            }
+            await updateDoc(doc(db, "withdrawals", id), { status: status });
+            loadWithdrawals();
+        };
+
+        window.postAnnouncement = async () => {
+            const msg = document.getElementById('announcement-msg').value;
+            await setDoc(doc(db, "settings", "announcement"), { text: msg, active: msg !== "" });
+            alert("Updated!");
         };
 
         window.addProduct = async () => {
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
-            if(!name || !price) return alert("Fill Name/Price");
-            await addDoc(collection(db, "products"), { 
-                name, 
-                price, 
-                description: document.getElementById('p-desc').value, 
-                tasks: document.getElementById('p-tasks').value, 
-                details: document.getElementById('p-details').value, 
-                createdAt: new Date() 
-            });
-            alert("Product Added!");
+            if(!name || !price) return;
+            await addDoc(collection(db, "products"), { name, price, description: document.getElementById('p-desc').value, tasks: document.getElementById('p-tasks').value, details: document.getElementById('p-details').value, createdAt: new Date() });
+            alert("Added!");
+            loadInventory();
         };
 
         async function loadLeaderboard() {
             const snap = await getDocs(collection(db, "users"));
             const counts = {};
-            snap.forEach(d => { 
-                const ref = d.data().referredBy;
-                if(ref && ref !== "none") counts[ref] = (counts[ref] || 0) + 1; 
-            });
+            snap.forEach(d => { if(d.data().referredBy && d.data().referredBy !== "none") counts[d.data().referredBy] = (counts[d.data().referredBy] || 0) + 1; });
             const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-            document.getElementById('leaderboard').innerHTML = sorted.map(([id, c]) => `
-                <div class="flex justify-between p-3 bg-white/5 rounded-xl">
-                    <span class="text-gray-400">ID: ...${id.slice(-6)}</span>
-                    <span class="text-blue-400 font-black">${c} RECRUITS</span>
-                </div>`).join('');
+            document.getElementById('leaderboard').innerHTML = sorted.map(([id, c]) => `<div class="flex justify-between p-2 bg-white/5 rounded-lg border border-white/5"><span class="text-gray-400 italic">...${id.slice(-5)}</span><span class="text-blue-400 font-black">${c} RECRUITS</span></div>`).join('');
         }
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
