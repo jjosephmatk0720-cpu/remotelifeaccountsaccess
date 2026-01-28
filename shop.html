@@ -103,7 +103,7 @@
         <div class="blur-card max-w-md w-full p-8 rounded-[2.5rem] relative">
             <button onclick="toggleModal('about-modal')" class="absolute top-6 right-6 text-gray-400 font-bold">✕</button>
             <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-4">About Us</h2>
-            <p class="text-[12px] text-gray-600 leading-relaxed font-bold">Working Remote is a premier digital agency empowering professionals globally. We specialize in providing high-trust account access for AI training platforms and data evaluation. We bridge the gap between global talent and the world’s leading technology developers.</p>
+            <p class="text-[12px] text-gray-600 leading-relaxed font-bold">Working Remote is a premier digital agency empowering professionals globally. We specialize in providing high-trust account access for AI training platforms and data evaluation.</p>
         </div>
     </div>
 
@@ -207,19 +207,21 @@
             });
         }
 
-        // --- TICKER LOGIC ---
-        const names = ["Amos K.", "Sarah W.", "John D.", "Njeri G.", "David L.", "Fatuma H.", "Kevin O."];
-        const actions = ["just earned $5.00 commission!", "reached 10 recruits!", "verified a new account!", "unlocked a withdrawal!"];
+        // --- 50+ LIVE ACTIVITY ENTRIES ---
+        const names = ["Amos K.", "Sarah W.", "John D.", "Njeri G.", "David L.", "Fatuma H.", "Kevin O.", "Mikel P.", "Grace A.", "Samuel T.", "Joy R.", "Peter S.", "Linda B.", "Chris M.", "Anita Q.", "Wilson J.", "Mercy F.", "Isaac V.", "Hellen N.", "Jeruto E.", "Stacy Z.", "Victor U.", "Faith O.", "Dennis W.", "Lydia K.", "Robert G.", "Martha Y.", "Caleb I.", "Olelenku M.", "George H.", "Nancy P.", "Kamau D.", "Emily L.", "Alex J.", "Diana B.", "Paul K.", "Alice C.", "Mark X.", "Brenda S.", "Timothy V.", "Agnes T.", "Felix R.", "Ruth N.", "Joshua Z.", "Priscila E.", "Oscar M.", "Teresa G.", "Collins W.", "Sharon L.", "Benson Q."];
+        const actions = ["just earned $5.00 commission!", "reached 10 recruits!", "verified a new account!", "unlocked a withdrawal!", "received TRC20 payment!", "started account training!", "invited a new team member!", "successfully linked wallet!"];
+        
         function showActivity() {
             const ticker = document.getElementById('activity-ticker');
             const text = document.getElementById('ticker-text');
-            text.innerText = `${names[Math.floor(Math.random() * names.length)]} ${actions[Math.floor(Math.random() * actions.length)]}`;
+            const randName = names[Math.floor(Math.random() * names.length)];
+            const randAction = actions[Math.floor(Math.random() * actions.length)];
+            text.innerText = `${randName} ${randAction}`;
             ticker.classList.add('ticker-visible');
             setTimeout(() => ticker.classList.remove('ticker-visible'), 4000);
         }
-        setInterval(showActivity, 15000);
+        setInterval(showActivity, 10000); // Pops up every 10 seconds
 
-        // --- GLOBAL FUNCTIONS ---
         window.toggleModal = (id) => document.getElementById(id).classList.toggle('hidden');
         window.addToCart = (id, name, price) => { cart.push({id, name, price}); updateCartUI(); toggleCart(true); };
         window.toggleCart = (f) => document.getElementById('cart-sidebar').classList[f===true?'remove':'toggle']('translate-x-full');
@@ -243,7 +245,7 @@
             const total = document.getElementById('cart-total').innerText;
             const msg = `ORDER: ${items}. TOTAL: ${total}. USER: ${auth.currentUser.email}`;
             
-            // ADMIN NOTIFICATION (Saves to Firebase)
+            // ADMIN NOTIFICATION (Check your Firebase collection 'notifications')
             await addDoc(collection(db, "notifications"), {
                 type: "SALE_ATTEMPT",
                 method: method,
