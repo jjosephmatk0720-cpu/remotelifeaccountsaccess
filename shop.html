@@ -47,6 +47,33 @@
         <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-4">
             </div>
 
+        <section class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="blur-card p-6 rounded-[2rem] border border-white/30 shadow-xl">
+                <h3 class="text-blue-700 font-black uppercase tracking-widest text-[10px] italic mb-3">About Our Agency</h3>
+                <p class="text-gray-600 text-[11px] leading-relaxed font-bold">
+                    Working Remote is a premier digital solutions agency dedicated to connecting skilled professionals with high-tier AI training and data evaluation platforms. We bridge the gap between global talent and the world’s leading AI developers.
+                </p>
+            </div>
+
+            <div class="blur-card p-6 rounded-[2rem] border border-white/30 shadow-xl">
+                <h3 class="text-blue-700 font-black uppercase tracking-widest text-[10px] italic mb-3">Terms & Policies</h3>
+                <ul class="space-y-2 text-[10px] text-gray-600 font-black uppercase tracking-tight">
+                    <li class="flex items-start gap-2"><span class="text-blue-600">✓</span> <span>Min. 10 recruits for withdrawal.</span></li>
+                    <li class="flex items-start gap-2"><span class="text-blue-600">✓</span> <span>TRC20 Payouts: 24-48 Hours.</span></li>
+                    <li class="flex items-start gap-2"><span class="text-blue-600">✓</span> <span>All digital account sales are final.</span></li>
+                </ul>
+            </div>
+
+            <div class="blur-card p-6 rounded-[2rem] border border-white/30 shadow-xl">
+                <h3 class="text-blue-700 font-black uppercase tracking-widest text-[10px] italic mb-3">Contact Us</h3>
+                <div class="text-[10px] text-gray-600 font-bold space-y-2">
+                    <p class="flex items-center gap-2">✉ supportremotelifeaccess@gmail.com</p>
+                    <p class="flex items-center gap-2">🕒 Mon – Fri: 08:00 - 20:00 (GMT)</p>
+                    <p class="text-blue-600 italic text-[9px] mt-2">Use Live Chat for instant status updates.</p>
+                </div>
+            </div>
+        </section>
+
         <section class="mt-16 mb-10">
             <h2 class="text-center text-white text-xl font-black uppercase italic tracking-widest mb-8">Verified Feedback</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -77,6 +104,10 @@
                 </div>
             </div>
         </section>
+
+        <footer class="text-center pb-10">
+            <p class="text-[9px] font-black uppercase tracking-[0.5em] text-white/40">© 2026 Working Remote Agency</p>
+        </footer>
     </main>
 
     <div id="training-modal" class="fixed inset-0 modal-bg z-[70] hidden flex items-center justify-center p-4">
@@ -84,19 +115,11 @@
             <button onclick="toggleTraining()" class="absolute top-6 right-6 text-gray-400 hover:text-black font-bold">✕</button>
             <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-2">Skill Up Center</h2>
             <p class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-6 text-center">Master the Tasks Before You Buy</p>
-            
             <div class="space-y-4">
                 <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100 text-center">
                     <p class="text-xs font-black text-blue-900 uppercase italic mb-2">Need a Live Demo?</p>
                     <p class="text-[10px] text-gray-600 mb-4">Click to alert an admin. We will send you a Google Meet link in the live chat bubble immediately.</p>
                     <button onclick="requestMeeting()" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition shadow-md">Request Live Meeting Link</button>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                    <p class="text-xs font-black text-gray-800 uppercase italic">Training Resources</p>
-                    <ul class="mt-2 space-y-2">
-                        <li class="flex items-center text-[10px] font-bold text-gray-500"><span class="mr-2 text-blue-500">✔</span> Outlier Fundamentals Guide</li>
-                        <li class="flex items-center text-[10px] font-bold text-gray-500"><span class="mr-2 text-blue-500">✔</span> Security & Ban Prevention</li>
-                    </ul>
                 </div>
             </div>
         </div>
@@ -153,11 +176,10 @@
             else { 
                 document.getElementById('main-body').style.opacity = "1"; 
                 loadProducts(); 
-                listenForAnnouncement(); // (Added Listener)
+                listenForAnnouncement();
             }
         });
 
-        // LIVE BANNER LISTENER (Added)
         function listenForAnnouncement() {
             onSnapshot(doc(db, "settings", "announcement"), (d) => {
                 const data = d.data();
@@ -193,15 +215,11 @@
         }
 
         window.toggleTraining = () => document.getElementById('training-modal').classList.toggle('hidden');
-        
         window.requestMeeting = () => {
             const userEmail = auth.currentUser ? auth.currentUser.email : "Unknown";
-            const message = `🚨 TRAINING REQUEST: ${userEmail} is waiting for a Live Meeting link!`;
-            if (typeof Tawk_API !== "undefined") {
-                Tawk_API.maximize();
-                Tawk_API.sendMessage(message);
-            }
-            alert("Request Sent! Admin will paste the link in the live chat bubble below.");
+            const message = `🚨 TRAINING REQUEST: ${userEmail}`;
+            if (typeof Tawk_API !== "undefined") { Tawk_API.maximize(); Tawk_API.sendMessage(message); }
+            alert("Request Sent!");
             toggleTraining();
         };
 
