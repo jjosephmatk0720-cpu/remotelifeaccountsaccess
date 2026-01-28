@@ -12,9 +12,20 @@
         input, textarea { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; font-size: 10px !important; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        
+        /* New Styles for Signals */
+        .order-card { border-left: 3px solid #3b82f6; transition: all 0.3s ease; }
+        .new-alert { animation: pulse-border 2s infinite; }
+        @keyframes pulse-border {
+            0% { border-color: #3b82f6; }
+            50% { border-color: #fbbf24; }
+            100% { border-color: #3b82f6; }
+        }
     </style>
 </head>
 <body id="main-body" class="admin-bg min-h-screen font-sans p-4">
+
+    <audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
 
     <nav class="max-w-7xl mx-auto flex justify-between items-center mb-6">
         <h1 class="text-xl font-black italic uppercase tracking-tighter">Admin <span class="text-blue-500">Panel</span></h1>
@@ -40,9 +51,19 @@
         </div>
 
         <div class="lg:col-span-6 space-y-4">
+            <div class="glass-panel p-5 rounded-3xl border-blue-500/40 bg-blue-500/5">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-[10px] font-black uppercase tracking-widest text-blue-400 italic">⚡ Live Signals</h2>
+                    <span class="text-[8px] font-bold text-green-400 animate-pulse uppercase">Active Monitoring</span>
+                </div>
+                <div id="notification-feed" class="space-y-2 max-h-[300px] overflow-y-auto pr-2">
+                    <div class="text-center py-4 text-[9px] text-gray-500 italic">Listening for customer activity...</div>
+                </div>
+            </div>
+
             <div class="glass-panel p-5 rounded-3xl border-purple-500/30">
                 <h2 class="text-[10px] font-black uppercase tracking-widest text-purple-400 mb-3 italic">💸 Pending Withdrawals</h2>
-                <div class="max-h-[250px] overflow-y-auto pr-2">
+                <div class="max-h-[200px] overflow-y-auto pr-2">
                     <table class="w-full text-left text-[9px]">
                         <tbody id="withdrawal-list" class="divide-y divide-white/5"></tbody>
                     </table>
@@ -51,7 +72,7 @@
 
             <div class="glass-panel p-5 rounded-3xl border-green-500/20">
                 <h2 class="text-[10px] font-black uppercase tracking-widest text-green-400 mb-3 italic">📦 Inventory Management</h2>
-                <div class="max-h-[300px] overflow-y-auto pr-2">
+                <div class="max-h-[250px] overflow-y-auto pr-2">
                     <table class="w-full text-left text-[9px]">
                         <thead>
                             <tr class="text-gray-500 uppercase border-b border-white/10">
@@ -84,12 +105,14 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, addDoc, setDoc, query, where, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, addDoc, setDoc, query, where, updateDoc, deleteDoc, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const audio = document.getElementById('notif-sound');
+        let firstLoad = true;
         
         const ADMIN_KEY = "SRC3838";
 
@@ -100,6 +123,7 @@
                 if (access === ADMIN_KEY) { 
                     document.getElementById('main-body').style.opacity = "1"; 
                     refreshData();
+                    startNotificationListener();
                 } else { window.location.href = "shop.html"; }
             }
         });
@@ -110,7 +134,41 @@
             loadInventory();
         }
 
-        // LOAD WITHDRAWALS
+        // --- NEW: LIVE NOTIFICATION LISTENER ---
+        function startNotificationListener() {
+            const q = query(collection(db, "notifications"), orderBy("time", "desc"), limit(15));
+            onSnapshot(q, (snapshot) => {
+                const feed = document.getElementById('notification-feed');
+                
+                if (!firstLoad && snapshot.docChanges().some(change => change.type === "added")) {
+                    audio.play().catch(() => {});
+                }
+
+                feed.innerHTML = snapshot.empty ? `<div class="text-center py-4 text-[9px] text-gray-500 italic">No activity yet.</div>` : "";
+                
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const time = data.time ? new Date(data.time.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "Now";
+                    const isTraining = data.type === "TRAINING";
+
+                    feed.innerHTML += `
+                        <div class="order-card p-3 rounded-xl bg-white/5 border border-white/5 ${firstLoad ? '' : 'new-alert'}">
+                            <div class="flex justify-between items-start">
+                                <span class="text-[7px] font-black uppercase px-1.5 py-0.5 rounded ${isTraining ? 'bg-yellow-500 text-black' : 'bg-blue-600 text-white'}">${data.type}</span>
+                                <span class="text-[8px] text-gray-500 font-bold">${time}</span>
+                            </div>
+                            <p class="text-[10px] font-black uppercase italic tracking-tighter mt-1 text-white">${isTraining ? 'Training Requested' : data.items}</p>
+                            <div class="flex justify-between items-center mt-1">
+                                <p class="text-[8px] text-blue-400 font-bold">${data.user}</p>
+                                <p class="text-[10px] font-black text-green-400">${isTraining ? '' : data.total}</p>
+                            </div>
+                        </div>`;
+                });
+                firstLoad = false;
+            });
+        }
+
+        // REST OF YOUR ORIGINAL FUNCTIONS
         async function loadWithdrawals() {
             const list = document.getElementById('withdrawal-list');
             const q = query(collection(db, "withdrawals"), where("status", "==", "pending"));
@@ -122,19 +180,18 @@
             });
         }
 
-        // RESTORED: LOAD INVENTORY
         async function loadInventory() {
             const list = document.getElementById('inventory-list');
             const snap = await getDocs(collection(db, "products"));
             list.innerHTML = "";
             snap.forEach((d) => {
                 const data = d.data();
-                list.innerHTML += `<tr class="border-b border-white/5"><td class="py-3 font-bold">${data.name}</td><td class="text-blue-400 font-bold">$${data.price}</td><td class="text-right"><button onclick="deleteProduct('${d.id}')" class="bg-red-900/50 text-red-400 border border-red-900 px-2 py-1 rounded text-[7px] uppercase hover:bg-red-600 hover:text-white transition">Delete Sold</button></td></tr>`;
+                list.innerHTML += `<tr class="border-b border-white/5"><td class="py-3 font-bold">${data.name}</td><td class="text-blue-400 font-bold">$${data.price}</td><td class="text-right"><button onclick="deleteProduct('${d.id}')" class="bg-red-900/50 text-red-400 border border-red-900 px-2 py-1 rounded text-[7px] uppercase hover:bg-red-600 hover:text-white transition">Delete</button></td></tr>`;
             });
         }
 
         window.deleteProduct = async (id) => {
-            if(confirm("Permanently remove this account from shop?")) {
+            if(confirm("Remove from shop?")) {
                 await deleteDoc(doc(db, "products", id));
                 loadInventory();
             }
