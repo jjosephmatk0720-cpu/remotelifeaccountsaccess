@@ -2,56 +2,83 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile | Working Remote</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Account | Working Remote</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .hero-bg { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; }
-        .blur-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); }
-        body { opacity: 0; transition: opacity 0.5s; }
+        /* Responsive background that adapts to any screen aspect ratio */
+        body { 
+            background: #0f172a; 
+            color: white; 
+            opacity: 0; 
+            transition: opacity 0.4s; 
+            overflow-x: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+        }
+        /* Mobile-first card: 100% width on phones, max-width on laptops */
+        .responsive-card { 
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(20px);
+            width: 100%;
+            max-width: 500px;
+        }
+        .progress-glow { box-shadow: 0 0 15px rgba(37, 99, 235, 0.5); }
     </style>
 </head>
-<body id="main-body" class="hero-bg min-h-screen flex items-center justify-center p-6">
+<body id="main-body" class="p-4 min-h-screen">
 
-    <div class="blur-card w-full max-w-lg p-10 rounded-[2.5rem] shadow-2xl relative">
-        <a href="shop.html" class="absolute top-8 left-8 text-[10px] font-black uppercase text-blue-700 tracking-widest hover:text-black">← Back to Shop</a>
-        
-        <div class="text-center mb-8">
-            <div class="w-16 h-16 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center border-2 border-white shadow-sm">
-                <span id="user-initial" class="text-2xl font-black text-blue-900 uppercase">?</span>
+    <div class="w-full max-w-[500px] flex justify-between items-center mb-6 pt-2">
+        <a href="shop.html" class="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400">← Market</a>
+        <button onclick="logout()" class="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">Exit</button>
+    </div>
+
+    <div class="text-center mb-8">
+        <div class="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-900 rounded-full mx-auto mb-3 flex items-center justify-center border-4 border-slate-800 shadow-xl">
+            <span id="user-initial" class="text-3xl font-black uppercase">?</span>
+        </div>
+        <h2 id="user-email" class="text-[11px] font-bold text-slate-400 truncate px-4">Loading...</h2>
+    </div>
+
+    <div class="responsive-card p-6 rounded-[2.5rem] mb-4">
+        <div class="flex justify-between items-end mb-3">
+            <div>
+                <p class="text-[9px] font-black text-blue-400 uppercase tracking-widest">Recruit Goal</p>
+                <p class="text-xl font-black"><span id="ref-count">0</span> <span class="text-slate-500 text-sm">/ 10</span></p>
             </div>
-            <h2 id="user-email" class="text-xs font-black text-gray-400 uppercase tracking-widest">Loading...</h2>
+            <div id="reward-status" class="text-[9px] font-black uppercase bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/20">
+                In Progress
+            </div>
+        </div>
+        <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden">
+            <div id="progress-bar" class="bg-blue-600 h-full transition-all duration-1000 progress-glow" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <div class="responsive-card p-6 rounded-[2.5rem] mb-4">
+        <div class="text-center mb-4">
+            <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Commission Balance</p>
+            <h3 id="calc-result" class="text-4xl font-black tracking-tighter text-white">$0.00</h3>
         </div>
 
-        <div class="mb-6 p-6 bg-blue-50 rounded-3xl border border-blue-100">
-            <div class="flex justify-between text-[10px] font-black uppercase mb-2">
-                <span class="text-blue-900">Verified Recruits: <span id="ref-count">0</span>/10</span>
-                <span id="reward-status" class="text-blue-500 italic">Target: 10 for Withdrawal</span>
-            </div>
-            <div class="w-full bg-blue-200/50 h-2.5 rounded-full overflow-hidden">
-                <div id="progress-bar" class="bg-blue-600 h-full transition-all duration-1000" style="width: 0%"></div>
-            </div>
+        <div id="lock-msg" class="bg-red-500/10 border border-red-500/20 rounded-2xl p-3 mb-4 text-center">
+            <p class="text-[9px] font-black text-red-400 uppercase italic">⚠️ Withdrawal Locked: Need <span id="needed-count">10</span> recruits</p>
         </div>
 
-        <div class="bg-gray-50 p-6 rounded-3xl border border-gray-100 mb-6 text-center">
-            <p class="text-[8px] font-black text-gray-400 uppercase mb-1">Current Balance</p>
-            <p id="calc-result" class="text-3xl font-black text-blue-900 mb-4 tracking-tighter">$0.00</p>
-            
-            <div id="lock-msg" class="bg-red-50 text-red-600 text-[9px] font-black uppercase p-2 rounded-lg mb-4 border border-red-100">
-                ⚠️ Withdrawal Locked (Min. 10 Referrals)
-            </div>
-
-            <input type="number" id="calc-input" placeholder="Referral Count" class="w-full mb-4 p-3 bg-white rounded-xl border border-gray-100 text-xs font-black outline-none text-center">
-            <button id="withdraw-btn" onclick="requestWithdrawal()" disabled class="w-full bg-gray-300 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition cursor-not-allowed">Withdraw via TRC20</button>
+        <div class="space-y-3">
+            <input type="number" id="calc-input" placeholder="Referral Count" class="w-full bg-slate-900 border border-slate-700 p-4 rounded-2xl text-center font-black text-white outline-none">
+            <button id="withdraw-btn" onclick="requestWithdrawal()" disabled class="w-full bg-slate-800 text-slate-500 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest transition">Request TRC20 Withdrawal</button>
         </div>
+    </div>
 
-        <div class="bg-black p-6 rounded-3xl text-white">
-            <p class="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-2 text-center">Your Recruiter Link</p>
-            <p id="ref-link" class="text-center font-black text-blue-400 text-[9px] mb-4 break-all px-2">Generating...</p>
-            <button onclick="copyRef()" class="w-full bg-white text-black py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-blue-400 transition">Copy Link</button>
+    <div class="w-full max-w-[500px] bg-blue-600 p-6 rounded-[2.5rem]">
+        <p class="text-[10px] font-black uppercase text-blue-100 mb-3 text-center tracking-widest">Invite Link</p>
+        <div class="bg-blue-700/50 rounded-2xl p-3 mb-4">
+            <p id="ref-link" class="text-center font-bold text-white text-[10px] break-all opacity-80 italic">Generating...</p>
         </div>
-        
-        <button onclick="logout()" class="w-full mt-6 text-[9px] font-black text-red-500 uppercase tracking-[0.2em] opacity-40 hover:opacity-100 transition">Log Out</button>
+        <button onclick="copyRef()" class="w-full bg-white text-blue-600 py-3 rounded-2xl font-black text-[11px] uppercase tracking-widest active:scale-95 transition">Copy My Link</button>
     </div>
 
     <script type="module">
@@ -64,70 +91,63 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let actualReferralCount = 0;
+        let verifiedCount = 0;
 
         onAuthStateChanged(auth, async (user) => {
-            if (!user) { 
-                window.location.href = "index.html"; 
-            } else {
+            if (!user) { window.location.href = "index.html"; }
+            else {
                 document.getElementById('main-body').style.opacity = "1";
                 document.getElementById('user-email').innerText = user.email;
                 document.getElementById('user-initial').innerText = user.email[0];
                 document.getElementById('ref-link').innerText = `${window.location.origin}/index.html?ref=${user.uid}`;
-                updateRewards(user.uid);
+                fetchStats(user.uid);
             }
         });
 
-        async function updateRewards(uid) {
+        async function fetchStats(uid) {
             const q = query(collection(db, "users"), where("referredBy", "==", uid));
             const snap = await getDocs(q);
-            actualReferralCount = snap.size;
+            verifiedCount = snap.size;
             
-            document.getElementById('ref-count').innerText = actualReferralCount;
-            document.getElementById('progress-bar').style.width = Math.min((actualReferralCount / 10) * 100, 100) + "%";
+            document.getElementById('ref-count').innerText = verifiedCount;
+            document.getElementById('progress-bar').style.width = Math.min((verifiedCount / 10) * 100, 100) + "%";
             
-            if (actualReferralCount >= 10) { 
-                document.getElementById('reward-status').innerText = "GOAL REACHED!"; 
-                document.getElementById('reward-status').className = "text-green-600 font-black animate-pulse";
+            if (verifiedCount >= 10) {
+                document.getElementById('reward-status').innerText = "UNLOCKED";
+                document.getElementById('reward-status').className = "text-[9px] font-black uppercase bg-green-500/10 text-green-400 px-3 py-1 rounded-full border border-green-500/20 animate-pulse";
                 document.getElementById('lock-msg').classList.add('hidden');
+            } else {
+                document.getElementById('needed-count').innerText = 10 - verifiedCount;
             }
-            checkWithdrawalEligibility();
         }
 
         document.getElementById('calc-input').addEventListener('input', (e) => {
-            const amount = e.target.value * 5;
-            document.getElementById('calc-result').innerText = "$" + amount.toFixed(2);
-            checkWithdrawalEligibility();
+            const val = e.target.value;
+            document.getElementById('calc-result').innerText = "$" + (val * 5).toFixed(2);
+            
+            const btn = document.getElementById('withdraw-btn');
+            // Strict check: verified count must be 10 AND input must be > 0
+            if(verifiedCount >= 10 && val > 0) {
+                btn.disabled = false;
+                btn.className = "w-full bg-white text-black py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-xl";
+            } else {
+                btn.disabled = true;
+                btn.className = "w-full bg-slate-800 text-slate-500 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest";
+            }
         });
 
-        function checkWithdrawalEligibility() {
-            const btn = document.getElementById('withdraw-btn');
-            const inputVal = document.getElementById('calc-input').value;
-
-            // Only allow withdrawal if verified DB count is 10+ AND they have a value in calculator
-            if(actualReferralCount >= 10 && inputVal > 0) { 
-                btn.disabled = false; 
-                btn.className = "w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95 transition"; 
-            } else { 
-                btn.disabled = true; 
-                btn.className = "w-full bg-gray-300 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest cursor-not-allowed"; 
-            }
-        }
-
         window.requestWithdrawal = async () => {
-            const wallet = prompt("ENTER YOUR CRYPTO TRC20 WALLET ADDRESS:");
-            if (!wallet || wallet.length < 10) return alert("Valid TRC20 Address Required!");
+            const wallet = prompt("PROVIDE YOUR CRYPTO TRC20 ADDRESS:");
+            if (!wallet || wallet.length < 10) return alert("Valid Wallet Required");
             
-            try {
-                await addDoc(collection(db, "withdrawals"), {
-                    email: auth.currentUser.email,
-                    amount: document.getElementById('calc-result').innerText,
-                    wallet: wallet,
-                    status: "pending",
-                    createdAt: new Date()
-                });
-                alert("Your withdrawal is PENDING. Admin will approve shortly once verified.");
-            } catch (e) { alert(e.message); }
+            await addDoc(collection(db, "withdrawals"), {
+                email: auth.currentUser.email,
+                amount: document.getElementById('calc-result').innerText,
+                wallet: wallet,
+                status: "pending",
+                createdAt: new Date()
+            });
+            alert("SUCCESS: Your withdrawal is pending approval. Admin has been notified.");
         };
 
         window.copyRef = () => { navigator.clipboard.writeText(document.getElementById('ref-link').innerText); alert("Link Copied!"); };
