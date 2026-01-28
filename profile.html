@@ -3,157 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile | Working Remote</title>
+    <title>Admin Dashboard | Working Remote</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .hero-bg { 
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), 
-                        url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80'); 
-            background-size: cover; background-position: center; 
-        }
-        .blur-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); }
+        .admin-bg { background: #0f172a; color: white; }
+        .glass-panel { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
         body { opacity: 0; transition: opacity 0.5s; }
-        .progress-glow { box-shadow: 0 0 15px rgba(37, 99, 235, 0.4); }
+        input, textarea { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; }
     </style>
 </head>
-<body id="main-body" class="hero-bg min-h-screen flex items-center justify-center p-6">
+<body id="main-body" class="admin-bg min-h-screen font-sans p-6">
 
-    <div class="blur-card w-full max-w-lg p-10 rounded-[2.5rem] shadow-2xl relative">
-        <a href="shop.html" class="absolute top-8 left-8 text-[10px] font-black uppercase text-blue-700 tracking-widest hover:text-black transition">← Back to Shop</a>
-        
-        <div class="text-center mb-8">
-            <div class="w-20 h-20 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center border-4 border-white shadow-sm">
-                <span id="user-initial" class="text-3xl font-black text-blue-900 uppercase">?</span>
+    <nav class="max-w-7xl mx-auto flex justify-between items-center mb-10">
+        <h1 class="text-2xl font-black italic uppercase tracking-tighter">Admin <span class="text-blue-500">Panel</span></h1>
+        <div class="flex space-x-4">
+            <a href="shop.html" class="text-[10px] font-black uppercase tracking-widest py-2 px-4 border border-white/20 rounded-full hover:bg-white hover:text-black transition">View Shop</a>
+            <button onclick="logout()" class="text-[10px] font-black uppercase tracking-widest py-2 px-4 bg-red-600 rounded-full">Logout</button>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-1 space-y-6">
+            <div class="glass-panel p-6 rounded-[2rem] border-yellow-500/30">
+                <h2 class="text-sm font-black uppercase tracking-widest text-yellow-400 mb-4 italic">📣 Flash Sale Banner</h2>
+                <input type="text" id="announcement-msg" placeholder="e.g. 20% OFF TODAY!" class="w-full p-3 rounded-xl text-xs font-bold outline-none mb-3">
+                <button onclick="postAnnouncement()" class="w-full bg-yellow-500 text-black font-black uppercase italic py-3 rounded-xl text-[10px] tracking-widest transition">Update Shop Banner</button>
             </div>
-            <h2 id="user-email" class="text-sm font-black text-gray-400 uppercase tracking-widest leading-none">Loading...</h2>
+
+            <div class="glass-panel p-6 rounded-[2rem]">
+                <h2 class="text-sm font-black uppercase tracking-widest text-blue-400 mb-6 italic">🏆 Top Recruiters</h2>
+                <div id="leaderboard" class="space-y-4 text-[10px]"></div>
+            </div>
         </div>
 
-        <div class="mb-6 p-6 bg-blue-50 rounded-3xl border border-blue-100">
-            <div class="flex justify-between text-[10px] font-black uppercase mb-2">
-                <span class="text-blue-900">Referral Goal: <span id="ref-count">0</span>/10</span>
-                <span id="reward-status" class="text-blue-500 italic">Target for Free Tasks</span>
-            </div>
-            <div class="w-full bg-blue-200/50 h-3 rounded-full overflow-hidden">
-                <div id="progress-bar" class="bg-blue-600 h-full transition-all duration-1000 progress-glow" style="width: 0%"></div>
-            </div>
-        </div>
-
-        <div class="bg-gray-50 p-6 rounded-3xl border border-gray-100 mb-6">
-            <div class="flex justify-between items-center mb-4">
-                <div>
-                    <p class="text-[8px] font-black text-gray-400 uppercase leading-none">Current Balance</p>
-                    <p id="calc-result" class="text-2xl font-black text-blue-900 tracking-tighter">$0.00</p>
+        <div class="lg:col-span-2 space-y-6">
+            <div class="glass-panel p-8 rounded-[2rem] border-purple-500/30">
+                <h2 class="text-sm font-black uppercase tracking-widest text-purple-400 mb-6 italic">💸 Pending Withdrawals</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <tbody id="withdrawal-list" class="divide-y divide-white/5"></tbody>
+                    </table>
                 </div>
-                <button id="withdraw-btn" onclick="requestWithdrawal()" disabled class="bg-gray-300 text-white px-6 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest cursor-not-allowed transition duration-300">Withdraw</button>
             </div>
-            <p class="text-[8px] font-bold text-gray-400 uppercase italic">Input your referral count below to see your earnings:</p>
-            <input type="number" id="calc-input" placeholder="Enter Recruit Count" class="w-full mt-2 p-3 bg-white rounded-xl border border-gray-200 text-xs font-black outline-none focus:ring-1 focus:ring-blue-500">
-        </div>
 
-        <div class="bg-black p-6 rounded-3xl text-white">
-            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 text-center">Your Recruiter ID</p>
-            <p id="ref-link" class="text-center font-black text-blue-400 tracking-tight mb-4 break-all text-[10px] px-2 italic">Generating...</p>
-            <button onclick="copyRef()" class="w-full bg-white text-black py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-400 hover:text-white transition">Copy Referral Link</button>
+            <div class="glass-panel p-8 rounded-[2rem]">
+                <h2 class="text-sm font-black uppercase tracking-widest text-blue-400 mb-6 italic">➕ List New Account</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="p-name" placeholder="Account Name" class="p-3 rounded-xl text-xs font-bold outline-none">
+                    <input type="number" id="p-price" placeholder="Price (USD)" class="p-3 rounded-xl text-xs font-bold outline-none">
+                    <input type="text" id="p-desc" placeholder="Region (UK/US)" class="p-3 rounded-xl text-xs font-bold outline-none">
+                    <input type="text" id="p-tasks" placeholder="Tasks (AI TRAINING)" class="p-3 rounded-xl text-xs font-bold outline-none">
+                    <textarea id="p-details" placeholder="Details..." class="md:col-span-2 p-3 rounded-xl text-xs font-bold h-20 outline-none"></textarea>
+                    <button onclick="addProduct()" class="md:col-span-2 bg-blue-600 text-white font-black uppercase italic py-3 rounded-xl text-[10px] tracking-widest transition">Post to Marketplace</button>
+                </div>
+            </div>
         </div>
-        
-        <button onclick="logout()" class="w-full mt-6 text-[9px] font-black text-red-500 uppercase tracking-[0.2em] opacity-40 hover:opacity-100 transition">Log Out</button>
-    </div>
-
-    <script type="text/javascript">
-        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-        (function(){
-            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-            s1.async=true; s1.src='https://embed.tawk.to/697549464a0f82197e621807/1jfp2cf6e';
-            s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
-            s0.parentNode.insertBefore(s1,s0);
-        })();
-    </script>
+    </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, deleteDoc, doc, addDoc, setDoc, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE",
-            authDomain: "remoteworkingacess.firebaseapp.com",
-            projectId: "remoteworkingacess",
-            storageBucket: "remoteworkingacess.firebasestorage.app",
-            messagingSenderId: "953179052891",
-            appId: "1:953179052891:web:8126924e32e9fb62f4987e"
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const ADMIN_KEY = "11223344";
 
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                window.location.href = "index.html";
-            } else {
-                document.getElementById('main-body').style.opacity = "1";
-                document.getElementById('user-email').innerText = user.email;
-                document.getElementById('user-initial').innerText = user.email[0];
-                document.getElementById('ref-link').innerText = `${window.location.origin}/index.html?ref=${user.uid}`;
-                updateRewards(user.uid);
+        onAuthStateChanged(auth, (user) => {
+            if (!user) { window.location.href = "index.html"; }
+            else {
+                const access = prompt("ENTER ADMIN ACCESS KEY:");
+                if (access !== ADMIN_KEY) { window.location.href = "shop.html"; }
+                else { 
+                    document.getElementById('main-body').style.opacity = "1"; 
+                    loadLeaderboard(); 
+                    loadWithdrawals(); 
+                }
             }
         });
 
-        async function updateRewards(uid) {
-            const q = query(collection(db, "users"), where("referredBy", "==", uid));
-            const snap = await getDocs(q);
-            const count = snap.size;
-            
-            document.getElementById('ref-count').innerText = count;
-            const percent = Math.min((count / 10) * 100, 100);
-            document.getElementById('progress-bar').style.width = percent + "%";
+        window.postAnnouncement = async () => {
+            const msg = document.getElementById('announcement-msg').value;
+            try {
+                await setDoc(doc(db, "settings", "announcement"), { text: msg, active: msg !== "" });
+                alert("Shop Banner Updated!");
+            } catch (e) { alert(e.message); }
+        };
 
-            if (count >= 10) {
-                const status = document.getElementById('reward-status');
-                status.innerText = "TASKS UNLOCKED!";
-                status.className = "text-green-600 font-black animate-pulse";
-            }
+        async function loadWithdrawals() {
+            const list = document.getElementById('withdrawal-list');
+            const q = query(collection(db, "withdrawals"), where("status", "==", "pending"));
+            const snap = await getDocs(q);
+            list.innerHTML = snap.empty ? `<p class="text-[10px] text-gray-500 py-4 italic">No pending requests.</p>` : "";
+            snap.forEach((d) => {
+                const data = d.data();
+                list.innerHTML += `
+                <tr class="text-[10px] font-bold">
+                    <td class="py-4 px-2">${data.email}<br><span class="text-gray-500 select-all">${data.wallet}</span></td>
+                    <td class="py-4 px-2 text-green-400 font-black">${data.amount}</td>
+                    <td class="py-4 px-2 text-right space-x-1">
+                        <button onclick="handleWithdrawal('${d.id}', 'approved')" class="bg-green-600 px-2 py-1 rounded text-[8px] uppercase">Approve</button>
+                        <button onclick="handleWithdrawal('${d.id}', 'declined')" class="bg-red-600 px-2 py-1 rounded text-[8px] uppercase">Decline</button>
+                    </td>
+                </tr>`;
+            });
         }
 
-        // CALCULATOR & BUTTON ACTIVATION
-        document.getElementById('calc-input').addEventListener('input', (e) => {
-            const val = e.target.value;
-            const estimate = val * 5; 
-            const resultEl = document.getElementById('calc-result');
-            const btn = document.getElementById('withdraw-btn');
-
-            resultEl.innerText = "$" + estimate.toFixed(2);
-
-            if (estimate > 0) {
-                btn.disabled = false;
-                btn.classList.remove('bg-gray-300', 'cursor-not-allowed');
-                btn.classList.add('bg-blue-700', 'hover:bg-black', 'shadow-lg');
-            } else {
-                btn.disabled = true;
-                btn.classList.add('bg-gray-300', 'cursor-not-allowed');
-                btn.classList.remove('bg-blue-700', 'hover:bg-black');
-            }
-        });
-
-        // WITHDRAWAL REQUEST LOGIC
-        window.requestWithdrawal = () => {
-            const amount = document.getElementById('calc-result').innerText;
-            const userEmail = auth.currentUser.email;
-            const message = `💰 WITHDRAWAL REQUEST: User ${userEmail} is requesting a withdrawal of ${amount}. Please authorize!`;
-
-            if (typeof Tawk_API !== "undefined") {
-                Tawk_API.maximize();
-                Tawk_API.sendMessage(message);
-                alert("Withdrawal Request Sent! Admin will verify your referrals and contact you in the Live Chat.");
-            } else {
-                alert("Live chat is loading, please try again in a second.");
+        window.handleWithdrawal = async (id, status) => {
+            if(confirm(`Mark request as ${status}?`)) {
+                await updateDoc(doc(db, "withdrawals", id), { status: status });
+                alert("Updated!"); loadWithdrawals();
             }
         };
 
-        window.copyRef = () => {
-            navigator.clipboard.writeText(document.getElementById('ref-link').innerText);
-            alert("Referral link copied!");
+        window.addProduct = async () => {
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            if(!name || !price) return alert("Fill Name/Price");
+            await addDoc(collection(db, "products"), { name, price, description: document.getElementById('p-desc').value, tasks: document.getElementById('p-tasks').value, details: document.getElementById('p-details').value, createdAt: new Date() });
+            alert("Product Added!");
         };
+
+        async function loadLeaderboard() {
+            const snap = await getDocs(collection(db, "users"));
+            const counts = {};
+            snap.forEach(d => { if(d.data().referredBy && d.data().referredBy !== "none") counts[d.data().referredBy] = (counts[d.data().referredBy] || 0) + 1; });
+            const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+            document.getElementById('leaderboard').innerHTML = sorted.map(([id, c]) => `<div class="flex justify-between p-3 bg-white/5 rounded-xl"><span>ID: ...${id.slice(-6)}</span><span class="text-blue-400 font-black">${c} RECRUITS</span></div>`).join('');
+        }
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
     </script>
