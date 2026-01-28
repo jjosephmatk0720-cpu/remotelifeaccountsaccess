@@ -23,48 +23,38 @@
     </nav>
 
     <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
         <div class="lg:col-span-1 space-y-6">
+            <div class="glass-panel p-6 rounded-[2rem] border-yellow-500/30">
+                <h2 class="text-sm font-black uppercase tracking-widest text-yellow-400 mb-4 italic">📣 Flash Sale Banner</h2>
+                <input type="text" id="announcement-msg" placeholder="e.g. 20% OFF TODAY!" class="w-full p-3 rounded-xl text-xs font-bold outline-none mb-3">
+                <button onclick="postAnnouncement()" class="w-full bg-yellow-500 text-black font-black uppercase italic py-3 rounded-xl text-[10px] tracking-widest transition">Update Shop Banner</button>
+            </div>
+
             <div class="glass-panel p-6 rounded-[2rem]">
                 <h2 class="text-sm font-black uppercase tracking-widest text-blue-400 mb-6 italic">🏆 Top Recruiters</h2>
-                <div id="leaderboard" class="space-y-4">
-                    <p class="text-xs text-gray-500 italic">Calculating rankings...</p>
-                </div>
+                <div id="leaderboard" class="space-y-4 text-[10px]"></div>
             </div>
         </div>
 
         <div class="lg:col-span-2 space-y-6">
-            
-            <div class="glass-panel p-8 rounded-[2rem] border-blue-500/30">
-                <h2 class="text-sm font-black uppercase tracking-widest text-blue-400 mb-6 italic">➕ List New Account</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" id="p-name" placeholder="Account Name (e.g. Outlier AI)" class="p-3 rounded-xl text-xs font-bold outline-none focus:ring-1 focus:ring-blue-500">
-                    <input type="number" id="p-price" placeholder="Price (USD)" class="p-3 rounded-xl text-xs font-bold outline-none focus:ring-1 focus:ring-blue-500">
-                    <input type="text" id="p-desc" placeholder="Region (e.g. Verified Account: UK)" class="p-3 rounded-xl text-xs font-bold outline-none focus:ring-1 focus:ring-blue-500">
-                    <input type="text" id="p-tasks" placeholder="Tasks (e.g. AI TRAINING • EVALUATION)" class="p-3 rounded-xl text-xs font-bold outline-none focus:ring-1 focus:ring-blue-500">
-                    <textarea id="p-details" placeholder="Detailed Description..." class="md:col-span-2 p-3 rounded-xl text-xs font-bold h-20 outline-none focus:ring-1 focus:ring-blue-500"></textarea>
-                    <button onclick="addProduct()" class="md:col-span-2 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase italic py-3 rounded-xl text-[10px] tracking-[0.2em] transition">Post to Marketplace</button>
+            <div class="glass-panel p-8 rounded-[2rem] border-purple-500/30">
+                <h2 class="text-sm font-black uppercase tracking-widest text-purple-400 mb-6 italic">💸 Pending Withdrawals</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <tbody id="withdrawal-list" class="divide-y divide-white/5"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <div class="glass-panel p-6 rounded-[2rem]">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-sm font-black uppercase tracking-widest text-green-400 italic">📦 Current Inventory</h2>
-                    <span class="text-[9px] font-bold text-gray-400 uppercase">Click 'Delete' to remove sold items</span>
-                </div>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="text-[10px] font-black uppercase text-gray-500 border-b border-white/10">
-                                <th class="pb-4 px-2">Account Name</th>
-                                <th class="pb-4 px-2 text-center">Price</th>
-                                <th class="pb-4 px-2 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="inventory-list" class="divide-y divide-white/5">
-                            </tbody>
-                    </table>
+            <div class="glass-panel p-8 rounded-[2rem]">
+                <h2 class="text-sm font-black uppercase tracking-widest text-blue-400 mb-6 italic">➕ List New Account</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="p-name" placeholder="Account Name" class="p-3 rounded-xl text-xs font-bold outline-none">
+                    <input type="number" id="p-price" placeholder="Price (USD)" class="p-3 rounded-xl text-xs font-bold outline-none">
+                    <input type="text" id="p-desc" placeholder="Region (UK/US)" class="p-3 rounded-xl text-xs font-bold outline-none">
+                    <input type="text" id="p-tasks" placeholder="Tasks (AI TRAINING)" class="p-3 rounded-xl text-xs font-bold outline-none">
+                    <textarea id="p-details" placeholder="Details..." class="md:col-span-2 p-3 rounded-xl text-xs font-bold h-20 outline-none"></textarea>
+                    <button onclick="addProduct()" class="md:col-span-2 bg-blue-600 text-white font-black uppercase italic py-3 rounded-xl text-[10px] tracking-widest transition">Post to Marketplace</button>
                 </div>
             </div>
         </div>
@@ -73,120 +63,76 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, getDocs, deleteDoc, doc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, deleteDoc, doc, addDoc, setDoc, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE",
-            authDomain: "remoteworkingacess.firebaseapp.com",
-            projectId: "remoteworkingacess",
-            storageBucket: "remoteworkingacess.firebasestorage.app",
-            messagingSenderId: "953179052891",
-            appId: "1:953179052891:web:8126924e32e9fb62f4987e"
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
-        const ADMIN_KEY = "SRC3838";
+        const ADMIN_KEY = "11223344";
 
         onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                window.location.href = "index.html";
-            } else {
+            if (!user) { window.location.href = "index.html"; }
+            else {
                 const access = prompt("ENTER ADMIN ACCESS KEY:");
-                if (access !== ADMIN_KEY) {
-                    alert("ACCESS DENIED");
-                    window.location.href = "shop.html";
-                } else {
-                    document.getElementById('main-body').style.opacity = "1";
-                    loadLeaderboard();
-                    loadInventory();
+                if (access !== ADMIN_KEY) { window.location.href = "shop.html"; }
+                else { 
+                    document.getElementById('main-body').style.opacity = "1"; 
+                    loadLeaderboard(); 
+                    loadWithdrawals(); 
                 }
             }
         });
 
-        // 🏆 ADD PRODUCT LOGIC
+        window.postAnnouncement = async () => {
+            const msg = document.getElementById('announcement-msg').value;
+            try {
+                await setDoc(doc(db, "settings", "announcement"), { text: msg, active: msg !== "" });
+                alert("Shop Banner Updated!");
+            } catch (e) { alert(e.message); }
+        };
+
+        async function loadWithdrawals() {
+            const list = document.getElementById('withdrawal-list');
+            const q = query(collection(db, "withdrawals"), where("status", "==", "pending"));
+            const snap = await getDocs(q);
+            list.innerHTML = snap.empty ? `<p class="text-[10px] text-gray-500 py-4 italic">No pending requests.</p>` : "";
+            snap.forEach((d) => {
+                const data = d.data();
+                list.innerHTML += `
+                <tr class="text-[10px] font-bold">
+                    <td class="py-4 px-2">${data.email}<br><span class="text-gray-500 select-all">${data.wallet}</span></td>
+                    <td class="py-4 px-2 text-green-400 font-black">${data.amount}</td>
+                    <td class="py-4 px-2 text-right space-x-1">
+                        <button onclick="handleWithdrawal('${d.id}', 'approved')" class="bg-green-600 px-2 py-1 rounded text-[8px] uppercase">Approve</button>
+                        <button onclick="handleWithdrawal('${d.id}', 'declined')" class="bg-red-600 px-2 py-1 rounded text-[8px] uppercase">Decline</button>
+                    </td>
+                </tr>`;
+            });
+        }
+
+        window.handleWithdrawal = async (id, status) => {
+            if(confirm(`Mark request as ${status}?`)) {
+                await updateDoc(doc(db, "withdrawals", id), { status: status });
+                alert("Updated!"); loadWithdrawals();
+            }
+        };
+
         window.addProduct = async () => {
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
-            const desc = document.getElementById('p-desc').value;
-            const tasks = document.getElementById('p-tasks').value;
-            const details = document.getElementById('p-details').value;
-
-            if(!name || !price) return alert("Name and Price are required!");
-
-            try {
-                await addDoc(collection(db, "products"), {
-                    name, price, description: desc, tasks, details,
-                    createdAt: new Date()
-                });
-                alert("Product Added Successfully!");
-                // Clear fields
-                document.getElementById('p-name').value = "";
-                document.getElementById('p-price').value = "";
-                loadInventory();
-            } catch (e) { alert("Error: " + e.message); }
+            if(!name || !price) return alert("Fill Name/Price");
+            await addDoc(collection(db, "products"), { name, price, description: document.getElementById('p-desc').value, tasks: document.getElementById('p-tasks').value, details: document.getElementById('p-details').value, createdAt: new Date() });
+            alert("Product Added!");
         };
 
         async function loadLeaderboard() {
-            try {
-                const usersSnap = await getDocs(collection(db, "users"));
-                const referralCounts = {};
-                usersSnap.forEach(userDoc => {
-                    const data = userDoc.data();
-                    if (data.referredBy && data.referredBy !== "none") {
-                        referralCounts[data.referredBy] = (referralCounts[data.referredBy] || 0) + 1;
-                    }
-                });
-                const leaderboardEl = document.getElementById('leaderboard');
-                leaderboardEl.innerHTML = "";
-                const sorted = Object.entries(referralCounts).sort((a, b) => b[1] - a[1]);
-                if (sorted.length === 0) {
-                    leaderboardEl.innerHTML = "<p class='text-[10px] text-gray-500 uppercase'>No active recruiters yet.</p>";
-                    return;
-                }
-                sorted.forEach(([id, count], index) => {
-                    leaderboardEl.innerHTML += `
-                        <div class="flex justify-between items-center p-3 bg-white/5 rounded-xl border border-white/5">
-                            <div class="flex items-center space-x-3">
-                                <span class="text-xs font-black ${index === 0 ? 'text-yellow-400' : 'text-blue-500'}">#${index + 1}</span>
-                                <span class="text-[9px] font-bold text-gray-300">ID: ...${id.slice(-6)}</span>
-                            </div>
-                            <span class="text-[9px] font-black bg-blue-600 px-2 py-1 rounded text-white">${count} RECRUITS</span>
-                        </div>`;
-                });
-            } catch (e) { console.error(e); }
+            const snap = await getDocs(collection(db, "users"));
+            const counts = {};
+            snap.forEach(d => { if(d.data().referredBy && d.data().referredBy !== "none") counts[d.data().referredBy] = (counts[d.data().referredBy] || 0) + 1; });
+            const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+            document.getElementById('leaderboard').innerHTML = sorted.map(([id, c]) => `<div class="flex justify-between p-3 bg-white/5 rounded-xl"><span>ID: ...${id.slice(-6)}</span><span class="text-blue-400 font-black">${c} RECRUITS</span></div>`).join('');
         }
-
-        async function loadInventory() {
-            try {
-                const list = document.getElementById('inventory-list');
-                const productsSnap = await getDocs(collection(db, "products"));
-                list.innerHTML = "";
-                productsSnap.forEach((productDoc) => {
-                    const data = productDoc.data();
-                    list.innerHTML += `
-                        <tr class="text-[11px] font-bold">
-                            <td class="py-4 px-2 uppercase tracking-tight">${data.name}</td>
-                            <td class="py-4 px-2 text-center text-blue-400 font-black">$${data.price}</td>
-                            <td class="py-4 px-2 text-right">
-                                <button onclick="deleteProduct('${productDoc.id}')" class="bg-red-900/40 text-red-400 px-3 py-1 rounded-lg border border-red-900/50 hover:bg-red-600 hover:text-white transition uppercase text-[9px] font-black">Delete Sold</button>
-                            </td>
-                        </tr>`;
-                });
-            } catch (e) { console.error(e); }
-        }
-
-        window.deleteProduct = async (id) => {
-            if (confirm("Permanently remove this SOLD account?")) {
-                try {
-                    await deleteDoc(doc(db, "products", id));
-                    alert("Account Deleted.");
-                    loadInventory();
-                } catch (error) { alert("Error: " + error.message); }
-            }
-        };
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
     </script>
