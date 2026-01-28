@@ -24,6 +24,10 @@
 </head>
 <body id="main-body" class="hero-bg min-h-screen text-gray-900 font-sans">
 
+    <div id="flash-banner" class="hidden bg-yellow-400 text-black text-center py-2 font-black uppercase italic text-[10px] tracking-[0.3em] sticky top-0 z-[100]">
+        <span id="banner-text"></span>
+    </div>
+
     <nav class="p-4 flex justify-between items-center max-w-[1600px] mx-auto relative z-10">
         <h1 class="text-xl font-black text-white italic tracking-tighter uppercase">Working Remote</h1>
         <div class="flex items-center space-x-4">
@@ -129,7 +133,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE",
@@ -146,8 +150,25 @@
 
         onAuthStateChanged(auth, (user) => {
             if (!user || !user.emailVerified) { window.location.href = "index.html"; }
-            else { document.getElementById('main-body').style.opacity = "1"; loadProducts(); }
+            else { 
+                document.getElementById('main-body').style.opacity = "1"; 
+                loadProducts(); 
+                listenForAnnouncement(); // (Added Listener)
+            }
         });
+
+        // LIVE BANNER LISTENER (Added)
+        function listenForAnnouncement() {
+            onSnapshot(doc(db, "settings", "announcement"), (d) => {
+                const data = d.data();
+                if (data && data.active) {
+                    document.getElementById('banner-text').innerText = data.text;
+                    document.getElementById('flash-banner').classList.remove('hidden');
+                } else {
+                    document.getElementById('flash-banner').classList.add('hidden');
+                }
+            });
+        }
 
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
@@ -215,4 +236,3 @@
     </script>
 </body>
 </html>
-
