@@ -3,137 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Working Remote</title>
+    <title>Profile | Working Remote</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .admin-bg { background: #0f172a; color: white; }
-        .glass-panel { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .hero-bg { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; }
+        .blur-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); }
         body { opacity: 0; transition: opacity 0.5s; }
-        input, textarea { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; }
     </style>
 </head>
-<body id="main-body" class="admin-bg min-h-screen font-sans p-6">
+<body id="main-body" class="hero-bg min-h-screen flex items-center justify-center p-6">
 
-    <nav class="max-w-7xl mx-auto flex justify-between items-center mb-10">
-        <h1 class="text-2xl font-black italic uppercase tracking-tighter">Admin <span class="text-blue-500">Panel</span></h1>
-        <div class="flex space-x-4">
-            <a href="shop.html" class="text-[10px] font-black uppercase tracking-widest py-2 px-4 border border-white/20 rounded-full hover:bg-white hover:text-black transition">View Shop</a>
-            <button onclick="logout()" class="text-[10px] font-black uppercase tracking-widest py-2 px-4 bg-red-600 rounded-full">Logout</button>
-        </div>
-    </nav>
-
-    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div class="lg:col-span-1 space-y-6">
-            <div class="glass-panel p-6 rounded-[2rem] border-yellow-500/30">
-                <h2 class="text-sm font-black uppercase tracking-widest text-yellow-400 mb-4 italic">📣 Flash Sale Banner</h2>
-                <input type="text" id="announcement-msg" placeholder="e.g. 20% OFF TODAY!" class="w-full p-3 rounded-xl text-xs font-bold outline-none mb-3">
-                <button onclick="postAnnouncement()" class="w-full bg-yellow-500 text-black font-black uppercase italic py-3 rounded-xl text-[10px] tracking-widest transition">Update Shop Banner</button>
+    <div class="blur-card w-full max-w-lg p-10 rounded-[2.5rem] shadow-2xl relative">
+        <a href="shop.html" class="absolute top-8 left-8 text-[10px] font-black uppercase text-blue-700 tracking-widest hover:text-black">← Back to Shop</a>
+        
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center border-2 border-white shadow-sm">
+                <span id="user-initial" class="text-2xl font-black text-blue-900 uppercase">?</span>
             </div>
+            <h2 id="user-email" class="text-xs font-black text-gray-400 uppercase tracking-widest">Loading...</h2>
+        </div>
 
-            <div class="glass-panel p-6 rounded-[2rem]">
-                <h2 class="text-sm font-black uppercase tracking-widest text-blue-400 mb-6 italic">🏆 Top Recruiters</h2>
-                <div id="leaderboard" class="space-y-4 text-[10px]"></div>
+        <div class="mb-6 p-6 bg-blue-50 rounded-3xl border border-blue-100">
+            <div class="flex justify-between text-[10px] font-black uppercase mb-2">
+                <span class="text-blue-900">Verified Recruits: <span id="ref-count">0</span>/10</span>
+                <span id="reward-status" class="text-blue-500 italic">Target: 10 for Withdrawal</span>
+            </div>
+            <div class="w-full bg-blue-200/50 h-2.5 rounded-full overflow-hidden">
+                <div id="progress-bar" class="bg-blue-600 h-full transition-all duration-1000" style="width: 0%"></div>
             </div>
         </div>
 
-        <div class="lg:col-span-2 space-y-6">
-            <div class="glass-panel p-8 rounded-[2rem] border-purple-500/30">
-                <h2 class="text-sm font-black uppercase tracking-widest text-purple-400 mb-6 italic">💸 Pending Withdrawals</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <tbody id="withdrawal-list" class="divide-y divide-white/5"></tbody>
-                    </table>
-                </div>
+        <div class="bg-gray-50 p-6 rounded-3xl border border-gray-100 mb-6 text-center">
+            <p class="text-[8px] font-black text-gray-400 uppercase mb-1">Current Balance</p>
+            <p id="calc-result" class="text-3xl font-black text-blue-900 mb-4 tracking-tighter">$0.00</p>
+            
+            <div id="lock-msg" class="bg-red-50 text-red-600 text-[9px] font-black uppercase p-2 rounded-lg mb-4 border border-red-100">
+                ⚠️ Withdrawal Locked (Min. 10 Referrals)
             </div>
 
-            <div class="glass-panel p-8 rounded-[2rem]">
-                <h2 class="text-sm font-black uppercase tracking-widest text-blue-400 mb-6 italic">➕ List New Account</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" id="p-name" placeholder="Account Name" class="p-3 rounded-xl text-xs font-bold outline-none">
-                    <input type="number" id="p-price" placeholder="Price (USD)" class="p-3 rounded-xl text-xs font-bold outline-none">
-                    <input type="text" id="p-desc" placeholder="Region (UK/US)" class="p-3 rounded-xl text-xs font-bold outline-none">
-                    <input type="text" id="p-tasks" placeholder="Tasks (AI TRAINING)" class="p-3 rounded-xl text-xs font-bold outline-none">
-                    <textarea id="p-details" placeholder="Details..." class="md:col-span-2 p-3 rounded-xl text-xs font-bold h-20 outline-none"></textarea>
-                    <button onclick="addProduct()" class="md:col-span-2 bg-blue-600 text-white font-black uppercase italic py-3 rounded-xl text-[10px] tracking-widest transition">Post to Marketplace</button>
-                </div>
-            </div>
+            <input type="number" id="calc-input" placeholder="Referral Count" class="w-full mb-4 p-3 bg-white rounded-xl border border-gray-100 text-xs font-black outline-none text-center">
+            <button id="withdraw-btn" onclick="requestWithdrawal()" disabled class="w-full bg-gray-300 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition cursor-not-allowed">Withdraw via TRC20</button>
         </div>
-    </main>
+
+        <div class="bg-black p-6 rounded-3xl text-white">
+            <p class="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-2 text-center">Your Recruiter Link</p>
+            <p id="ref-link" class="text-center font-black text-blue-400 text-[9px] mb-4 break-all px-2">Generating...</p>
+            <button onclick="copyRef()" class="w-full bg-white text-black py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-blue-400 transition">Copy Link</button>
+        </div>
+        
+        <button onclick="logout()" class="w-full mt-6 text-[9px] font-black text-red-500 uppercase tracking-[0.2em] opacity-40 hover:opacity-100 transition">Log Out</button>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, getDocs, deleteDoc, doc, addDoc, setDoc, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const ADMIN_KEY = "11223344";
 
-        onAuthStateChanged(auth, (user) => {
-            if (!user) { window.location.href = "index.html"; }
-            else {
-                const access = prompt("ENTER ADMIN ACCESS KEY:");
-                if (access !== ADMIN_KEY) { window.location.href = "shop.html"; }
-                else { 
-                    document.getElementById('main-body').style.opacity = "1"; 
-                    loadLeaderboard(); 
-                    loadWithdrawals(); 
-                }
+        let actualReferralCount = 0;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { 
+                window.location.href = "index.html"; 
+            } else {
+                document.getElementById('main-body').style.opacity = "1";
+                document.getElementById('user-email').innerText = user.email;
+                document.getElementById('user-initial').innerText = user.email[0];
+                document.getElementById('ref-link').innerText = `${window.location.origin}/index.html?ref=${user.uid}`;
+                updateRewards(user.uid);
             }
         });
 
-        window.postAnnouncement = async () => {
-            const msg = document.getElementById('announcement-msg').value;
+        async function updateRewards(uid) {
+            const q = query(collection(db, "users"), where("referredBy", "==", uid));
+            const snap = await getDocs(q);
+            actualReferralCount = snap.size;
+            
+            document.getElementById('ref-count').innerText = actualReferralCount;
+            document.getElementById('progress-bar').style.width = Math.min((actualReferralCount / 10) * 100, 100) + "%";
+            
+            if (actualReferralCount >= 10) { 
+                document.getElementById('reward-status').innerText = "GOAL REACHED!"; 
+                document.getElementById('reward-status').className = "text-green-600 font-black animate-pulse";
+                document.getElementById('lock-msg').classList.add('hidden');
+            }
+            checkWithdrawalEligibility();
+        }
+
+        document.getElementById('calc-input').addEventListener('input', (e) => {
+            const amount = e.target.value * 5;
+            document.getElementById('calc-result').innerText = "$" + amount.toFixed(2);
+            checkWithdrawalEligibility();
+        });
+
+        function checkWithdrawalEligibility() {
+            const btn = document.getElementById('withdraw-btn');
+            const inputVal = document.getElementById('calc-input').value;
+
+            // Only allow withdrawal if verified DB count is 10+ AND they have a value in calculator
+            if(actualReferralCount >= 10 && inputVal > 0) { 
+                btn.disabled = false; 
+                btn.className = "w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95 transition"; 
+            } else { 
+                btn.disabled = true; 
+                btn.className = "w-full bg-gray-300 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest cursor-not-allowed"; 
+            }
+        }
+
+        window.requestWithdrawal = async () => {
+            const wallet = prompt("ENTER YOUR CRYPTO TRC20 WALLET ADDRESS:");
+            if (!wallet || wallet.length < 10) return alert("Valid TRC20 Address Required!");
+            
             try {
-                await setDoc(doc(db, "settings", "announcement"), { text: msg, active: msg !== "" });
-                alert("Shop Banner Updated!");
+                await addDoc(collection(db, "withdrawals"), {
+                    email: auth.currentUser.email,
+                    amount: document.getElementById('calc-result').innerText,
+                    wallet: wallet,
+                    status: "pending",
+                    createdAt: new Date()
+                });
+                alert("Your withdrawal is PENDING. Admin will approve shortly once verified.");
             } catch (e) { alert(e.message); }
         };
 
-        async function loadWithdrawals() {
-            const list = document.getElementById('withdrawal-list');
-            const q = query(collection(db, "withdrawals"), where("status", "==", "pending"));
-            const snap = await getDocs(q);
-            list.innerHTML = snap.empty ? `<p class="text-[10px] text-gray-500 py-4 italic">No pending requests.</p>` : "";
-            snap.forEach((d) => {
-                const data = d.data();
-                list.innerHTML += `
-                <tr class="text-[10px] font-bold">
-                    <td class="py-4 px-2">${data.email}<br><span class="text-gray-500 select-all">${data.wallet}</span></td>
-                    <td class="py-4 px-2 text-green-400 font-black">${data.amount}</td>
-                    <td class="py-4 px-2 text-right space-x-1">
-                        <button onclick="handleWithdrawal('${d.id}', 'approved')" class="bg-green-600 px-2 py-1 rounded text-[8px] uppercase">Approve</button>
-                        <button onclick="handleWithdrawal('${d.id}', 'declined')" class="bg-red-600 px-2 py-1 rounded text-[8px] uppercase">Decline</button>
-                    </td>
-                </tr>`;
-            });
-        }
-
-        window.handleWithdrawal = async (id, status) => {
-            if(confirm(`Mark request as ${status}?`)) {
-                await updateDoc(doc(db, "withdrawals", id), { status: status });
-                alert("Updated!"); loadWithdrawals();
-            }
-        };
-
-        window.addProduct = async () => {
-            const name = document.getElementById('p-name').value;
-            const price = document.getElementById('p-price').value;
-            if(!name || !price) return alert("Fill Name/Price");
-            await addDoc(collection(db, "products"), { name, price, description: document.getElementById('p-desc').value, tasks: document.getElementById('p-tasks').value, details: document.getElementById('p-details').value, createdAt: new Date() });
-            alert("Product Added!");
-        };
-
-        async function loadLeaderboard() {
-            const snap = await getDocs(collection(db, "users"));
-            const counts = {};
-            snap.forEach(d => { if(d.data().referredBy && d.data().referredBy !== "none") counts[d.data().referredBy] = (counts[d.data().referredBy] || 0) + 1; });
-            const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-            document.getElementById('leaderboard').innerHTML = sorted.map(([id, c]) => `<div class="flex justify-between p-3 bg-white/5 rounded-xl"><span>ID: ...${id.slice(-6)}</span><span class="text-blue-400 font-black">${c} RECRUITS</span></div>`).join('');
-        }
-
+        window.copyRef = () => { navigator.clipboard.writeText(document.getElementById('ref-link').innerText); alert("Link Copied!"); };
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
     </script>
 </body>
