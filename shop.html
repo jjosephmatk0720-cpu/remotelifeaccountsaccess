@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketplace | Working Remote</title>
+    <title>Marketplace | Jubilee Fortunes Investments</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hero-bg {
@@ -83,59 +83,9 @@
         </section>
 
         <footer class="mt-20 border-t border-white/10 pt-10 pb-20 text-center">
-            <div class="flex flex-wrap justify-center gap-6 mb-8">
-                <button onclick="toggleModal('about-modal')" class="text-white text-[10px] font-black uppercase tracking-widest hover:text-yellow-400 transition">About Us</button>
-                <button onclick="toggleModal('terms-modal')" class="text-white text-[10px] font-black uppercase tracking-widest hover:text-yellow-400 transition">Terms & Policies</button>
-                <button onclick="toggleModal('contact-modal')" class="text-white text-[10px] font-black uppercase tracking-widest hover:text-yellow-400 transition">Contact Us</button>
-            </div>
             <p class="text-[9px] font-black uppercase tracking-[0.5em] text-white/30">© 2026 Working Remote Agency</p>
         </footer>
     </main>
-
-    <div id="activity-ticker">
-        <div class="blur-card p-3 rounded-2xl border border-blue-500/30 shadow-2xl flex items-center gap-3">
-            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <p id="ticker-text" class="text-[10px] font-black uppercase tracking-tight text-blue-900 italic"></p>
-        </div>
-    </div>
-
-    <div id="about-modal" class="fixed inset-0 modal-bg z-[200] hidden flex items-center justify-center p-4">
-        <div class="blur-card max-w-md w-full p-8 rounded-[2.5rem] relative">
-            <button onclick="toggleModal('about-modal')" class="absolute top-6 right-6 text-gray-400 font-bold">✕</button>
-            <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-4">About Us</h2>
-            <p class="text-[12px] text-gray-600 leading-relaxed font-bold">Working Remote is a premier digital agency empowering professionals globally.</p>
-        </div>
-    </div>
-
-    <div id="terms-modal" class="fixed inset-0 modal-bg z-[200] hidden flex items-center justify-center p-4">
-        <div class="blur-card max-w-md w-full p-8 rounded-[2.5rem] relative">
-            <button onclick="toggleModal('terms-modal')" class="absolute top-6 right-6 text-gray-400 font-bold">✕</button>
-            <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-4 text-center">Policies</h2>
-            <ul class="space-y-4 text-[10px] text-gray-700 font-black uppercase tracking-tight">
-                <li class="flex gap-3"><span class="text-blue-600 font-bold">01</span> <span>Minimum of 10 verified recruits required to unlock withdrawals.</span></li>
-                <li class="flex gap-3"><span class="text-blue-600 font-bold">02</span> <span>Payouts are processed via Crypto TRC20 within 24-48 business hours.</span></li>
-            </ul>
-        </div>
-    </div>
-
-    <div id="contact-modal" class="fixed inset-0 modal-bg z-[200] hidden flex items-center justify-center p-4">
-        <div class="blur-card max-w-md w-full p-8 rounded-[2.5rem] relative">
-            <button onclick="toggleModal('contact-modal')" class="absolute top-6 right-6 text-gray-400 font-bold">✕</button>
-            <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-4">Support</h2>
-            <div class="space-y-4 text-[11px] font-bold text-gray-600">
-                <p class="bg-gray-50 p-3 rounded-xl border border-gray-100">✉ supportremotelifeaccess@gmail.com</p>
-                <button onclick="Tawk_API.maximize(); toggleModal('contact-modal')" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black uppercase tracking-widest text-[10px]">Open Live Chat Agent</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="training-modal" class="fixed inset-0 modal-bg z-[200] hidden flex items-center justify-center p-4">
-        <div class="blur-card max-w-lg w-full p-8 rounded-[2.5rem] relative">
-            <button onclick="toggleModal('training-modal')" class="absolute top-6 right-6 text-gray-400 font-bold">✕</button>
-            <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-2">Skill Up Center</h2>
-            <button onclick="requestMeeting()" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase shadow-md">Request Meeting via Chat</button>
-        </div>
-    </div>
 
     <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-72 bg-white shadow-2xl z-[150] transform translate-x-full p-6 flex flex-col">
         <div class="flex justify-between items-center mb-6">
@@ -152,7 +102,6 @@
         <div id="checkout-options" class="hidden border-t pt-4 mt-4 space-y-2">
             <button onclick="processOrder('whatsapp')" class="w-full bg-green-600 text-white py-3 rounded-xl font-black text-[10px] uppercase italic">WhatsApp Order</button>
             <button onclick="processOrder('tawk')" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase italic">Live Chat Order</button>
-            <button onclick="hideOptions()" class="w-full text-[9px] font-bold text-gray-400 uppercase py-2">Back to cart</button>
         </div>
     </div>
 
@@ -169,31 +118,32 @@
 
         onAuthStateChanged(auth, (user) => {
             if (!user) { window.location.href = "index.html"; }
-            else { document.getElementById('main-body').style.opacity = "1"; loadProducts(); listenForAnnouncement(); }
+            else { document.getElementById('main-body').style.opacity = "1"; loadProducts(); }
         });
 
-        // --- FIXED: LOADING FROM BOTH FIREBASE AND LOCALSTORAGE ---
+        // --- THE FIXED LOAD FUNCTION ---
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = "";
 
-            // 1. Pull from Firebase
+            // 1. Check Firebase
             try {
                 const snap = await getDocs(collection(db, "products"));
-                snap.forEach((doc) => {
-                    const data = doc.data();
-                    renderCard(grid, doc.id, data.name, data.price, data.description, data.details);
-                });
-            } catch (e) { console.error("Firebase error:", e); }
+                snap.forEach(d => renderCard(grid, d.id, d.data().name, d.data().price, d.data().description, d.data().details));
+            } catch(e) {}
 
-            // 2. Pull from LocalStorage (The accounts you add as Admin)
-            const localData = JSON.parse(localStorage.getItem('investment_plans')) || [];
-            localData.forEach((acc, index) => {
-                renderCard(grid, `local-${index}`, acc.name, acc.price, acc.category, acc.description);
+            // 2. Check Admin LocalStorage (Tries multiple common keys)
+            const localKeys = ['investment_plans', 'lawzana_accounts', 'products'];
+            localKeys.forEach(key => {
+                const data = JSON.parse(localStorage.getItem(key)) || [];
+                data.forEach((acc, i) => {
+                    renderCard(grid, `local-${i}`, acc.name || acc.planName, acc.price || acc.amount, acc.category || acc.description, acc.details || "");
+                });
             });
         }
 
         function renderCard(grid, id, name, price, sub, det) {
+            if(!name) return;
             grid.innerHTML += `<div class="blur-card p-5 rounded-3xl border border-white/50 shadow-md flex flex-col justify-between">
                 <div>
                     <h3 class="text-lg font-black uppercase italic tracking-tighter text-blue-900 leading-tight">${name}</h3>
@@ -207,78 +157,26 @@
             </div>`;
         }
 
-        window.addToCart = (id, name, price) => { cart.push({id, name, price}); updateCartUI(); toggleCart(true); hideOptions(); };
+        window.addToCart = (id, name, price) => { cart.push({id, name, price}); updateCartUI(); toggleCart(true); };
         window.updateCartUI = () => {
             document.getElementById('cart-count').innerText = cart.length;
-            const subtotal = cart.reduce((acc, curr) => acc + Number(curr.price), 0);
-            let finalTotal = subtotal;
-            let discountHtml = '';
-            if (cart.length >= 2) {
-                const discount = subtotal * 0.10;
-                finalTotal = subtotal - discount;
-                discountHtml = `<div class="flex justify-between text-[10px] text-green-600 font-black italic"><span>Bulk Discount (10% OFF)</span><span>-$${discount.toFixed(2)}</span></div>`;
-            }
-            document.getElementById('cart-total-display').innerHTML = `${discountHtml}<div class="flex justify-between"><span>Total</span><span>$${finalTotal.toFixed(2)}</span></div>`;
+            const subtotal = cart.reduce((a, c) => a + Number(c.price), 0);
+            document.getElementById('cart-total-display').innerHTML = `<div class="flex justify-between"><span>Total</span><span>$${subtotal.toFixed(2)}</span></div>`;
             document.getElementById('cart-items').innerHTML = cart.map((item, idx) => `
-                <div class="bg-gray-50 p-2 rounded-lg text-[10px] font-bold flex justify-between group">
-                    <span>${item.name}</span>
-                    <div class="flex gap-2"><span>$${item.price}</span><button onclick="removeFromCart(${idx})" class="text-red-500 opacity-0 group-hover:opacity-100 transition">✕</button></div>
+                <div class="bg-gray-50 p-2 rounded-lg text-[10px] font-bold flex justify-between">
+                    <span>${item.name}</span><span>$${item.price}</span>
                 </div>`).join('');
         };
-
-        window.removeFromCart = (idx) => { cart.splice(idx, 1); updateCartUI(); };
         window.toggleCart = (f) => document.getElementById('cart-sidebar').classList[f===true?'remove':'toggle']('translate-x-full');
-        window.showOptions = () => { if(cart.length > 0) { document.getElementById('checkout-options').classList.remove('hidden'); document.getElementById('cart-footer').classList.add('hidden'); } };
-        window.hideOptions = () => { document.getElementById('checkout-options').classList.add('hidden'); document.getElementById('cart-footer').classList.remove('hidden'); };
-
-        window.processOrder = async (method) => {
-            const subtotal = cart.reduce((acc, curr) => acc + Number(curr.price), 0);
-            const total = cart.length >= 2 ? (subtotal * 0.90).toFixed(2) : subtotal.toFixed(2);
+        window.showOptions = () => { document.getElementById('checkout-options').classList.remove('hidden'); document.getElementById('cart-footer').classList.add('hidden'); };
+        window.processOrder = (m) => {
             const items = cart.map(i => i.name).join(', ');
-            const msg = `ORDER: ${items}. TOTAL: $${total}. USER: ${auth.currentUser.email}`;
-            await addDoc(collection(db, "notifications"), { type: "SALE", method, items, total, user: auth.currentUser.email, time: serverTimestamp() });
-            if (method === 'whatsapp') window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
-            else { Tawk_API.maximize(); Tawk_API.sendMessage(msg); toggleCart(); }
+            const msg = `ORDER: ${items}. USER: ${auth.currentUser.email}`;
+            if (m === 'whatsapp') window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
+            else { Tawk_API.maximize(); Tawk_API.sendMessage(msg); }
         };
-
-        window.requestMeeting = async () => {
-            Tawk_API.maximize(); Tawk_API.sendMessage(`🚨 TRAINING REQUEST: ${auth.currentUser.email}`);
-            await addDoc(collection(db, "notifications"), { type: "TRAINING", user: auth.currentUser.email, time: serverTimestamp() });
-            toggleModal('training-modal');
-        };
-
-        function listenForAnnouncement() {
-            onSnapshot(doc(db, "settings", "announcement"), (d) => {
-                const data = d.data();
-                if (data && data.active) {
-                    document.getElementById('banner-text').innerText = data.text;
-                    document.getElementById('flash-banner').classList.remove('hidden');
-                } else { document.getElementById('flash-banner').classList.add('hidden'); }
-            });
-        }
-
-        // TICKER LOGIC
-        const names = ["Amos K.", "Sarah W.", "John D.", "Njeri G.", "David L."];
-        const actions = ["just earned $5.00!", "reached 10 recruits!", "verified a new account!"];
-        setInterval(() => {
-            const ticker = document.getElementById('activity-ticker');
-            document.getElementById('ticker-text').innerText = `${names[Math.floor(Math.random()*names.length)]} ${actions[Math.floor(Math.random()*actions.length)]}`;
-            ticker.classList.add('ticker-visible');
-            setTimeout(() => ticker.classList.remove('ticker-visible'), 4000);
-        }, 12000);
-
         window.toggleModal = (id) => document.getElementById(id).classList.toggle('hidden');
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
-    </script>
-
-    <script type="text/javascript">
-        var Tawk_API=Tawk_API||{};
-        (function(){
-            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-            s1.async=true; s1.src='https://embed.tawk.to/697549464a0f82197e621807/1jfp2cf6e';
-            s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
-            s0.parentNode.insertBefore(s1,s0);
-        })();
     </script>
 </body>
 </html>
