@@ -6,7 +6,6 @@
     <title>My Account | Working Remote</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Responsive background that adapts to any screen aspect ratio */
         body { 
             background: #0f172a; 
             color: white; 
@@ -17,7 +16,6 @@
             flex-direction: column; 
             align-items: center;
         }
-        /* Mobile-first card: 100% width on phones, max-width on laptops */
         .responsive-card { 
             background: rgba(255, 255, 255, 0.03); 
             border: 1px solid rgba(255, 255, 255, 0.1); 
@@ -84,7 +82,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
         const app = initializeApp(firebaseConfig);
@@ -94,8 +92,9 @@
         let verifiedCount = 0;
 
         onAuthStateChanged(auth, async (user) => {
-            if (!user) { window.location.href = "index.html"; }
-            else {
+            if (!user) { 
+                window.location.href = "index.html"; 
+            } else {
                 document.getElementById('main-body').style.opacity = "1";
                 document.getElementById('user-email').innerText = user.email;
                 document.getElementById('user-initial').innerText = user.email[0];
@@ -105,20 +104,22 @@
         });
 
         async function fetchStats(uid) {
-            const q = query(collection(db, "users"), where("referredBy", "==", uid));
-            const snap = await getDocs(q);
-            verifiedCount = snap.size;
-            
-            document.getElementById('ref-count').innerText = verifiedCount;
-            document.getElementById('progress-bar').style.width = Math.min((verifiedCount / 10) * 100, 100) + "%";
-            
-            if (verifiedCount >= 10) {
-                document.getElementById('reward-status').innerText = "UNLOCKED";
-                document.getElementById('reward-status').className = "text-[9px] font-black uppercase bg-green-500/10 text-green-400 px-3 py-1 rounded-full border border-green-500/20 animate-pulse";
-                document.getElementById('lock-msg').classList.add('hidden');
-            } else {
-                document.getElementById('needed-count').innerText = 10 - verifiedCount;
-            }
+            try {
+                const q = query(collection(db, "users"), where("referredBy", "==", uid));
+                const snap = await getDocs(q);
+                verifiedCount = snap.size;
+                
+                document.getElementById('ref-count').innerText = verifiedCount;
+                document.getElementById('progress-bar').style.width = Math.min((verifiedCount / 10) * 100, 100) + "%";
+                
+                if (verifiedCount >= 10) {
+                    document.getElementById('reward-status').innerText = "UNLOCKED";
+                    document.getElementById('reward-status').className = "text-[9px] font-black uppercase bg-green-500/10 text-green-400 px-3 py-1 rounded-full border border-green-500/20 animate-pulse";
+                    document.getElementById('lock-msg').classList.add('hidden');
+                } else {
+                    document.getElementById('needed-count').innerText = 10 - verifiedCount;
+                }
+            } catch (e) { console.error("Error fetching stats:", e); }
         }
 
         document.getElementById('calc-input').addEventListener('input', (e) => {
@@ -126,7 +127,6 @@
             document.getElementById('calc-result').innerText = "$" + (val * 5).toFixed(2);
             
             const btn = document.getElementById('withdraw-btn');
-            // Strict check: verified count must be 10 AND input must be > 0
             if(verifiedCount >= 10 && val > 0) {
                 btn.disabled = false;
                 btn.className = "w-full bg-white text-black py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-xl";
@@ -140,17 +140,23 @@
             const wallet = prompt("PROVIDE YOUR CRYPTO TRC20 ADDRESS:");
             if (!wallet || wallet.length < 10) return alert("Valid Wallet Required");
             
-            await addDoc(collection(db, "withdrawals"), {
-                email: auth.currentUser.email,
-                amount: document.getElementById('calc-result').innerText,
-                wallet: wallet,
-                status: "pending",
-                createdAt: new Date()
-            });
-            alert("SUCCESS: Your withdrawal is pending approval. Admin has been notified.");
+            try {
+                await addDoc(collection(db, "withdrawals"), {
+                    email: auth.currentUser.email,
+                    amount: document.getElementById('calc-result').innerText,
+                    wallet: wallet,
+                    status: "pending",
+                    createdAt: serverTimestamp()
+                });
+                alert("SUCCESS: Your withdrawal is pending approval. Jubilee Fortunes Investments admin has been notified.");
+            } catch (e) { alert("Error submitting request."); }
         };
 
-        window.copyRef = () => { navigator.clipboard.writeText(document.getElementById('ref-link').innerText); alert("Link Copied!"); };
+        window.copyRef = () => { 
+            navigator.clipboard.writeText(document.getElementById('ref-link').innerText); 
+            alert("Link Copied!"); 
+        };
+
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
     </script>
 </body>
