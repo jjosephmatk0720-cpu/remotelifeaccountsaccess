@@ -103,7 +103,7 @@
         <div class="blur-card max-w-md w-full p-8 rounded-[2.5rem] relative">
             <button onclick="toggleModal('about-modal')" class="absolute top-6 right-6 text-gray-400 font-bold">✕</button>
             <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-4">About Us</h2>
-            <p class="text-[12px] text-gray-600 leading-relaxed font-bold">Working Remote is a premier digital agency empowering professionals globally. We specialize in providing high-trust account access for AI training platforms and data evaluation.</p>
+            <p class="text-[12px] text-gray-600 leading-relaxed font-bold">Working Remote is a premier digital agency empowering professionals globally.</p>
         </div>
     </div>
 
@@ -114,7 +114,6 @@
             <ul class="space-y-4 text-[10px] text-gray-700 font-black uppercase tracking-tight">
                 <li class="flex gap-3"><span class="text-blue-600 font-bold">01</span> <span>Minimum of 10 verified recruits required to unlock withdrawals.</span></li>
                 <li class="flex gap-3"><span class="text-blue-600 font-bold">02</span> <span>Payouts are processed via Crypto TRC20 within 24-48 business hours.</span></li>
-                <li class="flex gap-3"><span class="text-blue-600 font-bold">03</span> <span>All account sales are final once credentials have been issued.</span></li>
             </ul>
         </div>
     </div>
@@ -134,10 +133,7 @@
         <div class="blur-card max-w-lg w-full p-8 rounded-[2.5rem] relative">
             <button onclick="toggleModal('training-modal')" class="absolute top-6 right-6 text-gray-400 font-bold">✕</button>
             <h2 class="text-2xl font-black uppercase italic text-blue-900 mb-2">Skill Up Center</h2>
-            <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100 text-center mt-4">
-                <p class="text-xs font-black text-blue-900 uppercase italic mb-2">Live Training Link</p>
-                <button onclick="requestMeeting()" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase shadow-md">Request Meeting via Chat</button>
-            </div>
+            <button onclick="requestMeeting()" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase shadow-md">Request Meeting via Chat</button>
         </div>
     </div>
 
@@ -147,14 +143,12 @@
             <button onclick="toggleCart()" class="text-gray-400">✕</button>
         </div>
         <div id="cart-items" class="flex-grow overflow-y-auto space-y-3"></div>
-        
         <div id="cart-footer" class="border-t pt-4 mt-4">
             <div id="cart-total-display" class="font-black uppercase text-sm text-blue-900 mb-4">
                 <div class="flex justify-between"><span>Total</span><span id="cart-total">$0</span></div>
             </div>
             <button onclick="showOptions()" class="w-full bg-black text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest">Order Now</button>
         </div>
-
         <div id="checkout-options" class="hidden border-t pt-4 mt-4 space-y-2">
             <button onclick="processOrder('whatsapp')" class="w-full bg-green-600 text-white py-3 rounded-xl font-black text-[10px] uppercase italic">WhatsApp Order</button>
             <button onclick="processOrder('tawk')" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase italic">Live Chat Order</button>
@@ -178,38 +172,45 @@
             else { document.getElementById('main-body').style.opacity = "1"; loadProducts(); listenForAnnouncement(); }
         });
 
+        // --- FIXED: LOADING FROM BOTH FIREBASE AND LOCALSTORAGE ---
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
-            const snap = await getDocs(collection(db, "products"));
             grid.innerHTML = "";
-            snap.forEach((doc) => {
-                const data = doc.data();
-                grid.innerHTML += `<div class="blur-card p-5 rounded-3xl border border-white/50 shadow-md flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-lg font-black uppercase italic tracking-tighter text-blue-900 leading-tight">${data.name}</h3>
-                        <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-2">${data.description || ''}</p>
-                        <p class="text-[10px] text-gray-500 font-bold mb-4">${data.details || ''}</p>
-                    </div>
-                    <div class="flex justify-between items-center pt-3 border-t border-gray-100">
-                        <span class="text-xl font-black text-black tracking-tighter">$${data.price}</span>
-                        <button onclick="addToCart('${doc.id}', '${data.name}', ${data.price})" class="bg-blue-700 text-white px-4 py-2 rounded-lg font-black text-[9px] uppercase italic">Buy Now</button>
-                    </div>
-                </div>`;
+
+            // 1. Pull from Firebase
+            try {
+                const snap = await getDocs(collection(db, "products"));
+                snap.forEach((doc) => {
+                    const data = doc.data();
+                    renderCard(grid, doc.id, data.name, data.price, data.description, data.details);
+                });
+            } catch (e) { console.error("Firebase error:", e); }
+
+            // 2. Pull from LocalStorage (The accounts you add as Admin)
+            const localData = JSON.parse(localStorage.getItem('investment_plans')) || [];
+            localData.forEach((acc, index) => {
+                renderCard(grid, `local-${index}`, acc.name, acc.price, acc.category, acc.description);
             });
         }
 
-        window.addToCart = (id, name, price) => { 
-            cart.push({id, name, price}); 
-            updateCartUI(); 
-            toggleCart(true); 
-            hideOptions(); // Reset checkout buttons if they add more
-        };
+        function renderCard(grid, id, name, price, sub, det) {
+            grid.innerHTML += `<div class="blur-card p-5 rounded-3xl border border-white/50 shadow-md flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-black uppercase italic tracking-tighter text-blue-900 leading-tight">${name}</h3>
+                    <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-2">${sub || ''}</p>
+                    <p class="text-[10px] text-gray-500 font-bold mb-4">${det || ''}</p>
+                </div>
+                <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+                    <span class="text-xl font-black text-black tracking-tighter">$${price}</span>
+                    <button onclick="addToCart('${id}', '${name}', ${price})" class="bg-blue-700 text-white px-4 py-2 rounded-lg font-black text-[9px] uppercase italic">Buy Now</button>
+                </div>
+            </div>`;
+        }
 
+        window.addToCart = (id, name, price) => { cart.push({id, name, price}); updateCartUI(); toggleCart(true); hideOptions(); };
         window.updateCartUI = () => {
             document.getElementById('cart-count').innerText = cart.length;
             const subtotal = cart.reduce((acc, curr) => acc + Number(curr.price), 0);
-            
-            // --- 10% DISCOUNT LOGIC ---
             let finalTotal = subtotal;
             let discountHtml = '';
             if (cart.length >= 2) {
@@ -217,19 +218,11 @@
                 finalTotal = subtotal - discount;
                 discountHtml = `<div class="flex justify-between text-[10px] text-green-600 font-black italic"><span>Bulk Discount (10% OFF)</span><span>-$${discount.toFixed(2)}</span></div>`;
             }
-
-            document.getElementById('cart-total-display').innerHTML = `
-                ${discountHtml}
-                <div class="flex justify-between"><span>Total</span><span>$${finalTotal.toFixed(2)}</span></div>
-            `;
-
+            document.getElementById('cart-total-display').innerHTML = `${discountHtml}<div class="flex justify-between"><span>Total</span><span>$${finalTotal.toFixed(2)}</span></div>`;
             document.getElementById('cart-items').innerHTML = cart.map((item, idx) => `
                 <div class="bg-gray-50 p-2 rounded-lg text-[10px] font-bold flex justify-between group">
                     <span>${item.name}</span>
-                    <div class="flex gap-2">
-                        <span>$${item.price}</span>
-                        <button onclick="removeFromCart(${idx})" class="text-red-500 opacity-0 group-hover:opacity-100 transition">✕</button>
-                    </div>
+                    <div class="flex gap-2"><span>$${item.price}</span><button onclick="removeFromCart(${idx})" class="text-red-500 opacity-0 group-hover:opacity-100 transition">✕</button></div>
                 </div>`).join('');
         };
 
@@ -242,25 +235,14 @@
             const subtotal = cart.reduce((acc, curr) => acc + Number(curr.price), 0);
             const total = cart.length >= 2 ? (subtotal * 0.90).toFixed(2) : subtotal.toFixed(2);
             const items = cart.map(i => i.name).join(', ');
-            const msg = `ORDER: ${items}. FINAL TOTAL: $${total}. USER: ${auth.currentUser.email}`;
-            
-            // Send to Admin Notification Feed
-            await addDoc(collection(db, "notifications"), {
-                type: "SALE_ATTEMPT",
-                method: method,
-                items: items,
-                total: `$${total}`,
-                user: auth.currentUser.email,
-                time: serverTimestamp()
-            });
-
+            const msg = `ORDER: ${items}. TOTAL: $${total}. USER: ${auth.currentUser.email}`;
+            await addDoc(collection(db, "notifications"), { type: "SALE", method, items, total, user: auth.currentUser.email, time: serverTimestamp() });
             if (method === 'whatsapp') window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
             else { Tawk_API.maximize(); Tawk_API.sendMessage(msg); toggleCart(); }
         };
 
         window.requestMeeting = async () => {
-            const msg = `🚨 TRAINING REQUEST: ${auth.currentUser.email}`;
-            Tawk_API.maximize(); Tawk_API.sendMessage(msg);
+            Tawk_API.maximize(); Tawk_API.sendMessage(`🚨 TRAINING REQUEST: ${auth.currentUser.email}`);
             await addDoc(collection(db, "notifications"), { type: "TRAINING", user: auth.currentUser.email, time: serverTimestamp() });
             toggleModal('training-modal');
         };
@@ -275,9 +257,9 @@
             });
         }
 
-        // --- ACTIVITY TICKER ---
-        const names = ["Amos K.", "Sarah W.", "John D.", "Njeri G.", "David L.", "Fatuma H.", "Kevin O.", "Mikel P.", "Grace A.", "Samuel T."];
-        const actions = ["just earned $5.00 commission!", "reached 10 recruits!", "verified a new account!", "unlocked a withdrawal!", "received TRC20 payment!"];
+        // TICKER LOGIC
+        const names = ["Amos K.", "Sarah W.", "John D.", "Njeri G.", "David L."];
+        const actions = ["just earned $5.00!", "reached 10 recruits!", "verified a new account!"];
         setInterval(() => {
             const ticker = document.getElementById('activity-ticker');
             document.getElementById('ticker-text').innerText = `${names[Math.floor(Math.random()*names.length)]} ${actions[Math.floor(Math.random()*actions.length)]}`;
@@ -300,4 +282,3 @@
     </script>
 </body>
 </html>
-
