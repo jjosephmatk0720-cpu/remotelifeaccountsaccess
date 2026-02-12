@@ -1,171 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketplace | WORKING REMOTELY</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { background: #0f172a; font-family: sans-serif; color: white; overflow-x: hidden; }
-        .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
-        .activity-popup { 
-            position: fixed; bottom: 30px; left: 20px; 
-            background: white; color: #0f172a; 
-            padding: 12px 24px; border-radius: 20px; 
-            font-weight: 800; font-size: 11px; 
-            display: none; z-index: 1000; 
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-            border-left: 5px solid #2563eb;
-            animation: slideIn 0.5s ease-out;
-        }
-        @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        .feedback-scroll { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 20px; scrollbar-width: none; }
-        .feedback-scroll::-webkit-scrollbar { display: none; }
-        #cart-count { font-size: 8px; position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketplace | WORKING REMOTELY</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { background:#0f172a;font-family:sans-serif;color:white;overflow-x:hidden;}
+.glass-card { background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(10px);}
+.activity-popup {position:fixed;bottom:30px;left:20px;background:white;color:#0f172a;padding:12px 24px;border-radius:20px;font-weight:800;font-size:11px;display:none;z-index:1000;box-shadow:0 15px 40px rgba(0,0,0,0.6);border-left:5px solid #2563eb;animation:slideIn .5s ease-out;}
+@keyframes slideIn {from{transform:translateX(-100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.feedback-scroll {display:flex;overflow-x:auto;gap:15px;padding-bottom:20px;scrollbar-width:none;}
+.feedback-scroll::-webkit-scrollbar{display:none;}
+#cart-count {font-size:8px;position:absolute;top:-5px;right:-5px;background:red;color:white;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;}
+</style>
 </head>
+
 <body class="p-4 min-h-screen pb-32">
 
-    <div id="activity-ticker" class="activity-popup uppercase italic tracking-tighter">
-        <span id="activity-msg">...</span>
-    </div>
+<div id="activity-ticker" class="activity-popup uppercase italic tracking-tighter">
+<span id="activity-msg">...</span>
+</div>
 
-    <nav class="flex justify-between items-center mb-8 px-2">
-        <h1 class="text-xl font-black italic tracking-tighter">WORKING REMOTELY</h1>
-        <div class="flex items-center gap-3">
-            <button onclick="requestTraining()" class="text-[9px] font-black uppercase bg-white text-black px-3 py-1.5 rounded-full italic">Training Link</button>
-            <button onclick="toggleCartDisplay()" class="relative p-2 bg-blue-600 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-white">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-                </svg>
-                <span id="cart-count">0</span>
-            </button>
-            <a href="profile.html" class="text-[9px] font-black uppercase text-blue-400 ml-1">Profile</a>
-        </div>
-    </nav>
+<nav class="flex justify-between items-center mb-8 px-2">
+<h1 class="text-xl font-black italic tracking-tighter">WORKING REMOTELY</h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12" id="market-list"></div>
+<div class="flex items-center gap-3">
+<button onclick="requestTraining()" class="text-[9px] font-black uppercase bg-white text-black px-3 py-1.5 rounded-full italic">Training Link</button>
 
-    <div class="mt-10 mb-10">
-        <div class="flex items-center gap-2 mb-4 pl-2">
-            <div class="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
-            <h3 class="text-[11px] font-black uppercase text-green-400 tracking-[0.3em]">Verified Pay-Outs & Feedbacks</h3>
-        </div>
-        <div class="feedback-scroll">
-            <div class="glass-card p-4 min-w-[280px] rounded-3xl">
-                <p class="text-[10px] font-black text-blue-400 mb-2">@Sarah_Chepkemoi</p>
-                <p class="text-xs italic font-medium">"Just received my tasks $1500 TRC20 withdrawal!"</p>
-                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Paid: $1500.00</div>
-            </div>
-            <div class="glass-card p-4 min-w-[280px] rounded-3xl">
-                <p class="text-[10px] font-black text-blue-400 mb-2">@Mercy_Njambi</p>
-                <p class="text-xs italic font-medium">"Already hit $580 withdrawned in 2 days."</p>
-                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Status: 10 Recruits</div>
-            </div>
-        </div>
-    </div>
+<button onclick="toggleCartDisplay()" class="relative p-2 bg-blue-600 rounded-full">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-white">
+<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+</svg>
+<span id="cart-count">0</span>
+</button>
 
-    <div id="cart-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-md glass-card p-5 rounded-[2.5rem] flex flex-col gap-3 hidden z-50 shadow-2xl border-t-2 border-blue-500">
-        <div class="flex justify-between items-center px-2">
-            <div>
-                <p id="promo-tag" class="text-[8px] font-black text-yellow-400 uppercase hidden">🔥 10% OFF APPLIED (2+ ACCOUNTS)</p>
-                <p id="cart-summary" class="font-black italic uppercase text-sm"></p>
-            </div>
-            <p id="cart-total" class="text-xl font-black text-white"></p>
-        </div>
-        <div class="flex gap-2">
-            <button onclick="clearCart()" class="w-1/4 bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white py-4 rounded-2xl font-black uppercase text-[10px] italic transition-all">Clear</button>
-            <button onclick="contactSupport()" class="w-3/4 bg-green-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic tracking-widest shadow-lg">Pay via WhatsApp</button>
-        </div>
-    </div>
+<a href="profile.html" class="text-[9px] font-black uppercase text-blue-400 ml-1">Profile</a>
+</div>
+</nav>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12" id="market-list"></div>
 
-        const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+<div id="cart-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-md glass-card p-5 rounded-[2.5rem] flex flex-col gap-3 hidden z-50 shadow-2xl border-t-2 border-blue-500">
 
-        let cart = [];
+<div class="flex justify-between items-center px-2">
+<div>
+<p id="promo-tag" class="text-[8px] font-black text-yellow-400 uppercase hidden">🔥 10% OFF APPLIED (2+ ACCOUNTS)</p>
+<p id="cart-summary" class="font-black italic uppercase text-sm"></p>
+</div>
+<p id="cart-total" class="text-xl font-black text-white"></p>
+</div>
 
-        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), (snapshot) => {
-            const list = document.getElementById('market-list');
-            list.innerHTML = "";
-            snapshot.forEach(doc => {
-                const p = doc.data();
-                const card = document.createElement('div');
-                card.className = "glass-card p-6 rounded-[2rem]";
-                card.innerHTML = `<p class="text-[10px] font-black text-blue-400 uppercase mb-1">Remote Package</p><h2 class="text-xl font-black italic uppercase mb-4">${p.name}</h2><p class="text-gray-400 text-xs mb-6 font-medium leading-relaxed">${p.tasks || 'Tasks included'}</p><div class="flex justify-between items-center"><span class="text-2xl font-black">$${p.price}</span><button onclick="addToCart('${p.name}', ${p.price})" class="bg-blue-600 text-white px-6 py-2 rounded-full font-black uppercase text-[10px] italic">Add to Cart</button></div>`;
-                list.appendChild(card);
-            });
-        });
+<div class="flex gap-2">
+<button onclick="clearCart()" class="w-1/4 bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white py-4 rounded-2xl font-black uppercase text-[10px] italic transition-all">Clear</button>
 
-        window.addToCart = (name, price) => {
-            cart.push({ name, price });
-            updateCartUI();
-        };
+<button onclick="contactSupport()" class="w-2/4 bg-green-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic tracking-widest shadow-lg">
+Pay via WhatsApp
+</button>
 
-        window.clearCart = () => {
-            cart = [];
-            updateCartUI();
-            document.getElementById('cart-bar').classList.add('hidden');
-        };
+<button onclick="contactTawk()" class="w-2/4 bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic tracking-widest shadow-lg">
+Live Support
+</button>
+</div>
 
-        window.updateCartUI = () => {
-            const count = cart.length;
-            document.getElementById('cart-count').innerText = count;
-            
-            if (count > 0) {
-                document.getElementById('cart-bar').classList.remove('hidden');
-                let total = cart.reduce((sum, item) => sum + item.price, 0);
-                
-                if (count >= 2) {
-                    total = total * 0.9;
-                    document.getElementById('promo-tag').classList.remove('hidden');
-                } else {
-                    document.getElementById('promo-tag').classList.add('hidden');
-                }
+</div>
 
-                document.getElementById('cart-summary').innerText = `${count} Account(s)`;
-                document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
-            } else {
-                document.getElementById('cart-count').innerText = "0";
-            }
-        };
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        window.toggleCartDisplay = () => {
-            if(cart.length > 0) document.getElementById('cart-bar').classList.toggle('hidden');
-            else alert("Cart is empty.");
-        };
+const firebaseConfig={apiKey:"AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE",authDomain:"remoteworkingacess.firebaseapp.com",projectId:"remoteworkingacess",storageBucket:"remoteworkingacess.firebasestorage.app",messagingSenderId:"953179052891",appId:"1:953179052891:web:8126924e32e9fb62f4987e"};
 
-        window.contactSupport = () => {
-            const count = cart.length;
-            let total = cart.reduce((sum, item) => sum + item.price, 0);
-            if (count >= 2) total = total * 0.9;
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
 
-            const itemsList = cart.map(i => i.name).join(", ");
-            const msg = `Hello Working Remotely, I want to pay for ${count} account(s): [${itemsList}]. Total: $${total.toFixed(2)}.`;
-            window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
-        };
+let cart=[];
 
-        window.requestTraining = () => {
-            window.open(`https://wa.me/18608968455?text=I'm requesting a Zoom link for training I will pay the fee 20$.`, '_blank');
-        };
+onSnapshot(query(collection(db,"products"),orderBy("createdAt","desc")),(snapshot)=>{
+const list=document.getElementById('market-list');
+list.innerHTML="";
+snapshot.forEach(doc=>{
+const p=doc.data();
+const card=document.createElement('div');
+card.className="glass-card p-6 rounded-[2rem]";
+card.innerHTML=`<p class="text-[10px] font-black text-blue-400 uppercase mb-1">Remote Package</p>
+<h2 class="text-xl font-black italic uppercase mb-4">${p.name}</h2>
+<p class="text-gray-400 text-xs mb-6 font-medium leading-relaxed">${p.tasks||'Tasks included'}</p>
+<div class="flex justify-between items-center">
+<span class="text-2xl font-black">$${p.price}</span>
+<button onclick="addToCart('${p.name}',${p.price})" class="bg-blue-600 text-white px-6 py-2 rounded-full font-black uppercase text-[10px] italic">Add to Cart</button>
+</div>`;
+list.appendChild(card);
+});
+});
 
-        const userNames = ["Liam M.", "Noah W.", "Chumbaa J.", "Njeri D.", "Ben O.", "jeptoo T.", "Wambua R.", "Kibet K.", "Oga T.", "Mercy A."];
-        const acts = [(name) => `User ${name} purchased a Package!`, (name) => `User ${name} referred a new member!`, (name) => `Withdrawal approved for ${name}`];
-        setInterval(() => {
-            const ticker = document.getElementById('activity-ticker');
-            const msgSpan = document.getElementById('activity-msg');
-            msgSpan.innerHTML = acts[Math.floor(Math.random() * acts.length)](userNames[Math.floor(Math.random() * userNames.length)]);
-            ticker.style.display = "block";
-            setTimeout(() => { ticker.style.display = "none"; }, 4000);
-        }, 7000);
-    </script>
-    <!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+window.addToCart=(name,price)=>{cart.push({name,price});updateCartUI();};
+
+window.clearCart=()=>{cart=[];updateCartUI();document.getElementById('cart-bar').classList.add('hidden');};
+
+window.updateCartUI=()=>{
+const count=cart.length;
+document.getElementById('cart-count').innerText=count;
+
+if(count>0){
+document.getElementById('cart-bar').classList.remove('hidden');
+let total=cart.reduce((sum,item)=>sum+item.price,0);
+
+if(count>=2){total*=0.9;document.getElementById('promo-tag').classList.remove('hidden');}
+else{document.getElementById('promo-tag').classList.add('hidden');}
+
+document.getElementById('cart-summary').innerText=`${count} Account(s)`;
+document.getElementById('cart-total').innerText=`$${total.toFixed(2)}`;
+}else{document.getElementById('cart-count').innerText="0";}
+};
+
+window.toggleCartDisplay=()=>{
+if(cart.length>0)document.getElementById('cart-bar').classList.toggle('hidden');
+else alert("Cart is empty.");
+};
+
+window.contactSupport=()=>{
+const count=cart.length;
+let total=cart.reduce((sum,item)=>sum+item.price,0);
+if(count>=2)total*=0.9;
+
+const itemsList=cart.map(i=>i.name).join(", ");
+const msg=`Hello Working Remotely, I want to pay for ${count} account(s): [${itemsList}]. Total: $${total.toFixed(2)}.`;
+window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`,'_blank');
+};
+
+window.contactTawk=()=>{
+const count=cart.length;
+let total=cart.reduce((sum,item)=>sum+item.price,0);
+if(count>=2)total*=0.9;
+
+const itemsList=cart.map(i=>i.name).join(", ");
+
+if(typeof Tawk_API!=="undefined"){
+Tawk_API.maximize();
+Tawk_API.addEvent("Customer Order",{accounts:count,items:itemsList,total:`$${total.toFixed(2)}`});
+}else{alert("Live support not ready yet.");}
+};
+
+window.requestTraining=()=>{
+window.open(`https://wa.me/18608968455?text=I'm requesting a Zoom link for training I will pay the fee 20$.`,'_blank');
+};
+</script>
+
+<!-- Tawk.to -->
+<script>
+var Tawk_API=Tawk_API||{},Tawk_LoadStart=new Date();
 (function(){
 var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
 s1.async=true;
@@ -175,7 +160,6 @@ s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
 })();
 </script>
-<!--End of Tawk.to Script-->
+
 </body>
 </html>
-
