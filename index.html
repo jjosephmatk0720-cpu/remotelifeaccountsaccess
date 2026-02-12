@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Working Remote</title>
+    <title>Login | WORKING REMOTELY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hero-bg {
@@ -17,7 +17,7 @@
 
     <div class="bg-white/95 backdrop-blur-md w-full max-w-md p-10 rounded-[2.5rem] shadow-2xl border border-white/20">
         <div class="text-center mb-10">
-            <h1 class="text-3xl font-black text-blue-900 uppercase italic tracking-tighter">Working Remote</h1>
+            <h1 class="text-3xl font-black text-blue-900 uppercase italic tracking-tighter">WORKING REMOTELY</h1>
             <p id="auth-title" class="text-[10px] font-black uppercase text-gray-400 tracking-[0.3em] mt-2">Sign In</p>
         </div>
 
@@ -51,22 +51,13 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE",
-            authDomain: "remoteworkingacess.firebaseapp.com",
-            projectId: "remoteworkingacess",
-            storageBucket: "remoteworkingacess.firebasestorage.app",
-            messagingSenderId: "953179052891",
-            appId: "1:953179052891:web:8126924e32e9fb62f4987e"
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
         const urlParams = new URLSearchParams(window.location.search);
         const referralId = urlParams.get('ref');
-
         let isLogin = true;
 
         window.togglePasswordVisibility = () => {
@@ -86,26 +77,21 @@
             document.getElementById('auth-title').innerText = isLogin ? "Sign In" : "Register New Account";
             document.getElementById('main-btn').innerText = isLogin ? "Login" : "Create Account";
             document.getElementById('toggle-btn').innerText = isLogin ? "Create Account" : "Back to Login";
-            // Hide forgot password on register screen
             document.getElementById('forgot-pw-container').style.display = isLogin ? 'block' : 'none';
         };
 
         window.handleForgotPassword = async () => {
             const email = document.getElementById('email').value;
             if(!email) return alert("Please enter your email address first.");
-            
             try {
                 await sendPasswordResetEmail(auth, email);
                 alert("Password reset link sent to: " + email);
-            } catch (error) {
-                alert(error.message);
-            }
+            } catch (error) { alert(error.message); }
         };
 
         window.handleAuth = async () => {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-
             if(!email || !password) return alert("Please fill all fields");
 
             try {
@@ -113,41 +99,27 @@
                     const userCredential = await signInWithEmailAndPassword(auth, email, password);
                     if (userCredential.user.emailVerified) {
                         window.location.href = "shop.html";
-                    } else {
-                        alert("Verify your email! We sent a link to " + email);
-                    }
+                    } else { alert("Verify your email first!"); }
                 } else {
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    const user = userCredential.user;
-
-                    await setDoc(doc(db, "users", user.uid), {
-                        email: user.email,
-                        referredBy: referralId || "none",
-                        role: "recruit",
-                        joinedAt: new Date()
+                    await setDoc(doc(db, "users", userCredential.user.uid), {
+                        email: email, referredBy: referralId || "none", role: "recruit", joinedAt: new Date()
                     });
-
-                    await sendEmailVerification(user);
-                    alert("Account created! Verification link sent. Activate it to login.");
+                    await sendEmailVerification(userCredential.user);
+                    alert("Verification link sent! Activate it to login.");
                     toggleAuth();
                 }
-            } catch (error) {
-                alert(error.message);
-            }
+            } catch (error) { alert(error.message); }
         };
     </script>
-
     <script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    Tawk_API.id = '6797549464a0f82197e62180';
-    Tawk_API.widgetId = '1jfp2cf6e';
-    (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true; s1.src='https://embed.tawk.to/6797549464a0f82197e62180/1jfp2cf6e';
-    s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-    })();
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        Tawk_API.id = '6797549464a0f82197e62180'; Tawk_API.widgetId = '1jfp2cf6e';
+        (function(){
+            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+            s1.async=true; s1.src='https://embed.tawk.to/6797549464a0f82197e62180/1jfp2cf6e';
+            s1.charset='UTF-8'; s1.setAttribute('crossorigin','*'); s0.parentNode.insertBefore(s1,s0);
+        })();
     </script>
-
 </body>
 </html>
