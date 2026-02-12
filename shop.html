@@ -42,13 +42,11 @@ body { background:#0f172a;font-family:sans-serif;color:white;overflow-x:hidden;}
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12" id="market-list"></div>
 
-<!-- VERIFIED FEEDBACK SECTION RESTORED -->
+<!-- VERIFIED FEEDBACKS -->
 <div class="mt-10 mb-10">
 <div class="flex items-center gap-2 mb-4 pl-2">
 <div class="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
-<h3 class="text-[11px] font-black uppercase text-green-400 tracking-[0.3em]">
-Verified Pay-Outs & Feedbacks
-</h3>
+<h3 class="text-[11px] font-black uppercase text-green-400 tracking-[0.3em]">Verified Pay-Outs & Feedbacks</h3>
 </div>
 
 <div class="feedback-scroll">
@@ -93,7 +91,15 @@ Live Support
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const firebaseConfig={apiKey:"AIzaSy...",authDomain:"remoteworkingacess.firebaseapp.com",projectId:"remoteworkingacess",storageBucket:"remoteworkingacess.firebasestorage.app",messagingSenderId:"953179052891",appId:"1:953179052891:web:8126924e32e9fb62f4987e"};
+const firebaseConfig={
+apiKey:"AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE",
+authDomain:"remoteworkingacess.firebaseapp.com",
+projectId:"remoteworkingacess",
+storageBucket:"remoteworkingacess.firebasestorage.app",
+messagingSenderId:"953179052891",
+appId:"1:953179052891:web:8126924e32e9fb62f4987e"
+};
+
 const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
 
@@ -118,48 +124,73 @@ list.appendChild(card);
 });
 
 window.addToCart=(name,price)=>{cart.push({name,price});updateCartUI();};
+
 window.clearCart=()=>{cart=[];updateCartUI();document.getElementById('cart-bar').classList.add('hidden');};
 
 window.updateCartUI=()=>{
 const count=cart.length;
 document.getElementById('cart-count').innerText=count;
+
 if(count>0){
 document.getElementById('cart-bar').classList.remove('hidden');
-let total=cart.reduce((s,i)=>s+i.price,0);
-if(count>=2){total*=0.9;promo-tag.classList.remove('hidden');}
-else{promo-tag.classList.add('hidden');}
-cart-summary.innerText=`${count} Account(s)`;
-cart-total.innerText=`$${total.toFixed(2)}`;
-}else{cart-count.innerText="0";}
+let total=cart.reduce((sum,item)=>sum+item.price,0);
+
+if(count>=2){
+total*=0.9;
+document.getElementById('promo-tag').classList.remove('hidden');
+}else{
+document.getElementById('promo-tag').classList.add('hidden');
+}
+
+document.getElementById('cart-summary').innerText=`${count} Account(s)`;
+document.getElementById('cart-total').innerText=`$${total.toFixed(2)}`;
+}else{
+document.getElementById('cart-count').innerText="0";
+}
 };
 
 window.toggleCartDisplay=()=>{
-if(cart.length>0)cart-bar.classList.toggle('hidden');
+if(cart.length>0)document.getElementById('cart-bar').classList.toggle('hidden');
 else alert("Cart is empty.");
 };
 
 window.contactSupport=()=>{
 const count=cart.length;
-let total=cart.reduce((s,i)=>s+i.price,0);
+let total=cart.reduce((sum,item)=>sum+item.price,0);
 if(count>=2)total*=0.9;
-const items=cart.map(i=>i.name).join(", ");
-window.open(`https://wa.me/18608968455?text=${encodeURIComponent(`Hello Working Remotely, I want to pay for ${count} account(s): [${items}]. Total: $${total.toFixed(2)}.`)}`,'_blank');
+
+const itemsList=cart.map(i=>i.name).join(", ");
+const msg=`Hello Working Remotely, I want to pay for ${count} account(s): [${itemsList}]. Total: $${total.toFixed(2)}.`;
+window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`,'_blank');
 };
 
 window.contactTawk=()=>{
 const count=cart.length;
-let total=cart.reduce((s,i)=>s+i.price,0);
+let total=cart.reduce((sum,item)=>sum+item.price,0);
 if(count>=2)total*=0.9;
-const items=cart.map(i=>i.name).join(", ");
+
+const itemsList=cart.map(i=>i.name).join(", ");
+
 if(typeof Tawk_API!=="undefined"){
 Tawk_API.maximize();
-Tawk_API.addEvent("Customer Order",{accounts:count,items,total:`$${total.toFixed(2)}`});
+Tawk_API.addEvent("Customer Order",{accounts:count,items:itemsList,total:`$${total.toFixed(2)}`});
 }
 };
 
 window.requestTraining=()=>{
 window.open(`https://wa.me/18608968455?text=I'm requesting a Zoom link for training I will pay the fee 20$.`,'_blank');
 };
+
+const userNames=["Liam M.","Noah W.","Chumbaa J.","Njeri D.","Ben O.","jeptoo T.","Wambua R.","Kibet K.","Oga T.","Mercy A."];
+const acts=[(n)=>`User ${n} purchased a Package!`,(n)=>`User ${n} referred a new member!`,(n)=>`Withdrawal approved for ${n}`];
+
+setInterval(()=>{
+const ticker=document.getElementById('activity-ticker');
+const msgSpan=document.getElementById('activity-msg');
+msgSpan.innerHTML=acts[Math.floor(Math.random()*acts.length)](userNames[Math.floor(Math.random()*userNames.length)]);
+ticker.style.display="block";
+setTimeout(()=>{ticker.style.display="none";},4000);
+},7000);
 </script>
 
 <script>
