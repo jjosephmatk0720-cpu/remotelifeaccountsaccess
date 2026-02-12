@@ -22,9 +22,7 @@
             h1 { font-size: 1.25rem !important; }
             #activity-ticker { left: 10px !important; bottom: 85px !important; width: 90%; }
         }
-        
         body { opacity: 0; transition: opacity 0.5s; overflow-x: hidden; scroll-behavior: smooth; }
-        
         #activity-ticker {
             position: fixed; bottom: 90px; left: 20px; z-index: 1000;
             pointer-events: none; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -129,7 +127,6 @@
     <script type="text/javascript">
         var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
         
-        // Force the widget to stay in the bottom-right
         Tawk_API.customStyle = {
             visibility : {
                 desktop : { position : 'br', xOffset : 20, yOffset : 20 },
@@ -216,16 +213,12 @@
             if(method === 'whatsapp') {
                 window.open(`https://wa.me/18608968455?text=${encodeURIComponent(orderMsg)}`, '_blank');
             } else if (method === 'tawk') {
-                if (typeof Tawk_API !== "undefined") {
+                if (typeof Tawk_API !== "undefined" && Tawk_API.maximize) {
                     Tawk_API.maximize();
-                    Tawk_API.setAttributes({
-                        'name': auth.currentUser.email,
-                        'order_details': orderMsg
-                    }, function(error){});
                     Tawk_API.sendMessage(orderMsg);
                     toggleCart(false);
                 } else {
-                    alert("Chat is still loading... try again in a second.");
+                    alert("Chat is loading... try again in 2 seconds.");
                 }
             }
         };
