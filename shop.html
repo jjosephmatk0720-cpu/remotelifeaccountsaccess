@@ -6,226 +6,128 @@
     <title>Marketplace | WORKING REMOTELY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .hero-bg {
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), 
-                        url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover; background-position: center; background-attachment: fixed;
-        }
-        .blur-card { 
-            background: rgba(255, 255, 255, 0.95); 
-            backdrop-filter: blur(10px); 
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        body { opacity: 0; transition: opacity 0.5s; overflow-x: hidden; scroll-behavior: smooth; }
-        #activity-ticker {
-            position: fixed; bottom: 90px; left: 20px; z-index: 1000;
-            pointer-events: none; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateY(100px); opacity: 0;
-        }
-        .ticker-visible { transform: translateY(0) !important; opacity: 1 !important; }
-        #cart-sidebar { transition: transform 0.3s ease-in-out; z-index: 2000; width: 350px; }
+        body { background: #0f172a; font-family: sans-serif; color: white; }
+        .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+        .activity-popup { position: fixed; bottom: 20px; left: 20px; background: white; color: black; padding: 10px 20px; border-radius: 50px; font-weight: 800; font-size: 10px; display: none; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .feedback-scroll { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 20px; scrollbar-width: none; }
+        .feedback-scroll::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body id="main-body" class="hero-bg min-h-screen text-gray-900 font-sans">
+<body class="p-4 min-h-screen pb-24">
 
-    <nav class="p-6 flex justify-between items-center max-w-7xl mx-auto relative z-10">
-        <h1 class="text-2xl font-black text-white italic tracking-tighter uppercase">WORKING REMOTELY</h1>
-        <div class="flex items-center space-x-6">
-            <a href="#training-center" class="text-white text-[11px] font-black uppercase tracking-widest hover:text-blue-400">Training</a>
-            <button onclick="toggleCart(true)" class="relative text-white group">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                <span id="cart-count" class="absolute -top-1 -right-1 bg-blue-600 text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white">0</span>
-            </button>
-            <a href="profile.html" class="text-white text-[11px] font-black uppercase tracking-widest">Profile</a>
-            <button id="logout-btn" class="bg-red-600 text-white px-5 py-2 rounded-full text-[11px] font-black uppercase italic">Logout</button>
+    <div id="activity-ticker" class="activity-popup uppercase italic tracking-tighter shadow-blue-500/50">
+        User <span id="user-name">...</span> just joined the workforce!
+    </div>
+
+    <nav class="flex justify-between items-center mb-8 px-2">
+        <h1 class="text-xl font-black italic tracking-tighter">WORKING REMOTELY</h1>
+        <div class="flex gap-4">
+            <a href="profile.html" class="text-[10px] font-black uppercase text-blue-400">Dashboard</a>
+            <button onclick="requestTraining()" class="text-[10px] font-black uppercase bg-white text-black px-4 py-1 rounded-full italic">Training Link</button>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto p-6">
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-10">
-            <p class="text-white col-span-full text-center animate-pulse uppercase font-black italic">Synchronizing Marketplace...</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12" id="market-list">
         </div>
 
-        <section id="training-center" class="mt-32">
-            <h2 class="text-center text-white text-xl font-black uppercase italic tracking-[0.3em] mb-12">Training Center</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="blur-card p-8 rounded-[2.5rem] shadow-xl border-l-8 border-blue-600">
-                    <h3 class="text-xl font-black text-blue-900 uppercase italic mb-2">Outlier Training</h3>
-                    <p class="text-xs font-bold text-gray-600 mb-6 uppercase">Master AI transcriptions & Data Labeling</p>
-                    <button onclick="Tawk_API.maximize()" class="bg-black text-white w-full py-3 rounded-xl font-black text-[10px] uppercase">Enrol Now</button>
-                </div>
-                <div class="blur-card p-8 rounded-[2.5rem] shadow-xl border-l-8 border-green-600">
-                    <h3 class="text-xl font-black text-green-900 uppercase italic mb-2">Crowdgen Mastery</h3>
-                    <p class="text-xs font-bold text-gray-600 mb-6 uppercase">Global Micro-tasking Guide</p>
-                    <button onclick="Tawk_API.maximize()" class="bg-black text-white w-full py-3 rounded-xl font-black text-[10px] uppercase">Enrol Now</button>
-                </div>
+    <div class="mt-10 mb-10">
+        <h3 class="text-[11px] font-black uppercase text-green-400 tracking-[0.3em] mb-4 pl-2">Verified Pay-Outs & Feedbacks</h3>
+        <div class="feedback-scroll">
+            <div class="glass-card p-4 min-w-[280px] rounded-3xl">
+                <p class="text-[10px] font-black text-blue-400 mb-2">@Sarah_Remote</p>
+                <p class="text-xs italic font-medium">"Just received my $150 TRC20 withdrawal! This platform is a lifesaver. Thank you admin!"</p>
+                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Paid: $150.00</div>
             </div>
-        </section>
-
-        <section class="mt-32 mb-20">
-            <h2 class="text-center text-white text-xl font-black uppercase italic tracking-[0.3em] mb-12">Verified Feedback</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div class="blur-card p-5 rounded-3xl shadow-xl">
-                    <div class="text-yellow-500 text-xs mb-2">★★★★★</div>
-                    <p class="text-[11px] font-bold italic text-gray-700">"Fast transfer, legit UK outlier account transcriptions training."</p>
-                    <p class="mt-3 text-[9px] font-black uppercase text-blue-600">— David K.</p>
-                </div>
-                <div class="blur-card p-5 rounded-3xl shadow-xl">
-                    <div class="text-yellow-500 text-xs mb-2">★★★★★</div>
-                    <p class="text-[11px] font-bold italic text-gray-700">"Bought 2 Crowdgen accounts, got 10% off. Smooth trainer!"</p>
-                    <p class="mt-3 text-[9px] font-black uppercase text-blue-600">— Njeri M.</p>
-                </div>
-                <div class="blur-card p-5 rounded-3xl shadow-xl">
-                    <div class="text-yellow-500 text-xs mb-2">★★★★★</div>
-                    <p class="text-[11px] font-bold italic text-gray-700">"Excellent support for US tasks, data annotations tasks very fast."</p>
-                    <p class="mt-3 text-[9px] font-black uppercase text-blue-600">— Musyoka D.</p>
-                </div>
-                <div class="blur-card p-5 rounded-3xl shadow-xl">
-                    <div class="text-yellow-500 text-xs mb-2">★★★★★</div>
-                    <p class="text-[11px] font-bold italic text-gray-700">"Working great for US tasks, very reliable & kiswahili translation."</p>
-                    <p class="mt-3 text-[9px] font-black uppercase text-blue-600">— Jeruto C.</p>
-                </div>
-                <div class="blur-card p-5 rounded-3xl shadow-xl">
-                    <div class="text-yellow-500 text-xs mb-2">★★★★★</div>
-                    <p class="text-[11px] font-bold italic text-gray-700">"Quick email verification, legit transfer & easy access."</p>
-                    <p class="mt-3 text-[9px] font-black uppercase text-blue-600">— Mikel K.</p>
-                </div>
+            <div class="glass-card p-4 min-w-[280px] rounded-3xl">
+                <p class="text-[10px] font-black text-blue-400 mb-2">@Mike_Work</p>
+                <p class="text-xs italic font-medium">"Training was super clear. Already hit 12 recruits in 3 days. Best remote gig."</p>
+                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Paid: $60.00</div>
             </div>
-        </section>
-    </main>
-
-    <div id="cart-sidebar" class="fixed top-0 right-0 h-full bg-white shadow-2xl transform translate-x-full p-8 flex flex-col">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-2xl font-black uppercase italic text-blue-900 tracking-tighter">CHECKOUT</h2>
-            <button onclick="toggleCart(false)" class="text-gray-400 hover:text-black text-2xl">✕</button>
-        </div>
-        <div id="cart-items" class="flex-grow overflow-y-auto space-y-4 pr-2"></div>
-        <div class="border-t pt-6 mt-6">
-            <div id="discount-note" class="hidden mb-4 text-[10px] font-black text-green-600 uppercase bg-green-50 p-3 rounded-xl text-center italic border border-green-100">🎉 10% Multi-Buy Discount Applied!</div>
-            <div class="flex justify-between items-center font-black text-xl text-black uppercase mb-8"><span>Total</span><span id="cart-total">$0.00</span></div>
-            <button onclick="contactSupport('tawk')" class="w-full bg-blue-900 text-white py-5 rounded-2xl font-black text-[12px] uppercase shadow-2xl mb-3 tracking-widest">CONTACT SUPPORT</button>
-            <button onclick="contactSupport('whatsapp')" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black text-[10px] uppercase shadow-lg tracking-widest">ORDER VIA WHATSAPP</button>
+            <div class="glass-card p-4 min-w-[280px] rounded-3xl">
+                <p class="text-[10px] font-black text-blue-400 mb-2">@Elena_S</p>
+                <p class="text-xs italic font-medium">"Withdrawal process is so fast. Working from Kenya and getting paid in USD is amazing."</p>
+                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Paid: $210.00</div>
+            </div>
         </div>
     </div>
 
-    <div id="activity-ticker">
-        <div class="bg-white p-4 rounded-2xl border-l-4 border-blue-600 shadow-2xl flex items-center gap-4">
-            <div class="w-3 h-3 bg-green-500 rounded-full animate-ping"></div>
-            <p id="ticker-text" class="text-[11px] font-black uppercase text-gray-800 italic"></p>
+    <div id="cart-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md glass-card p-4 rounded-3xl flex justify-between items-center hidden">
+        <div>
+            <p class="text-[9px] font-black text-gray-400 uppercase">Selected Package</p>
+            <p id="cart-item-name" class="font-black italic uppercase text-sm"></p>
         </div>
+        <button onclick="contactSupport()" class="bg-green-600 text-white px-6 py-3 rounded-2xl font-black uppercase text-xs italic">Buy via WhatsApp</button>
     </div>
-
-    <script type="text/javascript">
-        var Tawk_API = Tawk_API || {};
-        Tawk_API.id = '6797549464a0f82197e62180'; 
-        Tawk_API.widgetId = '1jfp2cf6e';         
-        (function(){
-            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-            s1.async=true; s1.src='https://embed.tawk.to/6797549464a0f82197e62180/1jfp2cf6e'; 
-            s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
-            s0.parentNode.insertBefore(s1,s0);
-        })();
-    </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let cart = [];
-
-        onAuthStateChanged(auth, (user) => {
-            if (!user) { window.location.href = "index.html"; }
-            else { document.getElementById('main-body').style.opacity = "1"; listenToProducts(); runLiveActivity(); }
+        // FETCH MARKETPLACE
+        const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+        onSnapshot(q, (snapshot) => {
+            const list = document.getElementById('market-list');
+            list.innerHTML = "";
+            snapshot.forEach(doc => {
+                const p = doc.data();
+                const card = document.createElement('div');
+                card.className = "glass-card p-6 rounded-[2rem]";
+                card.innerHTML = `
+                    <p class="text-[10px] font-black text-blue-400 uppercase mb-1">Remote Package</p>
+                    <h2 class="text-xl font-black italic uppercase mb-4">${p.name}</h2>
+                    <p class="text-gray-400 text-xs mb-6 font-medium leading-relaxed">${p.tasks || 'No details'}</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-2xl font-black">$${p.price}</span>
+                        <button onclick="addToCart('${p.name}', '${p.price}')" class="bg-blue-600 text-white px-6 py-2 rounded-full font-black uppercase text-[10px] italic">Select</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
         });
 
-        function listenToProducts() {
-            const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
-            const grid = document.getElementById('product-grid');
-            onSnapshot(q, (snapshot) => {
-                grid.innerHTML = "";
-                snapshot.forEach((doc) => {
-                    const acc = doc.data();
-                    const item = document.createElement('div');
-                    item.className = "blur-card p-8 rounded-[2.5rem] shadow-xl flex flex-col justify-between";
-                    item.innerHTML = `
-                        <div>
-                            <h3 class="text-xl font-black uppercase italic text-blue-900 tracking-tighter">${acc.name}</h3>
-                            <p class="text-[10px] font-black text-blue-500 uppercase mt-1 mb-4 italic">Verified Account</p>
-                            <p class="text-[11px] text-gray-500 font-bold mb-8 leading-relaxed h-12 overflow-hidden">${acc.tasks || 'Immediate Setup'}</p>
-                        </div>
-                        <div class="flex justify-between items-center pt-6 border-t border-gray-100">
-                            <span class="text-3xl font-black text-black tracking-tighter">$${acc.price}</span>
-                            <button class="add-btn bg-blue-700 text-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase italic">Add to Cart</button>
-                        </div>`;
-                    item.querySelector('.add-btn').onclick = () => {
-                        cart.push({name: acc.name, price: acc.price});
-                        updateCartUI();
-                        toggleCart(true);
-                    };
-                    grid.appendChild(item);
-                });
-            });
-        }
+        // LIVE ACTIVITY LOGIC
+        const names = ["John D.", "Sarah W.", "Mike R.", "Elena S.", "David K.", "Blessing O.", "Kevin M.", "Priya G.", "Samuel L.", "Anna V."];
+        setInterval(() => {
+            const ticker = document.getElementById('activity-ticker');
+            const userSpan = document.getElementById('user-name');
+            userSpan.innerText = names[Math.floor(Math.random() * names.length)];
+            ticker.style.display = "block";
+            setTimeout(() => { ticker.style.display = "none"; }, 3000);
+        }, 5000);
 
-        window.toggleCart = (show) => {
-            const sidebar = document.getElementById('cart-sidebar');
-            show ? sidebar.classList.remove('translate-x-full') : sidebar.classList.add('translate-x-full');
+        // CART & CONTACT
+        window.addToCart = (name, price) => {
+            document.getElementById('cart-bar').classList.remove('hidden');
+            document.getElementById('cart-item-name').innerText = name + " - $" + price;
         };
 
-        window.updateCartUI = () => {
-            document.getElementById('cart-count').innerText = cart.length;
-            const container = document.getElementById('cart-items');
-            container.innerHTML = cart.map((item, idx) => `
-                <div class="bg-gray-50 p-5 rounded-2xl flex justify-between items-center border border-gray-100">
-                    <div><p class="text-[11px] font-black uppercase text-blue-900 italic">${item.name}</p></div>
-                    <button onclick="removeFromCart(${idx})" class="text-red-400 font-bold">✕</button>
-                </div>
-            `).join('');
-
-            let total = cart.reduce((sum, item) => sum + Number(item.price), 0);
-            if(cart.length >= 2) { total *= 0.9; document.getElementById('discount-note').classList.remove('hidden'); }
-            else { document.getElementById('discount-note').classList.add('hidden'); }
-            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+        window.contactSupport = () => {
+            const itemName = document.getElementById('cart-item-name').innerText;
+            const msg = `Hello Working Remotely Support, I want to purchase: ${itemName}`;
+            window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
         };
 
-        window.removeFromCart = (i) => { cart.splice(i, 1); updateCartUI(); };
-
-        window.contactSupport = (method) => {
-            if(cart.length === 0) return alert("Basket is empty.");
-            const items = cart.map(i => i.name).join(', ');
-            const total = document.getElementById('cart-total').innerText;
-            const msg = `MARKETPLACE ORDER: ${items}. Total: ${total}. Requesting payment details.`;
-            if(method === 'tawk') {
-                Tawk_API.maximize();
-                setTimeout(() => { Tawk_API.sendMessage(msg); }, 1500);
-                toggleCart(false);
-            } else {
-                window.open(`https://wa.me/254700000000?text=${encodeURIComponent(msg)}`, '_blank');
-            }
+        window.requestTraining = () => {
+            const msg = "Hello, I am requesting a Zoom/Google Meet link for the remote work training session.";
+            window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
         };
-
-        function runLiveActivity() {
-            const names = ["James K.", "Njeri M.", "Wambua D.", "Robert O.", "Mary S."];
-            const deeds = ["purchased Outlier AI!", "requested training!", "withdrew $100.00!"];
-            setInterval(() => {
-                const text = document.getElementById('ticker-text');
-                const ticker = document.getElementById('activity-ticker');
-                if(text && ticker) {
-                    text.innerText = `${names[Math.floor(Math.random()*names.length)]} ${deeds[Math.floor(Math.random()*deeds.length)]}`;
-                    ticker.classList.add('ticker-visible');
-                    setTimeout(() => ticker.classList.remove('ticker-visible'), 2500);
-                }
-            }, 6000);
-        }
-
-        document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.href = "index.html");
     </script>
+
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    Tawk_API.id = '6797549464a0f82197e62180';
+    Tawk_API.widgetId = '1jfp2cf6e';
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true; s1.src='https://embed.tawk.to/6797549464a0f82197e62180/1jfp2cf6e';
+    s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+
 </body>
 </html>
