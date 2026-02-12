@@ -3,114 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | WORKING REMOTELY</title>
+    <title>Admin Panel | WORKING REMOTELY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0f172a; font-family: sans-serif; opacity: 0; transition: opacity 0.5s; }
-        .admin-card { background: white; border-radius: 2rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        body { background: #0f172a; font-family: sans-serif; color: white; }
+        .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body id="admin-body" class="p-6 min-h-screen">
+<body class="p-6">
 
-    <nav class="max-w-7xl mx-auto flex justify-between items-center mb-10">
-        <h1 class="text-2xl font-black uppercase italic text-white tracking-tighter">WORKING REMOTELY ADMIN</h1>
-        <button id="logout-btn" class="bg-red-600 text-white px-6 py-2 rounded-full font-black text-[10px] uppercase italic">Logout</button>
-    </nav>
+    <div class="max-w-4xl mx-auto">
+        <div class="flex justify-between items-center mb-10">
+            <h1 class="text-2xl font-black italic uppercase tracking-tighter text-blue-500">Working Remotely Admin</h1>
+            <a href="shop.html" class="text-xs font-bold uppercase bg-white text-black px-4 py-2 rounded-full">View Shop</a>
+        </div>
 
-    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <section class="lg:col-span-1">
-            <div class="admin-card p-8">
-                <h2 class="text-sm font-black uppercase text-blue-900 mb-6">List Account</h2>
-                <div class="space-y-4">
-                    <input id="p-name" type="text" placeholder="ACCOUNT NAME" class="w-full p-4 rounded-xl ring-1 ring-gray-100 font-black text-xs uppercase italic outline-none">
-                    <input id="p-price" type="number" placeholder="PRICE (USD)" class="w-full p-4 rounded-xl ring-1 ring-gray-100 font-black text-xs outline-none">
-                    <textarea id="p-tasks" placeholder="DETAILS" class="w-full p-4 rounded-xl ring-1 ring-gray-100 font-bold text-xs h-32 outline-none"></textarea>
-                    
-                    <div class="pt-4 border-t">
-                        <label class="text-[9px] font-black text-red-500 uppercase">Master Admin Key</label>
-                        <input id="p-key" type="password" placeholder="ENTER SRC KEY" class="w-full p-4 rounded-xl ring-1 ring-red-100 font-black text-xs outline-none focus:ring-2 focus:ring-red-500">
-                    </div>
-                    
-                    <button id="add-btn" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black uppercase text-xs italic shadow-lg">Post to Marketplace</button>
-                </div>
+        <div class="glass-card p-8 rounded-[2.5rem] mb-10">
+            <h2 class="text-lg font-black uppercase mb-6 italic">Add New Remote Package</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" id="p-name" placeholder="Package Name (e.g. Data Entry)" class="p-4 bg-gray-800 rounded-2xl outline-none text-sm font-bold">
+                <input type="number" id="p-price" placeholder="Price (USD)" class="p-4 bg-gray-800 rounded-2xl outline-none text-sm font-bold">
+                <textarea id="p-tasks" placeholder="Task Details/Description" class="p-4 bg-gray-800 rounded-2xl outline-none text-sm font-bold md:col-span-2 h-24"></textarea>
+                
+                <input type="password" id="admin-key" placeholder="Enter Admin Key (SRC3838)" class="p-4 bg-blue-900/30 border border-blue-500/30 rounded-2xl outline-none text-sm font-bold md:col-span-2">
+                
+                <button onclick="addProduct()" class="md:col-span-2 bg-blue-600 p-4 rounded-2xl font-black uppercase italic tracking-widest">Publish Package</button>
             </div>
-        </section>
+        </div>
 
-        <section class="lg:col-span-2">
-            <div class="admin-card p-8 min-h-[400px]">
-                <h2 class="text-sm font-black uppercase text-blue-900 mb-6">Live Inventory</h2>
-                <div id="admin-product-list" class="space-y-3">
-                    <p class="text-gray-400 font-bold text-xs uppercase animate-pulse">Establishing secure link...</p>
+        <div class="glass-card p-8 rounded-[2.5rem]">
+            <h2 class="text-lg font-black uppercase mb-6 italic text-gray-400">Current Listings</h2>
+            <div id="admin-list" class="space-y-4">
                 </div>
-            </div>
-        </section>
-    </main>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
+        // SECURITY: ONLY ALLOW YOUR SPECIFIC ADMIN EMAIL
         onAuthStateChanged(auth, (user) => {
-            if (!user || user.email !== "jubileefortunesinvestments@gmail.com") { window.location.href = "login.html"; }
-            else { document.getElementById('admin-body').style.opacity = "1"; fetchProducts(); }
+            if (!user || user.email !== "jubileefortunesinvestments@gmail.com") {
+                alert("Unauthorized Access!");
+                window.location.href = "index.html";
+            }
         });
 
-        document.getElementById('add-btn').onclick = async () => {
+        // ADD PRODUCT LOGIC
+        window.addProduct = async () => {
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
             const tasks = document.getElementById('p-tasks').value;
-            const key = document.getElementById('p-key').value;
+            const key = document.getElementById('admin-key').value;
 
-            if(key !== "SRC3838") return alert("INVALID ADMIN KEY.");
-            if(!name || !price) return alert("Fill Name and Price.");
+            // VERIFY ADMIN KEY
+            if (key !== "SRC3838") {
+                return alert("INVALID ADMIN KEY! ACTION DENIED.");
+            }
+
+            if (!name || !price) return alert("Fill Name and Price");
 
             try {
                 await addDoc(collection(db, "products"), {
-                    name: name.toUpperCase(),
-                    price: price,
-                    tasks: tasks,
+                    name,
+                    price: parseFloat(price),
+                    tasks,
                     createdAt: serverTimestamp()
                 });
-                alert("Success: Account Listed.");
+                alert("Package Published Successfully!");
                 document.getElementById('p-name').value = "";
                 document.getElementById('p-price').value = "";
                 document.getElementById('p-tasks').value = "";
-                document.getElementById('p-key').value = "";
-            } catch (e) { alert("Error: " + e.message); }
+                document.getElementById('admin-key').value = "";
+            } catch (e) { alert(e.message); }
         };
 
-        function fetchProducts() {
-            const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
-            onSnapshot(q, (snapshot) => {
-                const list = document.getElementById('admin-product-list');
-                list.innerHTML = snapshot.empty ? `<p class="text-gray-400 font-bold text-xs uppercase">No active listings.</p>` : "";
-                snapshot.forEach((pDoc) => {
-                    const p = pDoc.data();
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = "flex justify-between items-center p-5 bg-gray-50 rounded-2xl border border-gray-100";
-                    itemDiv.innerHTML = `
-                        <div>
-                            <p class="font-black text-blue-900 uppercase italic text-sm tracking-tight">${p.name}</p>
-                            <p class="text-[10px] font-black text-green-600 uppercase">PRICE: $${p.price}</p>
-                        </div>
-                        <button class="del-btn text-red-500 font-black text-[9px] uppercase px-4 py-2 rounded-lg border border-red-50 hover:bg-red-600 hover:text-white transition">Remove</button>
-                    `;
-                    itemDiv.querySelector('.del-btn').onclick = async () => {
-                        if(confirm("Delete this listing?")) await deleteDoc(doc(db, "products", pDoc.id));
-                    };
-                    list.appendChild(itemDiv);
-                });
+        // VIEW & DELETE LOGIC
+        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), (snapshot) => {
+            const list = document.getElementById('admin-list');
+            list.innerHTML = "";
+            snapshot.forEach(docSnap => {
+                const p = docSnap.data();
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center bg-white/5 p-4 rounded-2xl";
+                item.innerHTML = `
+                    <div>
+                        <p class="font-black italic uppercase text-sm">${p.name}</p>
+                        <p class="text-xs text-blue-400 font-bold">$${p.price}</p>
+                    </div>
+                    <button onclick="deleteProduct('${docSnap.id}')" class="text-[10px] font-black uppercase text-red-500 bg-red-500/10 px-4 py-2 rounded-xl">Delete</button>
+                `;
+                list.appendChild(item);
             });
-        }
+        });
 
-        document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.href = "login.html");
+        window.deleteProduct = async (id) => {
+            const key = prompt("Confirm Admin Key to Delete:");
+            if (key === "SRC3838") {
+                await deleteDoc(doc(db, "products", id));
+            } else {
+                alert("Incorrect Key!");
+            }
+        };
     </script>
 </body>
 </html>
-
