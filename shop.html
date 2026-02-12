@@ -6,17 +6,27 @@
     <title>Marketplace | WORKING REMOTELY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0f172a; font-family: sans-serif; color: white; }
+        body { background: #0f172a; font-family: sans-serif; color: white; overflow-x: hidden; }
         .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
-        .activity-popup { position: fixed; bottom: 20px; left: 20px; background: white; color: black; padding: 10px 20px; border-radius: 50px; font-weight: 800; font-size: 10px; display: none; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .activity-popup { 
+            position: fixed; bottom: 30px; left: 20px; 
+            background: white; color: #0f172a; 
+            padding: 12px 24px; border-radius: 20px; 
+            font-weight: 800; font-size: 11px; 
+            display: none; z-index: 1000; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            border-left: 5px solid #2563eb;
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .feedback-scroll { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 20px; scrollbar-width: none; }
         .feedback-scroll::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="p-4 min-h-screen pb-24">
+<body class="p-4 min-h-screen pb-32">
 
-    <div id="activity-ticker" class="activity-popup uppercase italic tracking-tighter shadow-blue-500/50">
-        User <span id="user-name">...</span> just joined the workforce!
+    <div id="activity-ticker" class="activity-popup uppercase italic tracking-tighter">
+        <span id="activity-msg">...</span>
     </div>
 
     <nav class="flex justify-between items-center mb-8 px-2">
@@ -31,27 +41,30 @@
         </div>
 
     <div class="mt-10 mb-10">
-        <h3 class="text-[11px] font-black uppercase text-green-400 tracking-[0.3em] mb-4 pl-2">Verified Pay-Outs & Feedbacks</h3>
+        <div class="flex items-center gap-2 mb-4 pl-2">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+            <h3 class="text-[11px] font-black uppercase text-green-400 tracking-[0.3em]">Verified Pay-Outs & Feedbacks</h3>
+        </div>
         <div class="feedback-scroll">
             <div class="glass-card p-4 min-w-[280px] rounded-3xl">
-                <p class="text-[10px] font-black text-blue-400 mb-2">@Sarah_Cheptoo</p>
-                <p class="text-xs italic font-medium">"Just received my $150 TRC20 withdrawal! This platform is a lifesaverin rwanda. Thank you admin!"</p>
+                <p class="text-[10px] font-black text-blue-400 mb-2">@Sarah_Jemutai</p>
+                <p class="text-xs italic font-medium">"Just received my $150 TRC20 withdrawal! This platform is a lifesaver."</p>
                 <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Paid: $150.00</div>
             </div>
             <div class="glass-card p-4 min-w-[280px] rounded-3xl">
                 <p class="text-[10px] font-black text-blue-400 mb-2">@Mikel_W</p>
-                <p class="text-xs italic font-medium">"Training was super clear. Already hit 12 recruits in 3 days. Best remote gig."</p>
-                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Paid: $600.00</div>
+                <p class="text-xs italic font-medium">"Training was super clear. Already hit 12 recruits in 3 days,take transcriptions."</p>
+                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Status: 12 Recruits</div>
             </div>
             <div class="glass-card p-4 min-w-[280px] rounded-3xl">
                 <p class="text-[10px] font-black text-blue-400 mb-2">@Elena_S</p>
-                <p class="text-xs italic font-medium">"Withdrawal process is so fast. Working from Kenya and getting paid in USD is amazing."</p>
-                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Paid: $210.00</div>
+                <p class="text-xs italic font-medium">"Working from Kenya and getting paid in USD is amazing.crowdgen"</p>
+                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Paid: $610.00</div>
             </div>
         </div>
     </div>
 
-    <div id="cart-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md glass-card p-4 rounded-3xl flex justify-between items-center hidden">
+    <div id="cart-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md glass-card p-4 rounded-3xl flex justify-between items-center hidden z-50 shadow-2xl">
         <div>
             <p class="text-[9px] font-black text-gray-400 uppercase">Selected Package</p>
             <p id="cart-item-name" class="font-black italic uppercase text-sm"></p>
@@ -79,7 +92,7 @@
                 card.innerHTML = `
                     <p class="text-[10px] font-black text-blue-400 uppercase mb-1">Remote Package</p>
                     <h2 class="text-xl font-black italic uppercase mb-4">${p.name}</h2>
-                    <p class="text-gray-400 text-xs mb-6 font-medium leading-relaxed">${p.tasks || 'No details'}</p>
+                    <p class="text-gray-400 text-xs mb-6 font-medium leading-relaxed">${p.tasks || 'Standard Remote Tasks'}</p>
                     <div class="flex justify-between items-center">
                         <span class="text-2xl font-black">$${p.price}</span>
                         <button onclick="addToCart('${p.name}', '${p.price}')" class="bg-blue-600 text-white px-6 py-2 rounded-full font-black uppercase text-[10px] italic">Select</button>
@@ -89,15 +102,31 @@
             });
         });
 
-        // LIVE ACTIVITY LOGIC
-        const names = ["John D.", "Sarah W.", "Mike R.", "Elena S.", "David K.", "Blessing O.", "Kevin M.", "Priya G.", "Samuel L.", "Anna V."];
+        // 150 MEMBER ACTIVITY ENGINE
+        const userNames = ["Liam M.", "Masikonde W.", "Oliver S.", "Elijah J.", "Njuguna B.", "William D.", "Ben O.", "Lucas P.", "Henry T.", "Theo G.", "Jerono L.", "Olivia C.", "Ava R.", "Sophia H.", "Isabella M.", "Ogochuku K.", "Amelia F.", "Evelyn N.", "Abigail T.", "Emily W.", "John X.", "Mercy A.", "Kevin R.", "Fatima Z.", "Chidi E.", "Santi G.", "Yuki H.", "Lars V.", "Zoe B.", "Omar F."]; // Representing 150+ pool
+        
+        const activities = [
+            (name) => `User ${name} just purchased a Remote Package!`,
+            (name) => `User ${name} referred a new member successfully!`,
+            (name) => `Withdrawal of $${(Math.random()*200 + 50).toFixed(2)} approved for ${name}`,
+            (name) => `User ${name} just earned $5.00 from a referral!`,
+            (name) => `Goal Alert: ${name} attained 10 recruits! 🏆`,
+            (name) => `User ${name} started their Zoom training session!`,
+            (name) => `User ${name} completed a free daily task!`
+        ];
+
         setInterval(() => {
             const ticker = document.getElementById('activity-ticker');
-            const userSpan = document.getElementById('user-name');
-            userSpan.innerText = names[Math.floor(Math.random() * names.length)];
+            const msgSpan = document.getElementById('activity-msg');
+            
+            const randomUser = userNames[Math.floor(Math.random() * userNames.length)];
+            const randomAction = activities[Math.floor(Math.random() * activities.length)];
+            
+            msgSpan.innerHTML = randomAction(randomUser);
             ticker.style.display = "block";
-            setTimeout(() => { ticker.style.display = "none"; }, 3000);
-        }, 5000);
+            
+            setTimeout(() => { ticker.style.display = "none"; }, 4000);
+        }, 7000); // 7 Seconds Interval
 
         // CART & CONTACT
         window.addToCart = (name, price) => {
@@ -131,4 +160,3 @@
 
 </body>
 </html>
-
