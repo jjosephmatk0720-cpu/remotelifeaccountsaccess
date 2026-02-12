@@ -21,7 +21,7 @@
         @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .feedback-scroll { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 20px; scrollbar-width: none; }
         .feedback-scroll::-webkit-scrollbar { display: none; }
-        #cart-count { font-size: 8px; position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; width: 14px; height: 14px; display: flex; items-center; justify-content: center; }
+        #cart-count { font-size: 8px; position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body class="p-4 min-h-screen pb-32">
@@ -65,15 +65,18 @@
         </div>
     </div>
 
-    <div id="cart-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-md glass-card p-5 rounded-[2rem] flex flex-col gap-3 hidden z-50 shadow-2xl border-t-2 border-blue-500">
-        <div class="flex justify-between items-center">
+    <div id="cart-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-md glass-card p-5 rounded-[2.5rem] flex flex-col gap-3 hidden z-50 shadow-2xl border-t-2 border-blue-500">
+        <div class="flex justify-between items-center px-2">
             <div>
                 <p id="promo-tag" class="text-[8px] font-black text-yellow-400 uppercase hidden">🔥 10% OFF APPLIED (2+ ACCOUNTS)</p>
                 <p id="cart-summary" class="font-black italic uppercase text-sm"></p>
             </div>
             <p id="cart-total" class="text-xl font-black text-white"></p>
         </div>
-        <button onclick="contactSupport()" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic tracking-widest shadow-lg">Proceed to Payment (WhatsApp)</button>
+        <div class="flex gap-2">
+            <button onclick="clearCart()" class="w-1/4 bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white py-4 rounded-2xl font-black uppercase text-[10px] italic transition-all">Clear</button>
+            <button onclick="contactSupport()" class="w-3/4 bg-green-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic tracking-widest shadow-lg">Pay via WhatsApp</button>
+        </div>
     </div>
 
     <script type="module">
@@ -103,6 +106,12 @@
             updateCartUI();
         };
 
+        window.clearCart = () => {
+            cart = [];
+            updateCartUI();
+            document.getElementById('cart-bar').classList.add('hidden');
+        };
+
         window.updateCartUI = () => {
             const count = cart.length;
             document.getElementById('cart-count').innerText = count;
@@ -111,7 +120,6 @@
                 document.getElementById('cart-bar').classList.remove('hidden');
                 let total = cart.reduce((sum, item) => sum + item.price, 0);
                 
-                // 10% OFF Logic for 2 or more accounts
                 if (count >= 2) {
                     total = total * 0.9;
                     document.getElementById('promo-tag').classList.remove('hidden');
@@ -119,14 +127,16 @@
                     document.getElementById('promo-tag').classList.add('hidden');
                 }
 
-                document.getElementById('cart-summary').innerText = `${count} Account(s) Selected`;
+                document.getElementById('cart-summary').innerText = `${count} Account(s)`;
                 document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+            } else {
+                document.getElementById('cart-count').innerText = "0";
             }
         };
 
         window.toggleCartDisplay = () => {
             if(cart.length > 0) document.getElementById('cart-bar').classList.toggle('hidden');
-            else alert("Your cart is empty!");
+            else alert("Cart is empty.");
         };
 
         window.contactSupport = () => {
@@ -135,25 +145,16 @@
             if (count >= 2) total = total * 0.9;
 
             const itemsList = cart.map(i => i.name).join(", ");
-            const msg = `Hello Working Remotely, I want to pay for ${count} account(s): [${itemsList}]. Total amount after discount: $${total.toFixed(2)}. Please provide payment details.`;
+            const msg = `Hello Working Remotely, I want to pay for ${count} account(s): [${itemsList}]. Total: $${total.toFixed(2)}.`;
             window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
         };
 
-        // ... Keep existing activities and requestTraining code ...
         window.requestTraining = () => {
             window.open(`https://wa.me/18608968455?text=I'm requesting a Zoom link for training I will pay the fee 20$.`, '_blank');
         };
 
-        const userNames = ["Liam M.", "Noah W.", "Oliver S.", "Chumbaa J.", "James B.", "Njeri D.", "Ben O.", "Lucaku P.", "jeptoo T.", "Theo G.", "Emma L.", "Olivia C.", "Wambua R.", "Sophia H.", "Isabella M.", "Kibet K.", "Amelia F.", "Evelyn N.", "Oga T.", "Emily W.", "Ogochukwu X.", "Mercy A.", "Kevin R.", "Fatima Z.", "Chidi E.", "Santi G.", "Yuki H.", "Lars V.", "Zoe B.", "Omar F."];
-        const acts = [
-            (name) => `User ${name} purchased a Package!`,
-            (name) => `User ${name} referred a new member!`,
-            (name) => `Withdrawal approved for ${name}`,
-            (name) => `User ${name} earned $5.00 referral bonus!`,
-            (name) => `Goal Alert: ${name} attained 10 recruits! 🏆`,
-            (name) => `User ${name} started Zoom training!`,
-            (name) => `User ${name} completed a daily task!`
-        ];
+        const userNames = ["Liam M.", "Noah W.", "Chumbaa J.", "Njeri D.", "Ben O.", "jeptoo T.", "Wambua R.", "Kibet K.", "Oga T.", "Mercy A."];
+        const acts = [(name) => `User ${name} purchased a Package!`, (name) => `User ${name} referred a new member!`, (name) => `Withdrawal approved for ${name}`];
         setInterval(() => {
             const ticker = document.getElementById('activity-ticker');
             const msgSpan = document.getElementById('activity-msg');
