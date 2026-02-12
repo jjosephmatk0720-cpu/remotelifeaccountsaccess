@@ -3,171 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketplace | WORKING REMOTELY</title>
+    <title>Admin Dashboard | Working Remote</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .hero-bg {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), 
-                        url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover; background-position: center; background-attachment: fixed;
+        .admin-bg { background: #0f172a; color: white; }
+        .glass-panel { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        body { opacity: 0; transition: opacity 0.5s; }
+        input, textarea { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; font-size: 10px !important; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .order-card { border-left: 3px solid #3b82f6; transition: all 0.3s ease; }
+        .new-alert { animation: pulse-border 2s infinite; }
+        @keyframes pulse-border {
+            0% { border-color: #3b82f6; }
+            50% { border-color: #fbbf24; }
+            100% { border-color: #3b82f6; }
         }
-        .blur-card { 
-            background: rgba(255, 255, 255, 0.95); 
-            backdrop-filter: blur(10px); 
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        @media (max-width: 640px) {
-            .blur-card { padding: 1.25rem !important; border-radius: 1.5rem !important; }
-            h1 { font-size: 1.25rem !important; }
-            #activity-ticker { left: 10px !important; bottom: 85px !important; width: 90%; }
-        }
-        body { opacity: 0; transition: opacity 0.5s; overflow-x: hidden; scroll-behavior: smooth; }
-        #activity-ticker {
-            position: fixed; bottom: 90px; left: 20px; z-index: 1000;
-            pointer-events: none; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateY(100px); opacity: 0;
-        }
-        .ticker-visible { transform: translateY(0) !important; opacity: 1 !important; }
-        #cart-sidebar { transition: transform 0.3s ease-in-out; }
     </style>
 </head>
-<body id="main-body" class="hero-bg min-h-screen text-gray-900 font-sans">
+<body id="main-body" class="admin-bg min-h-screen font-sans p-4">
 
-    <nav class="p-4 md:p-6 flex justify-between items-center max-w-7xl mx-auto relative z-10">
-        <h1 class="text-xl md:text-2xl font-black text-white italic tracking-tighter uppercase">WORKING REMOTELY</h1>
-        <div class="flex items-center space-x-3 md:space-x-6">
-            <a href="#training-center" class="text-white text-[10px] md:text-[11px] font-black uppercase tracking-widest hover:text-blue-400">Training</a>
-            <button onclick="toggleCart()" class="relative text-white group">
-                <svg class="w-6 h-6 md:w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                <span id="cart-count" class="absolute -top-1 -right-1 bg-blue-600 text-[10px] font-bold px-1.5 py-0.5 rounded-full">0</span>
-            </button>
-            <a href="profile.html" class="text-white text-[10px] md:text-[11px] font-black uppercase tracking-widest">Profile</a>
-            <button onclick="logout()" class="bg-red-600 text-white px-3 py-1.5 md:px-5 md:py-2 rounded-full text-[9px] md:text-[11px] font-black uppercase italic">Logout</button>
+    <audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
+
+    <nav class="max-w-7xl mx-auto flex justify-between items-center mb-6">
+        <h1 class="text-xl font-black italic uppercase tracking-tighter">Jubilee Fortunes <span class="text-blue-500">Admin</span></h1>
+        <div class="flex space-x-2">
+            <a href="shop.html" class="text-[9px] font-black uppercase tracking-widest py-2 px-3 border border-white/20 rounded-full hover:bg-white hover:text-black transition">View Shop</a>
+            <button onclick="logout()" class="text-[9px] font-black uppercase tracking-widest py-2 px-3 bg-red-600 rounded-full">Logout</button>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto p-4 md:p-6">
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-10">
-            </div>
-
-        <section class="mt-20 md:mt-32 mb-20">
-            <h2 class="text-center text-white text-xl font-black uppercase italic tracking-[0.3em] mb-12">Verified Feedback</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div class="blur-card p-5 rounded-3xl shadow-xl">
-                    <div class="text-yellow-500 text-xs mb-2">★★★★★</div>
-                    <p class="text-[11px] font-bold italic text-gray-700">"Fast transfer, legit UK outlier account transcriptions training."</p>
-                    <p class="mt-3 text-[9px] font-black uppercase text-blue-600">— David K.</p>
-                </div>
-                <div class="blur-card p-5 rounded-3xl shadow-xl">
-                    <div class="text-yellow-500 text-xs mb-2">★★★★★</div>
-                    <p class="text-[11px] font-bold italic text-gray-700">"Bought 2 Crowdgen accounts, got 10% off. Smooth trainer!"</p>
-                    <p class="mt-3 text-[9px] font-black uppercase text-blue-600">— Njeri M.</p>
-                </div>
-                <div class="blur-card p-5 rounded-3xl shadow-xl">
-                    <div class="text-yellow-500 text-xs mb-2">★★★★★</div>
-                    <p class="text-[11px] font-bold italic text-gray-700">"Excellent support for US tasks, data annotations tasks very fast."</p>
-                    <p class="mt-3 text-[9px] font-black uppercase text-blue-600">— Musyoka D.</p>
-                </div>
-                <div class="blur-card p-5 rounded-3xl shadow-xl">
-                    <div class="text-yellow-500 text-xs mb-2">★★★★★</div>
-                    <p class="text-[11px] font-bold italic text-gray-700">"Working great for US tasks, very reliable & kiswahili translation."</p>
-                    <p class="mt-3 text-[9px] font-black uppercase text-blue-600">— Jeruto C.</p>
-                </div>
-                <div class="blur-card p-5 rounded-3xl shadow-xl">
-                    <div class="text-yellow-500 text-xs mb-2">★★★★★</div>
-                    <p class="text-[11px] font-bold italic text-gray-700">"Quick email verification, legit transfer & easy access."</p>
-                    <p class="mt-3 text-[9px] font-black uppercase text-blue-600">— Mikel K.</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <div id="activity-ticker">
-        <div class="bg-white p-4 rounded-2xl border-l-4 border-blue-600 shadow-2xl flex items-center gap-4">
-            <div class="w-3 h-3 bg-green-500 rounded-full animate-ping"></div>
-            <p id="ticker-text" class="text-[11px] font-black uppercase text-gray-800 italic"></p>
-        </div>
-    </div>
-
-    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-[150] transform translate-x-full p-6 flex flex-col">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-xl font-black uppercase italic text-blue-900">Checkout</h2>
-            <button onclick="toggleCart()" class="text-gray-400 hover:text-black text-2xl">✕</button>
-        </div>
-        <div id="cart-items" class="flex-grow overflow-y-auto space-y-4"></div>
-        <div class="border-t pt-6 mt-6">
-            <div id="discount-note" class="hidden mb-4 text-[10px] font-black text-green-600 uppercase bg-green-50 p-2 rounded-lg text-center italic">🎉 10% Multi-Buy Discount Applied!</div>
-            <div class="flex justify-between font-black text-lg text-black uppercase mb-6">
-                <span>Total</span><span id="cart-total">$0</span>
-            </div>
-            <button onclick="checkout('whatsapp')" class="w-full bg-green-600 text-white py-3 rounded-xl font-black text-[10px] uppercase mb-2">Order via WhatsApp</button>
-            <button onclick="checkout('tawk')" class="w-full bg-blue-700 text-white py-3 rounded-xl font-black text-[10px] uppercase">Order via Live Chat</button>
-        </div>
-    </div>
-
-    <script type="text/javascript">
-        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4">
         
-        // This makes it the Blue Round "We Are Here" bubble from your picture
-        Tawk_API.customStyle = {
-            visibility : {
-                desktop : { position : 'br', xOffset : 20, yOffset : 20 },
-                mobile : { position : 'br', xOffset : 15, yOffset : 85 }
-            }
-        };
+        <div class="lg:col-span-3 space-y-4">
+            <div class="glass-panel p-4 rounded-3xl border-yellow-500/30">
+                <h2 class="text-[10px] font-black uppercase tracking-widest text-yellow-400 mb-3 italic">📣 Shop Banner</h2>
+                <input type="text" id="announcement-msg" placeholder="Sale text..." class="w-full p-2 rounded-lg outline-none mb-2">
+                <button onclick="postAnnouncement()" class="w-full bg-yellow-500 text-black font-black uppercase italic py-2 rounded-lg text-[9px] tracking-widest">Update Banner</button>
+            </div>
 
-        (function(){
-            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-            s1.async=true; 
-            // Using the correct IDs from your Dashboard
-            s1.src='https://embed.tawk.to/6797549464a0f82197e62180/1jfp2cf6e'; 
-            s1.charset='UTF-8'; 
-            s1.setAttribute('crossorigin','*');
-            s0.parentNode.insertBefore(s1,s0);
-        })();
-    </script>
+            <div class="glass-panel p-4 rounded-3xl">
+                <h2 class="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-3 italic">🏆 Top Recruiters</h2>
+                <div id="leaderboard" class="space-y-2 max-h-[200px] overflow-y-auto pr-2"></div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-6 space-y-4">
+            <div class="glass-panel p-5 rounded-3xl border-blue-500/40 bg-blue-500/5">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-[10px] font-black uppercase tracking-widest text-blue-400 italic">⚡ Live Signals</h2>
+                    <span class="text-[8px] font-bold text-green-400 animate-pulse uppercase">Active Monitoring</span>
+                </div>
+                <div id="notification-feed" class="space-y-2 max-h-[300px] overflow-y-auto pr-2"></div>
+            </div>
+
+            <div class="glass-panel p-5 rounded-3xl border-purple-500/30">
+                <h2 class="text-[10px] font-black uppercase tracking-widest text-purple-400 mb-3 italic">💸 Pending Withdrawals</h2>
+                <div class="max-h-[200px] overflow-y-auto pr-2">
+                    <table class="w-full text-left text-[9px]">
+                        <tbody id="withdrawal-list" class="divide-y divide-white/5"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="glass-panel p-5 rounded-3xl border-green-500/20">
+                <h2 class="text-[10px] font-black uppercase tracking-widest text-green-400 mb-3 italic">📦 Shop Inventory</h2>
+                <div class="max-h-[250px] overflow-y-auto pr-2">
+                    <table class="w-full text-left text-[9px]">
+                        <thead>
+                            <tr class="text-gray-500 uppercase border-b border-white/10 text-[7px]">
+                                <th class="pb-2">Account Name</th>
+                                <th class="pb-2">Price</th>
+                                <th class="pb-2 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-list" class="divide-y divide-white/5"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-3">
+            <div class="glass-panel p-5 rounded-3xl sticky top-4 border-blue-500/50">
+                <h2 class="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-4 italic">➕ Post New Account</h2>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-[8px] uppercase text-gray-500 font-bold ml-1">Account Name</label>
+                        <input type="text" id="p-name" placeholder="e.g. Outlier UK Verified" class="w-full p-2 rounded-lg mt-1">
+                    </div>
+                    <div>
+                        <label class="text-[8px] uppercase text-gray-500 font-bold ml-1">Price ($)</label>
+                        <input type="number" id="p-price" placeholder="45" class="w-full p-2 rounded-lg mt-1">
+                    </div>
+                    <div>
+                        <label class="text-[8px] uppercase text-gray-500 font-bold ml-1">Category / Region</label>
+                        <input type="text" id="p-desc" placeholder="e.g. Remote Access / UK" class="w-full p-2 rounded-lg mt-1">
+                    </div>
+                    <div>
+                        <label class="text-[8px] uppercase text-gray-500 font-bold ml-1">Short Description</label>
+                        <input type="text" id="p-tasks" placeholder="e.g. AI Training Task" class="w-full p-2 rounded-lg mt-1">
+                    </div>
+                    <div>
+                        <label class="text-[8px] uppercase text-gray-500 font-bold ml-1">Full Details</label>
+                        <textarea id="p-details" placeholder="Full account details here..." class="w-full p-2 rounded-lg h-16 mt-1"></textarea>
+                    </div>
+                    <button onclick="addProduct()" class="w-full bg-blue-600 text-white font-black uppercase italic py-3 rounded-lg text-[9px] tracking-widest shadow-lg shadow-blue-900/50 hover:bg-blue-500 transition active:scale-95">Post To Shop</button>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, addDoc, setDoc, query, where, updateDoc, deleteDoc, orderBy, limit, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Your Firebase config...
         const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        let cart = [];
+        const audio = document.getElementById('notif-sound');
+        let firstLoad = true;
+        
+        const ADMIN_KEY = "SRC3838";
 
         onAuthStateChanged(auth, (user) => {
             if (!user) { window.location.href = "index.html"; }
-            else { document.getElementById('main-body').style.opacity = "1"; listenToProducts(); runLiveActivity(); }
+            else {
+                const access = prompt("ADMIN KEY:");
+                if (access === ADMIN_KEY) { 
+                    document.getElementById('main-body').style.opacity = "1"; 
+                    refreshData();
+                    startNotificationListener();
+                } else { window.location.href = "shop.html"; }
+            }
         });
 
-        // Checkout function fix for Live Chat
-        window.checkout = (method) => {
-            if(cart.length === 0) return alert("Cart is empty!");
-            const items = cart.map(i => i.name).join(', ');
-            const total = document.getElementById('cart-total').innerText;
-            const orderMsg = `NEW ORDER: ${items} | TOTAL: ${total}`;
+        // LOADS ALL DATA
+        async function refreshData() {
+            loadLeaderboard();
+            loadWithdrawals();
+            loadInventory();
+        }
 
-            if(method === 'whatsapp') {
-                window.open(`https://wa.me/18608968455?text=${encodeURIComponent(orderMsg)}`, '_blank');
-            } else if (method === 'tawk') {
-                // Check if Tawk is actually loaded before trying to use it
-                if (window.Tawk_API && typeof Tawk_API.maximize === 'function') {
-                    Tawk_API.maximize();
-                    Tawk_API.sendMessage(orderMsg);
-                    toggleCart(false);
-                } else {
-                    alert("Chat agent is still connecting... please wait a few seconds.");
-                }
+        // --- UPDATED ADD PRODUCT: SAVES TO FIREBASE CORRECTLY ---
+        window.addProduct = async () => {
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            const desc = document.getElementById('p-desc').value;
+            const tasks = document.getElementById('p-tasks').value;
+            const details = document.getElementById('p-details').value;
+
+            if(!name || !price) return alert("Fill name and price!");
+
+            try {
+                // We add to "products" collection. The Shop must also read from "products".
+                await addDoc(collection(db, "products"), {
+                    name: name,
+                    price: price,
+                    description: desc, // This maps to category in the shop
+                    details: details,
+                    tasks: tasks,
+                    createdAt: serverTimestamp()
+                });
+
+                alert("SUCCESS! Account is now live on the shop.");
+                
+                // Clear fields
+                document.getElementById('p-name').value = "";
+                document.getElementById('p-price').value = "";
+                document.getElementById('p-desc').value = "";
+                document.getElementById('p-tasks').value = "";
+                document.getElementById('p-details').value = "";
+                
+                loadInventory();
+            } catch (e) {
+                alert("Error adding product: " + e.message);
             }
         };
 
-        // ... Product listing and Activity Ticker logic (keeping all your names and deeds)
-        // [Logic preserved to match your previous setup]
+        // --- NOTIFICATION LISTENER ---
+        function startNotificationListener() {
+            const q = query(collection(db, "notifications"), orderBy("time", "desc"), limit(15));
+            onSnapshot(q, (snapshot) => {
+                const feed = document.getElementById('notification-feed');
+                if (!firstLoad && snapshot.docChanges().some(change => change.type === "added")) {
+                    audio.play().catch(() => {});
+                }
+                feed.innerHTML = snapshot.empty ? `<div class="text-center py-4 text-[9px] text-gray-500 italic">No activity yet.</div>` : "";
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const time = data.time ? new Date(data.time.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "Now";
+                    const isTraining = data.type === "TRAINING";
+                    feed.innerHTML += `
+                        <div class="order-card p-3 rounded-xl bg-white/5 border border-white/5 mb-2 ${firstLoad ? '' : 'new-alert'}">
+                            <div class="flex justify-between items-start">
+                                <span class="text-[7px] font-black uppercase px-1.5 py-0.5 rounded ${isTraining ? 'bg-yellow-500 text-black' : 'bg-blue-600 text-white'}">${data.type}</span>
+                                <span class="text-[8px] text-gray-500 font-bold">${time}</span>
+                            </div>
+                            <p class="text-[10px] font-black uppercase italic tracking-tighter mt-1 text-white">${isTraining ? 'Training Requested' : data.items}</p>
+                            <div class="flex justify-between items-center mt-1">
+                                <p class="text-[8px] text-blue-400 font-bold">${data.user}</p>
+                                <p class="text-[10px] font-black text-green-400">${isTraining ? '' : '$' + data.total}</p>
+                            </div>
+                        </div>`;
+                });
+                firstLoad = false;
+            });
+        }
+
+        async function loadWithdrawals() {
+            const list = document.getElementById('withdrawal-list');
+            const q = query(collection(db, "withdrawals"), where("status", "==", "pending"));
+            const snap = await getDocs(q);
+            list.innerHTML = snap.empty ? `<tr><td class="py-4 text-gray-500 italic text-center">None</td></tr>` : "";
+            snap.forEach((d) => {
+                const data = d.data();
+                list.innerHTML += `<tr class="font-bold border-b border-white/5"><td class="py-3">${data.email}<br><span class="text-blue-400 select-all font-mono">${data.wallet}</span></td><td class="text-green-400">${data.amount}</td><td class="text-right space-x-1"><button onclick="handleWithdrawal('${d.id}', 'approved')" class="bg-green-600 px-2 py-1 rounded text-[7px] uppercase">Mark Paid</button></td></tr>`;
+            });
+        }
+
+        async function loadInventory() {
+            const list = document.getElementById('inventory-list');
+            const snap = await getDocs(collection(db, "products"));
+            list.innerHTML = "";
+            snap.forEach((d) => {
+                const data = d.data();
+                list.innerHTML += `<tr class="border-b border-white/5"><td class="py-3 font-bold">${data.name}</td><td class="text-blue-400 font-bold">$${data.price}</td><td class="text-right"><button onclick="deleteProduct('${d.id}')" class="bg-red-900/50 text-red-400 border border-red-900 px-2 py-1 rounded text-[7px] uppercase hover:bg-red-600 hover:text-white transition">Delete</button></td></tr>`;
+            });
+        }
+
+        window.deleteProduct = async (id) => {
+            if(confirm("Remove from shop?")) {
+                await deleteDoc(doc(db, "products", id));
+                loadInventory();
+            }
+        }
+
+        window.handleWithdrawal = async (id, status) => {
+            await updateDoc(doc(db, "withdrawals", id), { status: status });
+            loadWithdrawals();
+        };
+
+        window.postAnnouncement = async () => {
+            const msg = document.getElementById('announcement-msg').value;
+            await setDoc(doc(db, "settings", "announcement"), { text: msg, active: msg !== "" });
+            alert("Updated banner for all users!");
+        };
+
+        async function loadLeaderboard() {
+            const snap = await getDocs(collection(db, "users"));
+            const counts = {};
+            snap.forEach(d => { if(d.data().referredBy && d.data().referredBy !== "none") counts[d.data().referredBy] = (counts[d.data().referredBy] || 0) + 1; });
+            const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+            document.getElementById('leaderboard').innerHTML = sorted.map(([id, c]) => `<div class="flex justify-between p-2 bg-white/5 rounded-lg border border-white/5 mb-2"><span class="text-gray-400 italic">...${id.slice(-5)}</span><span class="text-blue-400 font-black">${c} RECRUITS</span></div>`).join('');
+        }
+
+        window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
     </script>
 </body>
 </html>
