@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketplace | Working Remote</title>
+    <title>Marketplace | Jubilee Fortunes Investments</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hero-bg {
@@ -15,34 +15,42 @@
             background: rgba(255, 255, 255, 0.95); 
             backdrop-filter: blur(10px); 
             transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
         }
-        .blur-card:hover { transform: translateY(-5px); }
-        body { opacity: 0; transition: opacity 0.5s; }
-
-        /* THE LIVE ACTIVITY POP-UP STYLE */
+        .blur-card:hover { transform: translateY(-5px); border-color: #3b82f6; }
+        body { opacity: 0; transition: opacity 0.5s; overflow-x: hidden; }
+        
         #activity-ticker {
-            position: fixed; bottom: 30px; left: 20px; z-index: 1000;
-            pointer-events: none; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            transform: translateY(150px); opacity: 0;
+            position: fixed; bottom: 20px; left: 20px; z-index: 1000;
+            pointer-events: none; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(100px); opacity: 0;
         }
         .ticker-visible { transform: translateY(0) !important; opacity: 1 !important; }
+        #cart-sidebar { transition: transform 0.3s ease-in-out; }
     </style>
 </head>
-<body id="main-body" class="hero-bg min-h-screen text-gray-900">
+<body id="main-body" class="hero-bg min-h-screen text-gray-900 font-sans">
 
     <nav class="p-6 flex justify-between items-center max-w-7xl mx-auto relative z-10">
         <h1 class="text-2xl font-black text-white italic tracking-tighter uppercase">Working Remote</h1>
         <div class="flex items-center space-x-6">
-            <a href="profile.html" class="text-white text-[11px] font-black uppercase tracking-widest hover:text-blue-400">My Profile</a>
-            <button onclick="logout()" class="bg-red-600 text-white px-5 py-2 rounded-full text-[11px] font-black uppercase italic">Logout</button>
+            <button onclick="toggleCart()" class="relative text-white group">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <span id="cart-count" class="absolute -top-1 -right-1 bg-blue-600 text-[10px] font-bold px-1.5 py-0.5 rounded-full">0</span>
+            </button>
+            <a href="profile.html" class="text-white text-[11px] font-black uppercase tracking-widest hover:text-blue-400">Profile</a>
+            <button onclick="logout()" class="bg-red-600 text-white px-5 py-2 rounded-full text-[11px] font-black uppercase italic hover:bg-black transition">Logout</button>
         </div>
     </nav>
 
     <main class="max-w-7xl mx-auto p-6">
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-10">
+            <div class="col-span-full text-center py-20">
+                <p class="text-white font-bold animate-pulse uppercase tracking-widest">Syncing with Secure Servers...</p>
             </div>
+        </div>
 
-        <section class="mt-32">
+        <section class="mt-32 mb-20">
             <h2 class="text-center text-white text-xl font-black uppercase italic tracking-[0.3em] mb-12">Verified Feedback</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div class="blur-card p-5 rounded-3xl shadow-xl">
@@ -81,60 +89,126 @@
         </div>
     </div>
 
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-[150] transform translate-x-full p-6 flex flex-col">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-xl font-black uppercase italic text-blue-900">Your Cart</h2>
+            <button onclick="toggleCart()" class="text-gray-400 hover:text-black text-2xl">✕</button>
+        </div>
+        <div id="cart-items" class="flex-grow overflow-y-auto space-y-4"></div>
+        <div class="border-t pt-6 mt-6">
+            <div class="flex justify-between font-black text-lg text-black uppercase mb-6">
+                <span>Total</span><span id="cart-total">$0</span>
+            </div>
+            <button onclick="checkout()" class="w-full bg-blue-700 text-white py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-black transition">Complete Purchase</button>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", 
+            authDomain: "remoteworkingacess.firebaseapp.com", 
+            projectId: "remoteworkingacess", 
+            storageBucket: "remoteworkingacess.firebasestorage.app", 
+            messagingSenderId: "953179052891", 
+            appId: "1:953179052891:web:8126924e32e9fb62f4987e" 
+        };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
+        let cart = [];
 
         onAuthStateChanged(auth, (user) => {
             if (!user) { window.location.href = "index.html"; }
             else { 
                 document.getElementById('main-body').style.opacity = "1"; 
-                loadAdminAccounts(); 
+                listenToProducts(); 
                 runLiveActivity(); 
             }
         });
 
-        // THIS LOADS YOUR ADMIN LISTINGS
-        function loadAdminAccounts() {
-            const grid = document.getElementById('product-grid');
-            const data = JSON.parse(localStorage.getItem('investment_plans')) || [];
-            
-            if (data.length === 0) {
-                grid.innerHTML = `<p class="text-white font-bold opacity-50 col-span-full text-center">No accounts listed yet.</p>`;
-                return;
-            }
-
-            grid.innerHTML = data.map((acc, i) => `
-                <div class="blur-card p-6 rounded-[2rem] shadow-lg flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-xl font-black uppercase italic text-blue-900 leading-tight">${acc.name || acc.planName}</h3>
-                        <p class="text-[10px] font-black text-blue-500 uppercase mt-1 mb-4">${acc.category || 'Verified Account'}</p>
-                    </div>
-                    <div class="flex justify-between items-center pt-4 border-t border-gray-100">
-                        <span class="text-2xl font-black text-black">$${acc.price || acc.amount}</span>
-                        <button class="bg-blue-700 text-white px-5 py-2 rounded-xl font-black text-[10px] uppercase italic">Buy Now</button>
-                    </div>
-                </div>
-            `).join('');
+        // LIVE DATABASE LISTENER (Update shop automatically without refresh)
+        function listenToProducts() {
+            const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snapshot) => {
+                const grid = document.getElementById('product-grid');
+                if (snapshot.empty) {
+                    grid.innerHTML = `<p class="text-white font-bold opacity-50 col-span-full text-center py-20">No accounts currently listed.</p>`;
+                    return;
+                }
+                grid.innerHTML = "";
+                snapshot.forEach((doc) => {
+                    const acc = doc.data();
+                    grid.innerHTML += `
+                        <div class="blur-card p-6 rounded-[2.5rem] shadow-xl flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-xl font-black uppercase italic text-blue-900 leading-tight">${acc.name}</h3>
+                                <p class="text-[10px] font-black text-blue-500 uppercase mt-1 mb-4 tracking-widest">${acc.description || 'Verified'}</p>
+                                <p class="text-[11px] text-gray-600 font-bold mb-6 line-clamp-3">${acc.tasks || acc.details || ''}</p>
+                            </div>
+                            <div class="flex justify-between items-center pt-5 border-t border-gray-100">
+                                <span class="text-2xl font-black text-black tracking-tighter">$${acc.price}</span>
+                                <button onclick="addToCart('${doc.id}', '${acc.name}', ${acc.price})" class="bg-blue-700 text-white px-5 py-2.5 rounded-xl font-black text-[10px] uppercase italic hover:bg-blue-900 transition">Buy Now</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
         }
 
-        // LIVE ACTIVITY POP-UP LOGIC
+        // CART LOGIC
+        window.addToCart = (id, name, price) => {
+            cart.push({id, name, price});
+            updateCartUI();
+            toggleCart(true);
+        };
+
+        window.updateCartUI = () => {
+            document.getElementById('cart-count').innerText = cart.length;
+            const total = cart.reduce((sum, item) => sum + Number(item.price), 0);
+            document.getElementById('cart-total').innerText = `$${total}`;
+            document.getElementById('cart-items').innerHTML = cart.map((item, idx) => `
+                <div class="bg-gray-50 p-4 rounded-2xl flex justify-between items-center border border-gray-100">
+                    <div>
+                        <p class="text-[10px] font-black uppercase text-blue-900">${item.name}</p>
+                        <p class="text-xs font-bold text-gray-500">$${item.price}</p>
+                    </div>
+                    <button onclick="removeFromCart(${idx})" class="text-red-500 font-bold text-xs">Remove</button>
+                </div>
+            `).join('');
+        };
+
+        window.removeFromCart = (idx) => { cart.splice(idx, 1); updateCartUI(); };
+        window.toggleCart = (show) => {
+            const sidebar = document.getElementById('cart-sidebar');
+            if(show === true) sidebar.classList.remove('translate-x-full');
+            else sidebar.classList.toggle('translate-x-full');
+        };
+
+        window.checkout = () => {
+            const items = cart.map(i => i.name).join(', ');
+            const msg = `PURCHASE REQUEST: ${items}. Total: ${document.getElementById('cart-total').innerText}`;
+            window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
+        };
+
+        // LIVE ACTIVITY POP-UP
         function runLiveActivity() {
             const users = ["Amos K.", "Sarah W.", "John D.", "Njeri G.", "David L.", "Mikel K.", "Jeruto C."];
-            const deeds = ["just earned $5.00!", "reached 10 recruits!", "withdrew $50.00!", "purchased a US Task Account!"];
+            const deeds = ["earned $5.00!", "reached 10 recruits!", "withdrew $50.00!", "purchased Outlier AI!", "joined training!"];
             
             setInterval(() => {
                 const ticker = document.getElementById('activity-ticker');
                 const text = document.getElementById('ticker-text');
-                text.innerText = `${users[Math.floor(Math.random()*users.length)]} ${deeds[Math.floor(Math.random()*deeds.length)]}`;
-                
-                ticker.classList.add('ticker-visible');
-                setTimeout(() => { ticker.classList.remove('ticker-visible'); }, 4000);
-            }, 9000);
+                if(ticker && text) {
+                    text.innerText = `${users[Math.floor(Math.random()*users.length)]} ${deeds[Math.floor(Math.random()*deeds.length)]}`;
+                    ticker.classList.add('ticker-visible');
+                    setTimeout(() => { ticker.classList.remove('ticker-visible'); }, 4000);
+                }
+            }, 10000);
         }
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
