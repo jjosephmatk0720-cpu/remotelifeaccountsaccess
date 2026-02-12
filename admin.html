@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | WORKING REMOTELY</title>
+    <title>Admin Dashboard | Jubilee Fortunes Investments</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: #f0f2f5; font-family: sans-serif; }
@@ -43,17 +43,23 @@
     </main>
 
     <script type="text/javascript">
-        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        var Tawk_API = Tawk_API || {};
+        var Tawk_LoadStart = new Date();
+
+        // EXPLICIT CONNECTION FOR EFFICIENCY
+        Tawk_API.id = '6797549464a0f82197e62180'; 
+        Tawk_API.widgetId = '1jfp2cf6e';         
+
         Tawk_API.customStyle = {
             visibility : {
                 desktop : { position : 'br', xOffset : 20, yOffset : 20 },
                 mobile : { position : 'br', xOffset : 15, yOffset : 85 }
             }
         };
+
         (function(){
             var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
             s1.async=true;
-            // Updated to match your specific dashboard ID
             s1.src='https://embed.tawk.to/6797549464a0f82197e62180/1jfp2cf6e'; 
             s1.charset='UTF-8';
             s1.setAttribute('crossorigin','*');
@@ -66,14 +72,22 @@
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", 
+            authDomain: "remoteworkingacess.firebaseapp.com", 
+            projectId: "remoteworkingacess", 
+            storageBucket: "remoteworkingacess.firebasestorage.app", 
+            messagingSenderId: "953179052891", 
+            appId: "1:953179052891:web:8126924e32e9fb62f4987e" 
+        };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Security Check
+        // Security Check for Admin Email
         onAuthStateChanged(auth, (user) => {
-            if (!user || user.email !== "jubileefortunesinvestments@gmail.com") {
+            if (!user || user.email !== "contactworkingonlinetasks@gmail.com") {
                 window.location.href = "login.html";
             } else {
                 fetchProducts();
@@ -85,7 +99,7 @@
             const price = document.getElementById('p-price').value;
             const tasks = document.getElementById('p-tasks').value;
 
-            if(!name || !price) return alert("Fill required fields");
+            if(!name || !price) return alert("Please enter a name and price.");
 
             try {
                 await addDoc(collection(db, "products"), {
@@ -94,34 +108,34 @@
                     tasks: tasks,
                     createdAt: serverTimestamp()
                 });
-                alert("Product Added!");
+                alert("Success: Account added to marketplace.");
                 document.getElementById('p-name').value = "";
                 document.getElementById('p-price').value = "";
                 document.getElementById('p-tasks').value = "";
-            } catch (e) { alert("Error adding product"); }
+            } catch (e) { alert("Database Error: " + e.message); }
         };
 
         function fetchProducts() {
             const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
             onSnapshot(q, (snapshot) => {
                 const list = document.getElementById('admin-product-list');
-                list.innerHTML = "";
+                list.innerHTML = snapshot.empty ? `<p class="text-gray-400">Inventory empty.</p>` : "";
                 snapshot.forEach((pDoc) => {
                     const p = pDoc.data();
                     list.innerHTML += `
-                        <div class="flex justify-between items-center p-4 border-b hover:bg-gray-50">
+                        <div class="flex justify-between items-center p-4 border-b hover:bg-gray-50 transition">
                             <div>
-                                <p class="font-black text-blue-900">${p.name}</p>
-                                <p class="text-xs font-bold text-gray-500">$${p.price}</p>
+                                <p class="font-black text-blue-900 uppercase italic">${p.name}</p>
+                                <p class="text-xs font-bold text-green-600">$${p.price}</p>
                             </div>
-                            <button onclick="deleteProduct('${pDoc.id}')" class="text-red-600 font-bold text-xs uppercase border border-red-200 px-3 py-1 rounded-lg hover:bg-red-50">Remove</button>
+                            <button onclick="deleteProduct('${pDoc.id}')" class="text-red-600 font-bold text-[10px] uppercase border border-red-100 px-4 py-2 rounded-xl hover:bg-red-600 hover:text-white transition">Delete</button>
                         </div>`;
                 });
             });
         }
 
         window.deleteProduct = async (id) => {
-            if(confirm("Delete this item permanently?")) {
+            if(confirm("Permanently remove this account from the shop?")) {
                 await deleteDoc(doc(db, "products", id));
             }
         };
