@@ -33,6 +33,10 @@
                     </svg>
                 </button>
             </div>
+
+            <div id="forgot-pw-container" class="text-right pr-2">
+                <button onclick="handleForgotPassword()" class="text-[9px] font-black uppercase text-gray-400 hover:text-blue-600 transition tracking-widest">Forgot Password?</button>
+            </div>
             
             <button id="main-btn" onclick="handleAuth()" class="w-full bg-black text-white py-4 rounded-2xl font-black text-xs uppercase italic tracking-widest hover:bg-blue-700 transition-all shadow-lg">Login</button>
             
@@ -44,7 +48,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -60,7 +64,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Capture Referral ID from URL if present
         const urlParams = new URLSearchParams(window.location.search);
         const referralId = urlParams.get('ref');
 
@@ -83,6 +86,20 @@
             document.getElementById('auth-title').innerText = isLogin ? "Sign In" : "Register New Account";
             document.getElementById('main-btn').innerText = isLogin ? "Login" : "Create Account";
             document.getElementById('toggle-btn').innerText = isLogin ? "Create Account" : "Back to Login";
+            // Hide forgot password on register screen
+            document.getElementById('forgot-pw-container').style.display = isLogin ? 'block' : 'none';
+        };
+
+        window.handleForgotPassword = async () => {
+            const email = document.getElementById('email').value;
+            if(!email) return alert("Please enter your email address first.");
+            
+            try {
+                await sendPasswordResetEmail(auth, email);
+                alert("Password reset link sent to: " + email);
+            } catch (error) {
+                alert(error.message);
+            }
         };
 
         window.handleAuth = async () => {
@@ -100,11 +117,9 @@
                         alert("Verify your email! We sent a link to " + email);
                     }
                 } else {
-                    // REGISTER LOGIC WITH REFERRAL TRACKING
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     const user = userCredential.user;
 
-                    // Save the new user and who referred them into Firestore
                     await setDoc(doc(db, "users", user.uid), {
                         email: user.email,
                         referredBy: referralId || "none",
@@ -121,5 +136,18 @@
             }
         };
     </script>
+
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    Tawk_API.id = '6797549464a0f82197e62180';
+    Tawk_API.widgetId = '1jfp2cf6e';
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true; s1.src='https://embed.tawk.to/6797549464a0f82197e62180/1jfp2cf6e';
+    s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+
 </body>
 </html>
