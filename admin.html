@@ -6,36 +6,54 @@
     <title>Admin Dashboard | WORKING REMOTELY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #f0f2f5; font-family: sans-serif; }
-        .admin-card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        body { background: #0f172a; font-family: sans-serif; }
+        .admin-card { 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(10px);
+            border-radius: 2rem; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+        }
+        input, textarea { background: #f8fafc !important; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4 md:p-8 min-h-screen">
 
     <nav class="max-w-7xl mx-auto flex justify-between items-center mb-10">
-        <h1 class="text-2xl font-black uppercase italic text-blue-900">Jubilee Fortunes Admin</h1>
-        <button onclick="logout()" class="bg-red-600 text-white px-6 py-2 rounded-full font-bold text-xs uppercase">Logout</button>
+        <h1 class="text-2xl md:text-3xl font-black uppercase italic text-white tracking-tighter">WORKING REMOTELY</h1>
+        <div class="flex items-center gap-4">
+            <span class="text-blue-400 text-[10px] font-bold uppercase tracking-widest hidden md:block">System Administrator</span>
+            <button onclick="logout()" class="bg-red-600 text-white px-6 py-2 rounded-full font-black text-[10px] uppercase italic hover:bg-red-700 transition">Logout</button>
+        </div>
     </nav>
 
     <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         <section class="lg:col-span-1">
-            <div class="admin-card p-6">
-                <h2 class="text-lg font-black uppercase mb-6 border-b pb-2">Add New Account</h2>
+            <div class="admin-card p-8">
+                <h2 class="text-sm font-black uppercase text-blue-900 mb-6 flex items-center gap-2">
+                    <span class="w-2 h-2 bg-blue-600 rounded-full"></span>
+                    List New Account
+                </h2>
                 <div class="space-y-4">
-                    <input id="p-name" type="text" placeholder="Account Name (e.g. PROLIFIC)" class="w-full p-3 rounded-lg border font-bold text-sm">
-                    <input id="p-price" type="number" placeholder="Price (USD)" class="w-full p-3 rounded-lg border font-bold text-sm">
-                    <textarea id="p-tasks" placeholder="Task Details / Description" class="w-full p-3 rounded-lg border font-bold text-sm h-32"></textarea>
-                    <button onclick="addProduct()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-black uppercase tracking-widest hover:bg-black transition">Post to Shop</button>
+                    <input id="p-name" type="text" placeholder="ACCOUNT NAME" class="w-full p-4 rounded-xl border-0 ring-1 ring-gray-200 font-black text-xs uppercase italic focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input id="p-price" type="number" placeholder="PRICE (USD)" class="w-full p-4 rounded-xl border-0 ring-1 ring-gray-200 font-black text-xs outline-none">
+                    <textarea id="p-tasks" placeholder="ACCOUNT DETAILS & TASK INFO" class="w-full p-4 rounded-xl border-0 ring-1 ring-gray-200 font-bold text-xs h-32 outline-none"></textarea>
+                    
+                    <input id="p-key" type="password" placeholder="ADMIN KEY" class="w-full p-4 rounded-xl border-0 ring-1 ring-red-200 font-black text-xs outline-none focus:ring-2 focus:ring-red-500">
+                    
+                    <button onclick="addProduct()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black uppercase text-xs italic tracking-widest hover:bg-black transition shadow-lg shadow-blue-900/20">Post to Marketplace</button>
                 </div>
             </div>
         </section>
 
         <section class="lg:col-span-2">
-            <div class="admin-card p-6">
-                <h2 class="text-lg font-black uppercase mb-6 border-b pb-2">Live Shop Items</h2>
-                <div id="admin-product-list" class="space-y-4">
-                    <p class="text-gray-400 italic text-sm">Loading inventory...</p>
+            <div class="admin-card p-8">
+                <h2 class="text-sm font-black uppercase text-blue-900 mb-6 flex items-center gap-2">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    Live Inventory
+                </h2>
+                <div id="admin-product-list" class="space-y-3">
+                    <p class="text-gray-400 italic text-xs font-bold animate-pulse">Establishing secure link to database...</p>
                 </div>
             </div>
         </section>
@@ -45,18 +63,14 @@
     <script type="text/javascript">
         var Tawk_API = Tawk_API || {};
         var Tawk_LoadStart = new Date();
-
-        // EXPLICIT CONNECTION FOR EFFICIENCY
         Tawk_API.id = '6797549464a0f82197e62180'; 
         Tawk_API.widgetId = '1jfp2cf6e';         
-
         Tawk_API.customStyle = {
             visibility : {
                 desktop : { position : 'br', xOffset : 20, yOffset : 20 },
                 mobile : { position : 'br', xOffset : 15, yOffset : 85 }
             }
         };
-
         (function(){
             var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
             s1.async=true;
@@ -85,9 +99,8 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Security Check for Admin Email
         onAuthStateChanged(auth, (user) => {
-            if (!user || user.email !== "contactworkingonlinetasks@gmail.com") {
+            if (!user || user.email !== "contactremoteaccounts@gmail.com") {
                 window.location.href = "login.html";
             } else {
                 fetchProducts();
@@ -98,8 +111,14 @@
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
             const tasks = document.getElementById('p-tasks').value;
+            const key = document.getElementById('p-key').value;
 
-            if(!name || !price) return alert("Please enter a name and price.");
+            // VERIFY ADMIN KEY
+            if(key !== "SRC3838") {
+                return alert("ERROR: INVALID ADMIN KEY. ACCESS DENIED.");
+            }
+
+            if(!name || !price) return alert("Missing required fields.");
 
             try {
                 await addDoc(collection(db, "products"), {
@@ -108,34 +127,35 @@
                     tasks: tasks,
                     createdAt: serverTimestamp()
                 });
-                alert("Success: Account added to marketplace.");
+                alert("Listed Successfully on WORKING REMOTELY Marketplace.");
                 document.getElementById('p-name').value = "";
                 document.getElementById('p-price').value = "";
                 document.getElementById('p-tasks').value = "";
-            } catch (e) { alert("Database Error: " + e.message); }
+                document.getElementById('p-key').value = "";
+            } catch (e) { alert("Error: " + e.message); }
         };
 
         function fetchProducts() {
             const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
             onSnapshot(q, (snapshot) => {
                 const list = document.getElementById('admin-product-list');
-                list.innerHTML = snapshot.empty ? `<p class="text-gray-400">Inventory empty.</p>` : "";
+                list.innerHTML = snapshot.empty ? `<p class="text-gray-400 font-bold text-xs uppercase">No active listings.</p>` : "";
                 snapshot.forEach((pDoc) => {
                     const p = pDoc.data();
                     list.innerHTML += `
-                        <div class="flex justify-between items-center p-4 border-b hover:bg-gray-50 transition">
+                        <div class="flex justify-between items-center p-5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition group">
                             <div>
-                                <p class="font-black text-blue-900 uppercase italic">${p.name}</p>
-                                <p class="text-xs font-bold text-green-600">$${p.price}</p>
+                                <p class="font-black text-blue-900 uppercase italic text-sm tracking-tight">${p.name}</p>
+                                <p class="text-[10px] font-black text-green-600 uppercase mt-1">PRICE: $${p.price}</p>
                             </div>
-                            <button onclick="deleteProduct('${pDoc.id}')" class="text-red-600 font-bold text-[10px] uppercase border border-red-100 px-4 py-2 rounded-xl hover:bg-red-600 hover:text-white transition">Delete</button>
+                            <button onclick="deleteProduct('${pDoc.id}')" class="bg-gray-50 text-red-500 font-black text-[9px] uppercase px-4 py-2 rounded-lg group-hover:bg-red-600 group-hover:text-white transition-all border border-red-50">Remove</button>
                         </div>`;
                 });
             });
         }
 
         window.deleteProduct = async (id) => {
-            if(confirm("Permanently remove this account from the shop?")) {
+            if(confirm("Delete this listing from WORKING REMOTELY?")) {
                 await deleteDoc(doc(db, "products", id));
             }
         };
@@ -144,4 +164,3 @@
     </script>
 </body>
 </html>
-
