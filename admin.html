@@ -6,119 +6,69 @@
     <title>Admin Dashboard | WORKING REMOTELY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0f172a; font-family: sans-serif; }
-        .admin-card { 
-            background: rgba(255, 255, 255, 0.95); 
-            backdrop-filter: blur(10px);
-            border-radius: 2rem; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
-        }
-        input, textarea { background: #f8fafc !important; }
+        body { background: #0f172a; font-family: sans-serif; opacity: 0; transition: opacity 0.5s; }
+        .admin-card { background: white; border-radius: 2rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
     </style>
 </head>
-<body class="p-4 md:p-8 min-h-screen">
+<body id="admin-body" class="p-6 min-h-screen">
 
     <nav class="max-w-7xl mx-auto flex justify-between items-center mb-10">
-        <h1 class="text-2xl md:text-3xl font-black uppercase italic text-white tracking-tighter">WORKING REMOTELY</h1>
-        <div class="flex items-center gap-4">
-            <span class="text-blue-400 text-[10px] font-bold uppercase tracking-widest hidden md:block">System Administrator</span>
-            <button onclick="logout()" class="bg-red-600 text-white px-6 py-2 rounded-full font-black text-[10px] uppercase italic hover:bg-red-700 transition">Logout</button>
-        </div>
+        <h1 class="text-2xl font-black uppercase italic text-white tracking-tighter">WORKING REMOTELY ADMIN</h1>
+        <button id="logout-btn" class="bg-red-600 text-white px-6 py-2 rounded-full font-black text-[10px] uppercase italic">Logout</button>
     </nav>
 
     <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
         <section class="lg:col-span-1">
             <div class="admin-card p-8">
-                <h2 class="text-sm font-black uppercase text-blue-900 mb-6 flex items-center gap-2">
-                    <span class="w-2 h-2 bg-blue-600 rounded-full"></span>
-                    List New Account
-                </h2>
+                <h2 class="text-sm font-black uppercase text-blue-900 mb-6">List Account</h2>
                 <div class="space-y-4">
-                    <input id="p-name" type="text" placeholder="ACCOUNT NAME" class="w-full p-4 rounded-xl border-0 ring-1 ring-gray-200 font-black text-xs uppercase italic focus:ring-2 focus:ring-blue-500 outline-none">
-                    <input id="p-price" type="number" placeholder="PRICE (USD)" class="w-full p-4 rounded-xl border-0 ring-1 ring-gray-200 font-black text-xs outline-none">
-                    <textarea id="p-tasks" placeholder="ACCOUNT DETAILS & TASK INFO" class="w-full p-4 rounded-xl border-0 ring-1 ring-gray-200 font-bold text-xs h-32 outline-none"></textarea>
+                    <input id="p-name" type="text" placeholder="ACCOUNT NAME" class="w-full p-4 rounded-xl ring-1 ring-gray-100 font-black text-xs uppercase italic outline-none">
+                    <input id="p-price" type="number" placeholder="PRICE (USD)" class="w-full p-4 rounded-xl ring-1 ring-gray-100 font-black text-xs outline-none">
+                    <textarea id="p-tasks" placeholder="DETAILS" class="w-full p-4 rounded-xl ring-1 ring-gray-100 font-bold text-xs h-32 outline-none"></textarea>
                     
-                    <input id="p-key" type="password" placeholder="ADMIN KEY" class="w-full p-4 rounded-xl border-0 ring-1 ring-red-200 font-black text-xs outline-none focus:ring-2 focus:ring-red-500">
+                    <div class="pt-4 border-t">
+                        <label class="text-[9px] font-black text-red-500 uppercase">Master Admin Key</label>
+                        <input id="p-key" type="password" placeholder="ENTER SRC KEY" class="w-full p-4 rounded-xl ring-1 ring-red-100 font-black text-xs outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
                     
-                    <button onclick="addProduct()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black uppercase text-xs italic tracking-widest hover:bg-black transition shadow-lg shadow-blue-900/20">Post to Marketplace</button>
+                    <button id="add-btn" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black uppercase text-xs italic shadow-lg">Post to Marketplace</button>
                 </div>
             </div>
         </section>
 
         <section class="lg:col-span-2">
-            <div class="admin-card p-8">
-                <h2 class="text-sm font-black uppercase text-blue-900 mb-6 flex items-center gap-2">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    Live Inventory
-                </h2>
+            <div class="admin-card p-8 min-h-[400px]">
+                <h2 class="text-sm font-black uppercase text-blue-900 mb-6">Live Inventory</h2>
                 <div id="admin-product-list" class="space-y-3">
-                    <p class="text-gray-400 italic text-xs font-bold animate-pulse">Establishing secure link to database...</p>
+                    <p class="text-gray-400 font-bold text-xs uppercase animate-pulse">Establishing secure link...</p>
                 </div>
             </div>
         </section>
-
     </main>
-
-    <script type="text/javascript">
-        var Tawk_API = Tawk_API || {};
-        var Tawk_LoadStart = new Date();
-        Tawk_API.id = '6797549464a0f82197e62180'; 
-        Tawk_API.widgetId = '1jfp2cf6e';         
-        Tawk_API.customStyle = {
-            visibility : {
-                desktop : { position : 'br', xOffset : 20, yOffset : 20 },
-                mobile : { position : 'br', xOffset : 15, yOffset : 85 }
-            }
-        };
-        (function(){
-            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-            s1.async=true;
-            s1.src='https://embed.tawk.to/6797549464a0f82197e62180/1jfp2cf6e'; 
-            s1.charset='UTF-8';
-            s1.setAttribute('crossorigin','*');
-            s0.parentNode.insertBefore(s1,s0);
-        })();
-    </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = { 
-            apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", 
-            authDomain: "remoteworkingacess.firebaseapp.com", 
-            projectId: "remoteworkingacess", 
-            storageBucket: "remoteworkingacess.firebasestorage.app", 
-            messagingSenderId: "953179052891", 
-            appId: "1:953179052891:web:8126924e32e9fb62f4987e" 
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
         onAuthStateChanged(auth, (user) => {
-            if (!user || user.email !== "contactremoteaccounts@gmail.com") {
-                window.location.href = "login.html";
-            } else {
-                fetchProducts();
-            }
+            if (!user || user.email !== "jubileefortunesinvestments@gmail.com") { window.location.href = "login.html"; }
+            else { document.getElementById('admin-body').style.opacity = "1"; fetchProducts(); }
         });
 
-        window.addProduct = async () => {
+        document.getElementById('add-btn').onclick = async () => {
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
             const tasks = document.getElementById('p-tasks').value;
             const key = document.getElementById('p-key').value;
 
-            // VERIFY ADMIN KEY
-            if(key !== "SRC3838") {
-                return alert("ERROR: INVALID ADMIN KEY. ACCESS DENIED.");
-            }
-
-            if(!name || !price) return alert("Missing required fields.");
+            if(key !== "SRC3838") return alert("INVALID ADMIN KEY.");
+            if(!name || !price) return alert("Fill Name and Price.");
 
             try {
                 await addDoc(collection(db, "products"), {
@@ -127,7 +77,7 @@
                     tasks: tasks,
                     createdAt: serverTimestamp()
                 });
-                alert("Listed Successfully on WORKING REMOTELY Marketplace.");
+                alert("Success: Account Listed.");
                 document.getElementById('p-name').value = "";
                 document.getElementById('p-price').value = "";
                 document.getElementById('p-tasks').value = "";
@@ -142,25 +92,24 @@
                 list.innerHTML = snapshot.empty ? `<p class="text-gray-400 font-bold text-xs uppercase">No active listings.</p>` : "";
                 snapshot.forEach((pDoc) => {
                     const p = pDoc.data();
-                    list.innerHTML += `
-                        <div class="flex justify-between items-center p-5 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition group">
-                            <div>
-                                <p class="font-black text-blue-900 uppercase italic text-sm tracking-tight">${p.name}</p>
-                                <p class="text-[10px] font-black text-green-600 uppercase mt-1">PRICE: $${p.price}</p>
-                            </div>
-                            <button onclick="deleteProduct('${pDoc.id}')" class="bg-gray-50 text-red-500 font-black text-[9px] uppercase px-4 py-2 rounded-lg group-hover:bg-red-600 group-hover:text-white transition-all border border-red-50">Remove</button>
-                        </div>`;
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = "flex justify-between items-center p-5 bg-gray-50 rounded-2xl border border-gray-100";
+                    itemDiv.innerHTML = `
+                        <div>
+                            <p class="font-black text-blue-900 uppercase italic text-sm tracking-tight">${p.name}</p>
+                            <p class="text-[10px] font-black text-green-600 uppercase">PRICE: $${p.price}</p>
+                        </div>
+                        <button class="del-btn text-red-500 font-black text-[9px] uppercase px-4 py-2 rounded-lg border border-red-50 hover:bg-red-600 hover:text-white transition">Remove</button>
+                    `;
+                    itemDiv.querySelector('.del-btn').onclick = async () => {
+                        if(confirm("Delete this listing?")) await deleteDoc(doc(db, "products", pDoc.id));
+                    };
+                    list.appendChild(itemDiv);
                 });
             });
         }
 
-        window.deleteProduct = async (id) => {
-            if(confirm("Delete this listing from WORKING REMOTELY?")) {
-                await deleteDoc(doc(db, "products", id));
-            }
-        };
-
-        window.logout = () => signOut(auth).then(() => window.location.href = "login.html");
+        document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.href = "login.html");
     </script>
 </body>
 </html>
