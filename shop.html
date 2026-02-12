@@ -21,6 +21,7 @@
         @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .feedback-scroll { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 20px; scrollbar-width: none; }
         .feedback-scroll::-webkit-scrollbar { display: none; }
+        #cart-count { font-size: 8px; position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; width: 14px; height: 14px; display: flex; items-center; justify-content: center; }
     </style>
 </head>
 <body class="p-4 min-h-screen pb-32">
@@ -31,9 +32,15 @@
 
     <nav class="flex justify-between items-center mb-8 px-2">
         <h1 class="text-xl font-black italic tracking-tighter">WORKING REMOTELY</h1>
-        <div class="flex gap-4">
-            <a href="profile.html" class="text-[10px] font-black uppercase text-blue-400">Dashboard</a>
-            <button onclick="requestTraining()" class="text-[10px] font-black uppercase bg-white text-black px-4 py-1 rounded-full italic">Training Link</button>
+        <div class="flex items-center gap-3">
+            <button onclick="requestTraining()" class="text-[9px] font-black uppercase bg-white text-black px-3 py-1.5 rounded-full italic">Training Link</button>
+            <button onclick="toggleCartDisplay()" class="relative p-2 bg-blue-600 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-white">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                </svg>
+                <span id="cart-count">0</span>
+            </button>
+            <a href="profile.html" class="text-[9px] font-black uppercase text-blue-400 ml-1">Profile</a>
         </div>
     </nav>
 
@@ -47,28 +54,26 @@
         <div class="feedback-scroll">
             <div class="glass-card p-4 min-w-[280px] rounded-3xl">
                 <p class="text-[10px] font-black text-blue-400 mb-2">@Sarah_Chepkemoi</p>
-                <p class="text-xs italic font-medium">"Just received my tasks $1500 TRC20 withdrawal! Rwanda as it"</p>
+                <p class="text-xs italic font-medium">"Just received my tasks $1500 TRC20 withdrawal!"</p>
                 <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Paid: $1500.00</div>
             </div>
-               <div class="glass-card p-4 min-w-[280px] rounded-3xl">
-                <p class="text-[10px] font-black text-blue-400 mb-2">@Mercy_Njambi</p>
-                <p class="text-xs italic font-medium">"Already hit $580 withdrawned in 2 days tasking transcriptions. Kenya has faster access"</p>
-                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Status: 10 Recruits</div>
-            </div>
             <div class="glass-card p-4 min-w-[280px] rounded-3xl">
-                <p class="text-[10px] font-black text-blue-400 mb-2">@Mike_Chukwu</p>
-                <p class="text-xs italic font-medium">"Already hit 20 tasks in 3 days wow. Nigeria faster access"</p>
-                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Status: 19 Recruits</div>
+                <p class="text-[10px] font-black text-blue-400 mb-2">@Mercy_Njambi</p>
+                <p class="text-xs italic font-medium">"Already hit $580 withdrawned in 2 days."</p>
+                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Status: 10 Recruits</div>
             </div>
         </div>
     </div>
 
-    <div id="cart-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md glass-card p-4 rounded-3xl flex justify-between items-center hidden z-50 shadow-2xl">
-        <div>
-            <p class="text-[9px] font-black text-gray-400 uppercase">Basket</p>
-            <p id="cart-item-name" class="font-black italic uppercase text-sm"></p>
+    <div id="cart-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-md glass-card p-5 rounded-[2rem] flex flex-col gap-3 hidden z-50 shadow-2xl border-t-2 border-blue-500">
+        <div class="flex justify-between items-center">
+            <div>
+                <p id="promo-tag" class="text-[8px] font-black text-yellow-400 uppercase hidden">🔥 10% OFF APPLIED (2+ ACCOUNTS)</p>
+                <p id="cart-summary" class="font-black italic uppercase text-sm"></p>
+            </div>
+            <p id="cart-total" class="text-xl font-black text-white"></p>
         </div>
-        <button onclick="contactSupport()" class="bg-green-600 text-white px-6 py-3 rounded-2xl font-black uppercase text-xs italic">Order via WhatsApp</button>
+        <button onclick="contactSupport()" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic tracking-widest shadow-lg">Proceed to Payment (WhatsApp)</button>
     </div>
 
     <script type="module">
@@ -79,6 +84,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        let cart = [];
+
         onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), (snapshot) => {
             const list = document.getElementById('market-list');
             list.innerHTML = "";
@@ -86,13 +93,59 @@
                 const p = doc.data();
                 const card = document.createElement('div');
                 card.className = "glass-card p-6 rounded-[2rem]";
-                card.innerHTML = `<p class="text-[10px] font-black text-blue-400 uppercase mb-1">Remote Package</p><h2 class="text-xl font-black italic uppercase mb-4">${p.name}</h2><p class="text-gray-400 text-xs mb-6 font-medium leading-relaxed">${p.tasks || 'Tasks included'}</p><div class="flex justify-between items-center"><span class="text-2xl font-black">$${p.price}</span><button onclick="addToCart('${p.name}', '${p.price}')" class="bg-blue-600 text-white px-6 py-2 rounded-full font-black uppercase text-[10px] italic">Select</button></div>`;
+                card.innerHTML = `<p class="text-[10px] font-black text-blue-400 uppercase mb-1">Remote Package</p><h2 class="text-xl font-black italic uppercase mb-4">${p.name}</h2><p class="text-gray-400 text-xs mb-6 font-medium leading-relaxed">${p.tasks || 'Tasks included'}</p><div class="flex justify-between items-center"><span class="text-2xl font-black">$${p.price}</span><button onclick="addToCart('${p.name}', ${p.price})" class="bg-blue-600 text-white px-6 py-2 rounded-full font-black uppercase text-[10px] italic">Add to Cart</button></div>`;
                 list.appendChild(card);
             });
         });
 
+        window.addToCart = (name, price) => {
+            cart.push({ name, price });
+            updateCartUI();
+        };
+
+        window.updateCartUI = () => {
+            const count = cart.length;
+            document.getElementById('cart-count').innerText = count;
+            
+            if (count > 0) {
+                document.getElementById('cart-bar').classList.remove('hidden');
+                let total = cart.reduce((sum, item) => sum + item.price, 0);
+                
+                // 10% OFF Logic for 2 or more accounts
+                if (count >= 2) {
+                    total = total * 0.9;
+                    document.getElementById('promo-tag').classList.remove('hidden');
+                } else {
+                    document.getElementById('promo-tag').classList.add('hidden');
+                }
+
+                document.getElementById('cart-summary').innerText = `${count} Account(s) Selected`;
+                document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+            }
+        };
+
+        window.toggleCartDisplay = () => {
+            if(cart.length > 0) document.getElementById('cart-bar').classList.toggle('hidden');
+            else alert("Your cart is empty!");
+        };
+
+        window.contactSupport = () => {
+            const count = cart.length;
+            let total = cart.reduce((sum, item) => sum + item.price, 0);
+            if (count >= 2) total = total * 0.9;
+
+            const itemsList = cart.map(i => i.name).join(", ");
+            const msg = `Hello Working Remotely, I want to pay for ${count} account(s): [${itemsList}]. Total amount after discount: $${total.toFixed(2)}. Please provide payment details.`;
+            window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
+        };
+
+        // ... Keep existing activities and requestTraining code ...
+        window.requestTraining = () => {
+            window.open(`https://wa.me/18608968455?text=I'm requesting a Zoom link for training I will pay the fee 20$.`, '_blank');
+        };
+
         const userNames = ["Liam M.", "Noah W.", "Oliver S.", "Chumbaa J.", "James B.", "Njeri D.", "Ben O.", "Lucaku P.", "jeptoo T.", "Theo G.", "Emma L.", "Olivia C.", "Wambua R.", "Sophia H.", "Isabella M.", "Kibet K.", "Amelia F.", "Evelyn N.", "Oga T.", "Emily W.", "Ogochukwu X.", "Mercy A.", "Kevin R.", "Fatima Z.", "Chidi E.", "Santi G.", "Yuki H.", "Lars V.", "Zoe B.", "Omar F."];
-        const activities = [
+        const acts = [
             (name) => `User ${name} purchased a Package!`,
             (name) => `User ${name} referred a new member!`,
             (name) => `Withdrawal approved for ${name}`,
@@ -101,38 +154,13 @@
             (name) => `User ${name} started Zoom training!`,
             (name) => `User ${name} completed a daily task!`
         ];
-
         setInterval(() => {
             const ticker = document.getElementById('activity-ticker');
             const msgSpan = document.getElementById('activity-msg');
-            msgSpan.innerHTML = activities[Math.floor(Math.random() * activities.length)](userNames[Math.floor(Math.random() * userNames.length)]);
+            msgSpan.innerHTML = acts[Math.floor(Math.random() * acts.length)](userNames[Math.floor(Math.random() * userNames.length)]);
             ticker.style.display = "block";
             setTimeout(() => { ticker.style.display = "none"; }, 4000);
         }, 7000);
-
-        window.addToCart = (name, price) => {
-            document.getElementById('cart-bar').classList.remove('hidden');
-            document.getElementById('cart-item-name').innerText = name + " - $" + price;
-        };
-
-        window.contactSupport = () => {
-            const msg = `Hello, I want to purchase: ${document.getElementById('cart-item-name').innerText}`;
-            window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
-        };
-
-        window.requestTraining = () => {
-            window.open(`https://wa.me/18608968455?text=I'm requesting a Zoom link for training I will pay the fee 20$.`, '_blank');
-        };
-    </script>
-    <script type="text/javascript">
-        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-        Tawk_API.id = '6797549464a0f82197e62180'; Tawk_API.widgetId = '1jfp2cf6e';
-        (function(){
-            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-            s1.async=true; s1.src='https://embed.tawk.to/6797549464a0f82197e62180/1jfp2cf6e';
-            s1.charset='UTF-8'; s1.setAttribute('crossorigin','*'); s0.parentNode.insertBefore(s1,s0);
-        })();
     </script>
 </body>
 </html>
-
