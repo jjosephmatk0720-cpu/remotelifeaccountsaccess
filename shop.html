@@ -37,8 +37,7 @@
         </div>
     </nav>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12" id="market-list">
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12" id="market-list"></div>
 
     <div class="mt-10 mb-10">
         <div class="flex items-center gap-2 mb-4 pl-2">
@@ -47,29 +46,24 @@
         </div>
         <div class="feedback-scroll">
             <div class="glass-card p-4 min-w-[280px] rounded-3xl">
-                <p class="text-[10px] font-black text-blue-400 mb-2">@Sarah_Jemutai</p>
-                <p class="text-xs italic font-medium">"Just received my $150 TRC20 withdrawal! This platform is a lifesaver."</p>
-                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Paid: $150.00</div>
+                <p class="text-[10px] font-black text-blue-400 mb-2">@Sarah_Chepkemoi</p>
+                <p class="text-xs italic font-medium">"Just received my tasks $1500 TRC20 withdrawal! Rwanda as it"</p>
+                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Paid: $1500.00</div>
             </div>
             <div class="glass-card p-4 min-w-[280px] rounded-3xl">
-                <p class="text-[10px] font-black text-blue-400 mb-2">@Mikel_W</p>
-                <p class="text-xs italic font-medium">"Training was super clear. Already hit 12 recruits in 3 days,take transcriptions."</p>
-                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Status: 12 Recruits</div>
-            </div>
-            <div class="glass-card p-4 min-w-[280px] rounded-3xl">
-                <p class="text-[10px] font-black text-blue-400 mb-2">@Elena_S</p>
-                <p class="text-xs italic font-medium">"Working from Kenya and getting paid in USD is amazing.crowdgen"</p>
-                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Paid: $610.00</div>
+                <p class="text-[10px] font-black text-blue-400 mb-2">@Mike_Suali</p>
+                <p class="text-xs italic font-medium">"Already hit 12 recruits in 3 days. Nigeria faster access"</p>
+                <div class="mt-3 text-[9px] font-black text-green-500 uppercase">Status: 19 Recruits</div>
             </div>
         </div>
     </div>
 
     <div id="cart-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md glass-card p-4 rounded-3xl flex justify-between items-center hidden z-50 shadow-2xl">
         <div>
-            <p class="text-[9px] font-black text-gray-400 uppercase">Selected Package</p>
+            <p class="text-[9px] font-black text-gray-400 uppercase">Basket</p>
             <p id="cart-item-name" class="font-black italic uppercase text-sm"></p>
         </div>
-        <button onclick="contactSupport()" class="bg-green-600 text-white px-6 py-3 rounded-2xl font-black uppercase text-xs italic">Buy via WhatsApp</button>
+        <button onclick="contactSupport()" class="bg-green-600 text-white px-6 py-3 rounded-2xl font-black uppercase text-xs italic">Order via WhatsApp</button>
     </div>
 
     <script type="module">
@@ -80,83 +74,59 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // FETCH MARKETPLACE
-        const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
-        onSnapshot(q, (snapshot) => {
+        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), (snapshot) => {
             const list = document.getElementById('market-list');
             list.innerHTML = "";
             snapshot.forEach(doc => {
                 const p = doc.data();
                 const card = document.createElement('div');
                 card.className = "glass-card p-6 rounded-[2rem]";
-                card.innerHTML = `
-                    <p class="text-[10px] font-black text-blue-400 uppercase mb-1">Remote Package</p>
-                    <h2 class="text-xl font-black italic uppercase mb-4">${p.name}</h2>
-                    <p class="text-gray-400 text-xs mb-6 font-medium leading-relaxed">${p.tasks || 'Standard Remote Tasks'}</p>
-                    <div class="flex justify-between items-center">
-                        <span class="text-2xl font-black">$${p.price}</span>
-                        <button onclick="addToCart('${p.name}', '${p.price}')" class="bg-blue-600 text-white px-6 py-2 rounded-full font-black uppercase text-[10px] italic">Select</button>
-                    </div>
-                `;
+                card.innerHTML = `<p class="text-[10px] font-black text-blue-400 uppercase mb-1">Remote Package</p><h2 class="text-xl font-black italic uppercase mb-4">${p.name}</h2><p class="text-gray-400 text-xs mb-6 font-medium leading-relaxed">${p.tasks || 'Tasks included'}</p><div class="flex justify-between items-center"><span class="text-2xl font-black">$${p.price}</span><button onclick="addToCart('${p.name}', '${p.price}')" class="bg-blue-600 text-white px-6 py-2 rounded-full font-black uppercase text-[10px] italic">Select</button></div>`;
                 list.appendChild(card);
             });
         });
 
-        // 150 MEMBER ACTIVITY ENGINE
-        const userNames = ["Liam M.", "Masikonde W.", "Oliver S.", "Elijah J.", "Njuguna B.", "William D.", "Ben O.", "Lucas P.", "Henry T.", "Theo G.", "Jerono L.", "Olivia C.", "Ava R.", "Sophia H.", "Isabella M.", "Ogochuku K.", "Amelia F.", "Evelyn N.", "Abigail T.", "Emily W.", "John X.", "Mercy A.", "Kevin R.", "Fatima Z.", "Chidi E.", "Santi G.", "Yuki H.", "Lars V.", "Zoe B.", "Omar F."]; // Representing 150+ pool
-        
+        const userNames = ["Liam M.", "Noah W.", "Oliver S.", "Chumbaa J.", "James B.", "Njeri D.", "Ben O.", "Lucaku P.", "jeptoo T.", "Theo G.", "Emma L.", "Olivia C.", "Wambua R.", "Sophia H.", "Isabella M.", "Kibet K.", "Amelia F.", "Evelyn N.", "Oga T.", "Emily W.", "Ogochukwu X.", "Mercy A.", "Kevin R.", "Fatima Z.", "Chidi E.", "Santi G.", "Yuki H.", "Lars V.", "Zoe B.", "Omar F."];
         const activities = [
-            (name) => `User ${name} just purchased a Remote Package!`,
-            (name) => `User ${name} referred a new member successfully!`,
-            (name) => `Withdrawal of $${(Math.random()*200 + 50).toFixed(2)} approved for ${name}`,
-            (name) => `User ${name} just earned $5.00 from a referral!`,
+            (name) => `User ${name} purchased a Package!`,
+            (name) => `User ${name} referred a new member!`,
+            (name) => `Withdrawal approved for ${name}`,
+            (name) => `User ${name} earned $5.00 referral bonus!`,
             (name) => `Goal Alert: ${name} attained 10 recruits! 🏆`,
-            (name) => `User ${name} started their Zoom training session!`,
-            (name) => `User ${name} completed a free daily task!`
+            (name) => `User ${name} started Zoom training!`,
+            (name) => `User ${name} completed a daily task!`
         ];
 
         setInterval(() => {
             const ticker = document.getElementById('activity-ticker');
             const msgSpan = document.getElementById('activity-msg');
-            
-            const randomUser = userNames[Math.floor(Math.random() * userNames.length)];
-            const randomAction = activities[Math.floor(Math.random() * activities.length)];
-            
-            msgSpan.innerHTML = randomAction(randomUser);
+            msgSpan.innerHTML = activities[Math.floor(Math.random() * activities.length)](userNames[Math.floor(Math.random() * userNames.length)]);
             ticker.style.display = "block";
-            
             setTimeout(() => { ticker.style.display = "none"; }, 4000);
-        }, 7000); // 7 Seconds Interval
+        }, 7000);
 
-        // CART & CONTACT
         window.addToCart = (name, price) => {
             document.getElementById('cart-bar').classList.remove('hidden');
             document.getElementById('cart-item-name').innerText = name + " - $" + price;
         };
 
         window.contactSupport = () => {
-            const itemName = document.getElementById('cart-item-name').innerText;
-            const msg = `Hello Working Remotely Support, I want to purchase: ${itemName}`;
+            const msg = `Hello, I want to purchase: ${document.getElementById('cart-item-name').innerText}`;
             window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
         };
 
         window.requestTraining = () => {
-            const msg = "Hello, I am requesting a Zoom/Google Meet link for the remote work training session.";
-            window.open(`https://wa.me/18608968455?text=${encodeURIComponent(msg)}`, '_blank');
+            window.open(`https://wa.me/18608968455?text=I'm requesting a Zoom link for training I will pay the fee 20$.`, '_blank');
         };
     </script>
-
     <script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    Tawk_API.id = '6797549464a0f82197e62180';
-    Tawk_API.widgetId = '1jfp2cf6e';
-    (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true; s1.src='https://embed.tawk.to/6797549464a0f82197e62180/1jfp2cf6e';
-    s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-    })();
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        Tawk_API.id = '6797549464a0f82197e62180'; Tawk_API.widgetId = '1jfp2cf6e';
+        (function(){
+            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+            s1.async=true; s1.src='https://embed.tawk.to/6797549464a0f82197e62180/1jfp2cf6e';
+            s1.charset='UTF-8'; s1.setAttribute('crossorigin','*'); s0.parentNode.insertBefore(s1,s0);
+        })();
     </script>
-
 </body>
 </html>
