@@ -3,263 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Working Remote</title>
+    <title>Admin Dashboard | WORKING REMOTELY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .admin-bg { background: #0f172a; color: white; }
-        .glass-panel { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        body { opacity: 0; transition: opacity 0.5s; }
-        input, textarea { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; font-size: 10px !important; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        .order-card { border-left: 3px solid #3b82f6; transition: all 0.3s ease; }
-        .new-alert { animation: pulse-border 2s infinite; }
-        @keyframes pulse-border {
-            0% { border-color: #3b82f6; }
-            50% { border-color: #fbbf24; }
-            100% { border-color: #3b82f6; }
-        }
+        body { background: #f0f2f5; font-family: sans-serif; }
+        .admin-card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     </style>
 </head>
-<body id="main-body" class="admin-bg min-h-screen font-sans p-4">
+<body class="p-4 md:p-8">
 
-    <audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
-
-    <nav class="max-w-7xl mx-auto flex justify-between items-center mb-6">
-        <h1 class="text-xl font-black italic uppercase tracking-tighter">Jubilee Fortunes <span class="text-blue-500">Admin</span></h1>
-        <div class="flex space-x-2">
-            <a href="shop.html" class="text-[9px] font-black uppercase tracking-widest py-2 px-3 border border-white/20 rounded-full hover:bg-white hover:text-black transition">View Shop</a>
-            <button onclick="logout()" class="text-[9px] font-black uppercase tracking-widest py-2 px-3 bg-red-600 rounded-full">Logout</button>
-        </div>
+    <nav class="max-w-7xl mx-auto flex justify-between items-center mb-10">
+        <h1 class="text-2xl font-black uppercase italic text-blue-900">Jubilee Fortunes Admin</h1>
+        <button onclick="logout()" class="bg-red-600 text-white px-6 py-2 rounded-full font-bold text-xs uppercase">Logout</button>
     </nav>
 
-    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-4">
+    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <div class="lg:col-span-3 space-y-4">
-            <div class="glass-panel p-4 rounded-3xl border-yellow-500/30">
-                <h2 class="text-[10px] font-black uppercase tracking-widest text-yellow-400 mb-3 italic">📣 Shop Banner</h2>
-                <input type="text" id="announcement-msg" placeholder="Sale text..." class="w-full p-2 rounded-lg outline-none mb-2">
-                <button onclick="postAnnouncement()" class="w-full bg-yellow-500 text-black font-black uppercase italic py-2 rounded-lg text-[9px] tracking-widest">Update Banner</button>
-            </div>
-
-            <div class="glass-panel p-4 rounded-3xl">
-                <h2 class="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-3 italic">🏆 Top Recruiters</h2>
-                <div id="leaderboard" class="space-y-2 max-h-[200px] overflow-y-auto pr-2"></div>
-            </div>
-        </div>
-
-        <div class="lg:col-span-6 space-y-4">
-            <div class="glass-panel p-5 rounded-3xl border-blue-500/40 bg-blue-500/5">
-                <div class="flex justify-between items-center mb-3">
-                    <h2 class="text-[10px] font-black uppercase tracking-widest text-blue-400 italic">⚡ Live Signals</h2>
-                    <span class="text-[8px] font-bold text-green-400 animate-pulse uppercase">Active Monitoring</span>
-                </div>
-                <div id="notification-feed" class="space-y-2 max-h-[300px] overflow-y-auto pr-2"></div>
-            </div>
-
-            <div class="glass-panel p-5 rounded-3xl border-purple-500/30">
-                <h2 class="text-[10px] font-black uppercase tracking-widest text-purple-400 mb-3 italic">💸 Pending Withdrawals</h2>
-                <div class="max-h-[200px] overflow-y-auto pr-2">
-                    <table class="w-full text-left text-[9px]">
-                        <tbody id="withdrawal-list" class="divide-y divide-white/5"></tbody>
-                    </table>
+        <section class="lg:col-span-1">
+            <div class="admin-card p-6">
+                <h2 class="text-lg font-black uppercase mb-6 border-b pb-2">Add New Account</h2>
+                <div class="space-y-4">
+                    <input id="p-name" type="text" placeholder="Account Name (e.g. PROLIFIC)" class="w-full p-3 rounded-lg border font-bold text-sm">
+                    <input id="p-price" type="number" placeholder="Price (USD)" class="w-full p-3 rounded-lg border font-bold text-sm">
+                    <textarea id="p-tasks" placeholder="Task Details / Description" class="w-full p-3 rounded-lg border font-bold text-sm h-32"></textarea>
+                    <button onclick="addProduct()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-black uppercase tracking-widest hover:bg-black transition">Post to Shop</button>
                 </div>
             </div>
+        </section>
 
-            <div class="glass-panel p-5 rounded-3xl border-green-500/20">
-                <h2 class="text-[10px] font-black uppercase tracking-widest text-green-400 mb-3 italic">📦 Shop Inventory</h2>
-                <div class="max-h-[250px] overflow-y-auto pr-2">
-                    <table class="w-full text-left text-[9px]">
-                        <thead>
-                            <tr class="text-gray-500 uppercase border-b border-white/10 text-[7px]">
-                                <th class="pb-2">Account Name</th>
-                                <th class="pb-2">Price</th>
-                                <th class="pb-2 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="inventory-list" class="divide-y divide-white/5"></tbody>
-                    </table>
+        <section class="lg:col-span-2">
+            <div class="admin-card p-6">
+                <h2 class="text-lg font-black uppercase mb-6 border-b pb-2">Live Shop Items</h2>
+                <div id="admin-product-list" class="space-y-4">
+                    <p class="text-gray-400 italic text-sm">Loading inventory...</p>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="lg:col-span-3">
-            <div class="glass-panel p-5 rounded-3xl sticky top-4 border-blue-500/50">
-                <h2 class="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-4 italic">➕ Post New Account</h2>
-                <div class="space-y-3">
-                    <div>
-                        <label class="text-[8px] uppercase text-gray-500 font-bold ml-1">Account Name</label>
-                        <input type="text" id="p-name" placeholder="e.g. Outlier UK Verified" class="w-full p-2 rounded-lg mt-1">
-                    </div>
-                    <div>
-                        <label class="text-[8px] uppercase text-gray-500 font-bold ml-1">Price ($)</label>
-                        <input type="number" id="p-price" placeholder="45" class="w-full p-2 rounded-lg mt-1">
-                    </div>
-                    <div>
-                        <label class="text-[8px] uppercase text-gray-500 font-bold ml-1">Category / Region</label>
-                        <input type="text" id="p-desc" placeholder="e.g. Remote Access / UK" class="w-full p-2 rounded-lg mt-1">
-                    </div>
-                    <div>
-                        <label class="text-[8px] uppercase text-gray-500 font-bold ml-1">Short Description</label>
-                        <input type="text" id="p-tasks" placeholder="e.g. AI Training Task" class="w-full p-2 rounded-lg mt-1">
-                    </div>
-                    <div>
-                        <label class="text-[8px] uppercase text-gray-500 font-bold ml-1">Full Details</label>
-                        <textarea id="p-details" placeholder="Full account details here..." class="w-full p-2 rounded-lg h-16 mt-1"></textarea>
-                    </div>
-                    <button onclick="addProduct()" class="w-full bg-blue-600 text-white font-black uppercase italic py-3 rounded-lg text-[9px] tracking-widest shadow-lg shadow-blue-900/50 hover:bg-blue-500 transition active:scale-95">Post To Shop</button>
-                </div>
-            </div>
-        </div>
     </main>
+
+    <script type="text/javascript">
+        var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+        Tawk_API.customStyle = {
+            visibility : {
+                desktop : { position : 'br', xOffset : 20, yOffset : 20 },
+                mobile : { position : 'br', xOffset : 15, yOffset : 85 }
+            }
+        };
+        (function(){
+            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+            s1.async=true;
+            // Updated to match your specific dashboard ID
+            s1.src='https://embed.tawk.to/6797549464a0f82197e62180/1jfp2cf6e'; 
+            s1.charset='UTF-8';
+            s1.setAttribute('crossorigin','*');
+            s0.parentNode.insertBefore(s1,s0);
+        })();
+    </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, addDoc, setDoc, query, where, updateDoc, deleteDoc, orderBy, limit, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const audio = document.getElementById('notif-sound');
-        let firstLoad = true;
-        
-        const ADMIN_KEY = "SRC3838";
 
+        // Security Check
         onAuthStateChanged(auth, (user) => {
-            if (!user) { window.location.href = "index.html"; }
-            else {
-                const access = prompt("ADMIN KEY:");
-                if (access === ADMIN_KEY) { 
-                    document.getElementById('main-body').style.opacity = "1"; 
-                    refreshData();
-                    startNotificationListener();
-                } else { window.location.href = "shop.html"; }
+            if (!user || user.email !== "jubileefortunesinvestments@gmail.com") {
+                window.location.href = "login.html";
+            } else {
+                fetchProducts();
             }
         });
 
-        // LOADS ALL DATA
-        async function refreshData() {
-            loadLeaderboard();
-            loadWithdrawals();
-            loadInventory();
-        }
-
-        // --- UPDATED ADD PRODUCT: SAVES TO FIREBASE CORRECTLY ---
         window.addProduct = async () => {
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
-            const desc = document.getElementById('p-desc').value;
             const tasks = document.getElementById('p-tasks').value;
-            const details = document.getElementById('p-details').value;
 
-            if(!name || !price) return alert("Fill name and price!");
+            if(!name || !price) return alert("Fill required fields");
 
             try {
-                // We add to "products" collection. The Shop must also read from "products".
                 await addDoc(collection(db, "products"), {
-                    name: name,
+                    name: name.toUpperCase(),
                     price: price,
-                    description: desc, // This maps to category in the shop
-                    details: details,
                     tasks: tasks,
                     createdAt: serverTimestamp()
                 });
-
-                alert("SUCCESS! Account is now live on the shop.");
-                
-                // Clear fields
+                alert("Product Added!");
                 document.getElementById('p-name').value = "";
                 document.getElementById('p-price').value = "";
-                document.getElementById('p-desc').value = "";
                 document.getElementById('p-tasks').value = "";
-                document.getElementById('p-details').value = "";
-                
-                loadInventory();
-            } catch (e) {
-                alert("Error adding product: " + e.message);
-            }
+            } catch (e) { alert("Error adding product"); }
         };
 
-        // --- NOTIFICATION LISTENER ---
-        function startNotificationListener() {
-            const q = query(collection(db, "notifications"), orderBy("time", "desc"), limit(15));
+        function fetchProducts() {
+            const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
             onSnapshot(q, (snapshot) => {
-                const feed = document.getElementById('notification-feed');
-                if (!firstLoad && snapshot.docChanges().some(change => change.type === "added")) {
-                    audio.play().catch(() => {});
-                }
-                feed.innerHTML = snapshot.empty ? `<div class="text-center py-4 text-[9px] text-gray-500 italic">No activity yet.</div>` : "";
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const time = data.time ? new Date(data.time.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "Now";
-                    const isTraining = data.type === "TRAINING";
-                    feed.innerHTML += `
-                        <div class="order-card p-3 rounded-xl bg-white/5 border border-white/5 mb-2 ${firstLoad ? '' : 'new-alert'}">
-                            <div class="flex justify-between items-start">
-                                <span class="text-[7px] font-black uppercase px-1.5 py-0.5 rounded ${isTraining ? 'bg-yellow-500 text-black' : 'bg-blue-600 text-white'}">${data.type}</span>
-                                <span class="text-[8px] text-gray-500 font-bold">${time}</span>
+                const list = document.getElementById('admin-product-list');
+                list.innerHTML = "";
+                snapshot.forEach((pDoc) => {
+                    const p = pDoc.data();
+                    list.innerHTML += `
+                        <div class="flex justify-between items-center p-4 border-b hover:bg-gray-50">
+                            <div>
+                                <p class="font-black text-blue-900">${p.name}</p>
+                                <p class="text-xs font-bold text-gray-500">$${p.price}</p>
                             </div>
-                            <p class="text-[10px] font-black uppercase italic tracking-tighter mt-1 text-white">${isTraining ? 'Training Requested' : data.items}</p>
-                            <div class="flex justify-between items-center mt-1">
-                                <p class="text-[8px] text-blue-400 font-bold">${data.user}</p>
-                                <p class="text-[10px] font-black text-green-400">${isTraining ? '' : '$' + data.total}</p>
-                            </div>
+                            <button onclick="deleteProduct('${pDoc.id}')" class="text-red-600 font-bold text-xs uppercase border border-red-200 px-3 py-1 rounded-lg hover:bg-red-50">Remove</button>
                         </div>`;
                 });
-                firstLoad = false;
-            });
-        }
-
-        async function loadWithdrawals() {
-            const list = document.getElementById('withdrawal-list');
-            const q = query(collection(db, "withdrawals"), where("status", "==", "pending"));
-            const snap = await getDocs(q);
-            list.innerHTML = snap.empty ? `<tr><td class="py-4 text-gray-500 italic text-center">None</td></tr>` : "";
-            snap.forEach((d) => {
-                const data = d.data();
-                list.innerHTML += `<tr class="font-bold border-b border-white/5"><td class="py-3">${data.email}<br><span class="text-blue-400 select-all font-mono">${data.wallet}</span></td><td class="text-green-400">${data.amount}</td><td class="text-right space-x-1"><button onclick="handleWithdrawal('${d.id}', 'approved')" class="bg-green-600 px-2 py-1 rounded text-[7px] uppercase">Mark Paid</button></td></tr>`;
-            });
-        }
-
-        async function loadInventory() {
-            const list = document.getElementById('inventory-list');
-            const snap = await getDocs(collection(db, "products"));
-            list.innerHTML = "";
-            snap.forEach((d) => {
-                const data = d.data();
-                list.innerHTML += `<tr class="border-b border-white/5"><td class="py-3 font-bold">${data.name}</td><td class="text-blue-400 font-bold">$${data.price}</td><td class="text-right"><button onclick="deleteProduct('${d.id}')" class="bg-red-900/50 text-red-400 border border-red-900 px-2 py-1 rounded text-[7px] uppercase hover:bg-red-600 hover:text-white transition">Delete</button></td></tr>`;
             });
         }
 
         window.deleteProduct = async (id) => {
-            if(confirm("Remove from shop?")) {
+            if(confirm("Delete this item permanently?")) {
                 await deleteDoc(doc(db, "products", id));
-                loadInventory();
             }
-        }
-
-        window.handleWithdrawal = async (id, status) => {
-            await updateDoc(doc(db, "withdrawals", id), { status: status });
-            loadWithdrawals();
         };
 
-        window.postAnnouncement = async () => {
-            const msg = document.getElementById('announcement-msg').value;
-            await setDoc(doc(db, "settings", "announcement"), { text: msg, active: msg !== "" });
-            alert("Updated banner for all users!");
-        };
-
-        async function loadLeaderboard() {
-            const snap = await getDocs(collection(db, "users"));
-            const counts = {};
-            snap.forEach(d => { if(d.data().referredBy && d.data().referredBy !== "none") counts[d.data().referredBy] = (counts[d.data().referredBy] || 0) + 1; });
-            const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-            document.getElementById('leaderboard').innerHTML = sorted.map(([id, c]) => `<div class="flex justify-between p-2 bg-white/5 rounded-lg border border-white/5 mb-2"><span class="text-gray-400 italic">...${id.slice(-5)}</span><span class="text-blue-400 font-black">${c} RECRUITS</span></div>`).join('');
-        }
-
-        window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
+        window.logout = () => signOut(auth).then(() => window.location.href = "login.html");
     </script>
 </body>
 </html>
