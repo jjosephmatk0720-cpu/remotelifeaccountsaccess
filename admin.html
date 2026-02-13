@@ -8,6 +8,8 @@
     <style>
         body { background: #0f172a; font-family: sans-serif; color: white; }
         .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+        input, textarea { transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.05) !important; }
+        input:focus, textarea:focus { border-color: #3b82f6 !important; background: rgba(30, 41, 59, 1) !important; outline: none; }
     </style>
 </head>
 <body class="p-6">
@@ -15,60 +17,109 @@
     <div class="max-w-4xl mx-auto">
         <div class="flex justify-between items-center mb-10">
             <h1 class="text-2xl font-black italic uppercase tracking-tighter text-blue-500">Working Remotely Admin</h1>
-            <a href="shop.html" class="text-xs font-bold uppercase bg-white text-black px-4 py-2 rounded-full">View Shop</a>
+            <a href="shop.html" class="text-xs font-bold uppercase bg-white text-black px-4 py-2 rounded-full hover:bg-blue-500 hover:text-white transition">View Shop</a>
         </div>
 
-        <div class="glass-card p-8 rounded-[2.5rem] mb-10">
-            <h2 class="text-lg font-black uppercase mb-6 italic">Add New Remote Package</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" id="p-name" placeholder="Package Name (e.g. Data Entry)" class="p-4 bg-gray-800 rounded-2xl outline-none text-sm font-bold">
-                <input type="number" id="p-price" placeholder="Price (USD)" class="p-4 bg-gray-800 rounded-2xl outline-none text-sm font-bold">
-                <textarea id="p-tasks" placeholder="Task Details/Description" class="p-4 bg-gray-800 rounded-2xl outline-none text-sm font-bold md:col-span-2 h-24"></textarea>
-                
-                <input type="password" id="admin-key" placeholder="Enter Admin Key (SRC3838)" class="p-4 bg-blue-900/30 border border-blue-500/30 rounded-2xl outline-none text-sm font-bold md:col-span-2">
-                
-                <button onclick="addProduct()" class="md:col-span-2 bg-blue-600 p-4 rounded-2xl font-black uppercase italic tracking-widest">Publish Package</button>
+        <div class="glass-card p-8 rounded-[2.5rem] mb-10 border-l-4 border-yellow-500 shadow-2xl">
+            <h2 class="text-lg font-black uppercase mb-2 italic text-yellow-500">Broadcast Update</h2>
+            <div class="space-y-4 mt-4">
+                <input type="text" id="email-subject" placeholder="Email Subject" class="w-full p-4 bg-gray-800 rounded-2xl text-sm font-bold">
+                <textarea id="broadcast-msg" placeholder="Your announcement message..." class="w-full p-4 bg-gray-800 rounded-2xl text-sm font-bold h-32"></textarea>
+                <div class="flex flex-col md:flex-row items-center gap-4">
+                    <input type="password" id="broadcast-key" placeholder="Admin Key (SRC3838)" class="w-full md:w-1/2 p-4 bg-blue-900/30 border-blue-500/30 rounded-2xl text-sm font-bold">
+                    <button onclick="sendBroadcast()" id="broadcast-btn" class="w-full md:w-1/2 bg-yellow-500 text-black py-4 rounded-2xl font-black uppercase italic tracking-widest shadow-lg hover:bg-yellow-400 transition">Send To All Users</button>
+                </div>
+                <p id="broadcast-status" class="text-[10px] font-black uppercase text-center mt-2"></p>
             </div>
         </div>
 
-        <div class="glass-card p-8 rounded-[2.5rem]">
-            <h2 class="text-lg font-black uppercase mb-6 italic text-gray-400">Current Listings</h2>
-            <div id="admin-list" class="space-y-4">
-                </div>
+        <div class="glass-card p-8 rounded-[2.5rem] mb-10 border-l-4 border-blue-500 shadow-2xl">
+            <h2 class="text-lg font-black uppercase mb-6 italic text-blue-500">Add New Package</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" id="p-name" placeholder="Package Name" class="p-4 bg-gray-800 rounded-2xl text-sm font-bold">
+                <input type="number" id="p-price" placeholder="Price (USD)" class="p-4 bg-gray-800 rounded-2xl text-sm font-bold">
+                <textarea id="p-tasks" placeholder="Package Description/Tasks" class="p-4 bg-gray-800 rounded-2xl text-sm font-bold md:col-span-2 h-24"></textarea>
+                <input type="password" id="admin-key" placeholder="Admin Key (SRC3838)" class="p-4 bg-blue-900/30 border-blue-500/30 rounded-2xl text-sm font-bold md:col-span-2">
+                <button onclick="addProduct()" class="md:col-span-2 bg-blue-600 p-4 rounded-2xl font-black uppercase italic tracking-widest hover:bg-blue-500 transition shadow-xl">Publish Package</button>
+            </div>
+        </div>
+
+        <div class="glass-card p-8 rounded-[2.5rem] shadow-2xl">
+            <h2 class="text-lg font-black uppercase mb-6 italic text-gray-500">Live Marketplace</h2>
+            <div id="admin-list" class="space-y-3"></div>
         </div>
     </div>
 
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", 
+            authDomain: "remoteworkingacess.firebaseapp.com", 
+            projectId: "remoteworkingacess", 
+            storageBucket: "remoteworkingacess.firebasestorage.app", 
+            messagingSenderId: "953179052891", 
+            appId: "1:953179052891:web:8126924e32e9fb62f4987e" 
+        };
+
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const auth = getAuth(app);
 
-        // SECURITY: ONLY ALLOW YOUR SPECIFIC ADMIN EMAIL
-        onAuthStateChanged(auth, (user) => {
-            if (!user || user.email !== "jubileefortunesinvestments@gmail.com") {
-                alert("Unauthorized Access!");
-                window.location.href = "index.html";
+        // INITIALIZE EMAILJS
+        emailjs.init("YOUR_PUBLIC_KEY");
+
+        // --- BROADCAST LOGIC ---
+        window.sendBroadcast = async () => {
+            const subject = document.getElementById('email-subject').value;
+            const message = document.getElementById('broadcast-msg').value;
+            const key = document.getElementById('broadcast-key').value;
+            const btn = document.getElementById('broadcast-btn');
+            const status = document.getElementById('broadcast-status');
+
+            if (key !== "SRC3838") return alert("ACCESS DENIED: WRONG KEY");
+            if (!subject || !message) return alert("Please provide subject and message");
+
+            btn.disabled = true;
+            btn.innerText = "SENDING...";
+            status.innerText = "Processing worker database...";
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "users"));
+                let sentCount = 0;
+                for (const userDoc of querySnapshot.docs) {
+                    const email = userDoc.data().email;
+                    if (email) {
+                        await emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+                            subject: subject,
+                            message: message,
+                            user_email: email,
+                            admin_email: "contactsuportremoteworkings@gmail.com"
+                        });
+                        sentCount++;
+                    }
+                }
+                status.innerText = `SUCCESS: SENT TO ${sentCount} USERS`;
+                status.className = "text-[10px] font-black uppercase text-center text-green-500";
+            } catch (err) {
+                status.innerText = "ERROR IN BROADCAST";
+                status.className = "text-[10px] font-black uppercase text-center text-red-500";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Send To All Users";
             }
-        });
+        };
 
-        // ADD PRODUCT LOGIC
+        // --- PRODUCT LOGIC ---
         window.addProduct = async () => {
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
             const tasks = document.getElementById('p-tasks').value;
             const key = document.getElementById('admin-key').value;
 
-            // VERIFY ADMIN KEY
-            if (key !== "SRC3838") {
-                return alert("INVALID ADMIN KEY! ACTION DENIED.");
-            }
-
-            if (!name || !price) return alert("Fill Name and Price");
+            if (key !== "SRC3838") return alert("INVALID ADMIN KEY");
+            if (!name || !price) return alert("Fill required info");
 
             try {
                 await addDoc(collection(db, "products"), {
@@ -77,7 +128,7 @@
                     tasks,
                     createdAt: serverTimestamp()
                 });
-                alert("Package Published Successfully!");
+                alert("Package Published.");
                 document.getElementById('p-name').value = "";
                 document.getElementById('p-price').value = "";
                 document.getElementById('p-tasks').value = "";
@@ -85,31 +136,31 @@
             } catch (e) { alert(e.message); }
         };
 
-        // VIEW & DELETE LOGIC
+        // --- LISTINGS DISPLAY ---
         onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), (snapshot) => {
             const list = document.getElementById('admin-list');
             list.innerHTML = "";
             snapshot.forEach(docSnap => {
                 const p = docSnap.data();
                 const item = document.createElement('div');
-                item.className = "flex justify-between items-center bg-white/5 p-4 rounded-2xl";
+                item.className = "flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5";
                 item.innerHTML = `
                     <div>
                         <p class="font-black italic uppercase text-sm">${p.name}</p>
-                        <p class="text-xs text-blue-400 font-bold">$${p.price}</p>
+                        <p class="text-[10px] text-blue-400 font-bold">$${p.price}</p>
                     </div>
-                    <button onclick="deleteProduct('${docSnap.id}')" class="text-[10px] font-black uppercase text-red-500 bg-red-500/10 px-4 py-2 rounded-xl">Delete</button>
+                    <button onclick="deleteProduct('${docSnap.id}')" class="text-[9px] font-black uppercase text-red-500 bg-red-500/10 px-4 py-2 rounded-xl hover:bg-red-500 hover:text-white transition">Delete</button>
                 `;
                 list.appendChild(item);
             });
         });
 
         window.deleteProduct = async (id) => {
-            const key = prompt("Confirm Admin Key to Delete:");
+            const key = prompt("Confirm Admin Key:");
             if (key === "SRC3838") {
                 await deleteDoc(doc(db, "products", id));
             } else {
-                alert("Incorrect Key!");
+                alert("Key Incorrect.");
             }
         };
     </script>
