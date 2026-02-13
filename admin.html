@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel | WORKING REMOTELY</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        (function() {
+            const accessKey = prompt("RESTRICTED ACCESS: Enter Admin Key (SRC3838) to continue:");
+            if (accessKey !== "SRC3838") {
+                alert("ACCESS DENIED");
+                window.location.href = "index.html";
+            }
+        })();
+    </script>
+
     <style>
         body { background: #0f172a; font-family: sans-serif; color: white; }
         .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
@@ -21,14 +32,13 @@
         </div>
 
         <div class="glass-card p-8 rounded-[2.5rem] mb-10 border-l-4 border-yellow-500 shadow-2xl">
-            <h2 class="text-lg font-black uppercase mb-2 italic text-yellow-500">Broadcast Update</h2>
-            <div class="space-y-4 mt-4">
+            <h2 class="text-lg font-black uppercase mb-2 italic text-yellow-500">Bulk Email Broadcast</h2>
+            <p class="text-[10px] text-gray-400 mb-6 uppercase font-bold tracking-widest">Send updates via contactsuportremoteworkings@gmail.com</p>
+            
+            <div class="space-y-4">
                 <input type="text" id="email-subject" placeholder="Email Subject" class="w-full p-4 bg-gray-800 rounded-2xl text-sm font-bold">
                 <textarea id="broadcast-msg" placeholder="Your announcement message..." class="w-full p-4 bg-gray-800 rounded-2xl text-sm font-bold h-32"></textarea>
-                <div class="flex flex-col md:flex-row items-center gap-4">
-                    <input type="password" id="broadcast-key" placeholder="Admin Key (SRC3838)" class="w-full md:w-1/2 p-4 bg-blue-900/30 border-blue-500/30 rounded-2xl text-sm font-bold">
-                    <button onclick="sendBroadcast()" id="broadcast-btn" class="w-full md:w-1/2 bg-yellow-500 text-black py-4 rounded-2xl font-black uppercase italic tracking-widest shadow-lg hover:bg-yellow-400 transition">Send To All Users</button>
-                </div>
+                <button onclick="sendBroadcast()" id="broadcast-btn" class="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black uppercase italic tracking-widest shadow-lg hover:bg-yellow-400 transition">Send To All Workers</button>
                 <p id="broadcast-status" class="text-[10px] font-black uppercase text-center mt-2"></p>
             </div>
         </div>
@@ -39,7 +49,6 @@
                 <input type="text" id="p-name" placeholder="Package Name" class="p-4 bg-gray-800 rounded-2xl text-sm font-bold">
                 <input type="number" id="p-price" placeholder="Price (USD)" class="p-4 bg-gray-800 rounded-2xl text-sm font-bold">
                 <textarea id="p-tasks" placeholder="Package Description/Tasks" class="p-4 bg-gray-800 rounded-2xl text-sm font-bold md:col-span-2 h-24"></textarea>
-                <input type="password" id="admin-key" placeholder="Admin Key (SRC3838)" class="p-4 bg-blue-900/30 border-blue-500/30 rounded-2xl text-sm font-bold md:col-span-2">
                 <button onclick="addProduct()" class="md:col-span-2 bg-blue-600 p-4 rounded-2xl font-black uppercase italic tracking-widest hover:bg-blue-500 transition shadow-xl">Publish Package</button>
             </div>
         </div>
@@ -67,23 +76,20 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // INITIALIZE EMAILJS
-        emailjs.init("YOUR_PUBLIC_KEY");
+        // --- EMAILJS CONFIGURATION ---
+        emailjs.init("YOUR_PUBLIC_KEY_HERE"); // PASTE YOUR PUBLIC KEY HERE
 
-        // --- BROADCAST LOGIC ---
         window.sendBroadcast = async () => {
             const subject = document.getElementById('email-subject').value;
             const message = document.getElementById('broadcast-msg').value;
-            const key = document.getElementById('broadcast-key').value;
             const btn = document.getElementById('broadcast-btn');
             const status = document.getElementById('broadcast-status');
 
-            if (key !== "SRC3838") return alert("ACCESS DENIED: WRONG KEY");
-            if (!subject || !message) return alert("Please provide subject and message");
+            if (!subject || !message) return alert("Fill all fields");
 
             btn.disabled = true;
             btn.innerText = "SENDING...";
-            status.innerText = "Processing worker database...";
+            status.innerText = "Accessing User Database...";
 
             try {
                 const querySnapshot = await getDocs(collection(db, "users"));
@@ -91,7 +97,7 @@
                 for (const userDoc of querySnapshot.docs) {
                     const email = userDoc.data().email;
                     if (email) {
-                        await emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+                        await emailjs.send("service_8l6ng22", "YOUR_TEMPLATE_ID_HERE", {
                             subject: subject,
                             message: message,
                             user_email: email,
@@ -100,26 +106,25 @@
                         sentCount++;
                     }
                 }
-                status.innerText = `SUCCESS: SENT TO ${sentCount} USERS`;
-                status.className = "text-[10px] font-black uppercase text-center text-green-500";
+                status.innerText = `SUCCESS: SENT TO ${sentCount} WORKERS`;
+                status.className = "text-green-500 uppercase text-[10px] font-black";
             } catch (err) {
-                status.innerText = "ERROR IN BROADCAST";
-                status.className = "text-[10px] font-black uppercase text-center text-red-500";
+                console.error(err);
+                status.innerText = "ERROR IN SENDING";
+                status.className = "text-red-500 uppercase text-[10px] font-black";
             } finally {
                 btn.disabled = false;
-                btn.innerText = "Send To All Users";
+                btn.innerText = "Send To All Workers";
             }
         };
 
-        // --- PRODUCT LOGIC ---
+        // --- PRODUCT MANAGEMENT ---
         window.addProduct = async () => {
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
             const tasks = document.getElementById('p-tasks').value;
-            const key = document.getElementById('admin-key').value;
 
-            if (key !== "SRC3838") return alert("INVALID ADMIN KEY");
-            if (!name || !price) return alert("Fill required info");
+            if (!name || !price) return alert("Fill name/price");
 
             try {
                 await addDoc(collection(db, "products"), {
@@ -128,15 +133,14 @@
                     tasks,
                     createdAt: serverTimestamp()
                 });
-                alert("Package Published.");
+                alert("Published Successfully!");
                 document.getElementById('p-name').value = "";
                 document.getElementById('p-price').value = "";
                 document.getElementById('p-tasks').value = "";
-                document.getElementById('admin-key').value = "";
             } catch (e) { alert(e.message); }
         };
 
-        // --- LISTINGS DISPLAY ---
+        // --- LOAD LISTINGS ---
         onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), (snapshot) => {
             const list = document.getElementById('admin-list');
             list.innerHTML = "";
@@ -149,18 +153,15 @@
                         <p class="font-black italic uppercase text-sm">${p.name}</p>
                         <p class="text-[10px] text-blue-400 font-bold">$${p.price}</p>
                     </div>
-                    <button onclick="deleteProduct('${docSnap.id}')" class="text-[9px] font-black uppercase text-red-500 bg-red-500/10 px-4 py-2 rounded-xl hover:bg-red-500 hover:text-white transition">Delete</button>
+                    <button onclick="deleteProduct('${docSnap.id}')" class="text-[9px] font-black uppercase text-red-500 bg-red-500/10 px-4 py-2 rounded-xl">Delete</button>
                 `;
                 list.appendChild(item);
             });
         });
 
         window.deleteProduct = async (id) => {
-            const key = prompt("Confirm Admin Key:");
-            if (key === "SRC3838") {
+            if (confirm("Permanently delete this item?")) {
                 await deleteDoc(doc(db, "products", id));
-            } else {
-                alert("Key Incorrect.");
             }
         };
     </script>
