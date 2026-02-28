@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel | WORKING REMOTELY</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <script>
         (function() {
@@ -19,13 +20,13 @@
     <style>
         body { background: #0f172a; font-family: sans-serif; color: white; }
         .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
-        input, textarea { transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.05) !important; }
+        input, textarea, select { transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.05) !important; color: white; }
         input:focus, textarea:focus { border-color: #3b82f6 !important; background: rgba(30, 41, 59, 1) !important; outline: none; }
     </style>
 </head>
 <body class="p-6">
 
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-4xl mx-auto pb-20">
         <div class="flex justify-between items-center mb-10">
             <h1 class="text-2xl font-black italic uppercase tracking-tighter text-blue-500">WORKING REMOTELY Admin</h1>
             <a href="index.html" class="text-xs font-bold uppercase bg-white text-black px-4 py-2 rounded-full hover:bg-blue-500 hover:text-white transition">Exit Panel</a>
@@ -43,6 +44,25 @@
             </div>
         </div>
 
+        <div class="glass-card p-8 rounded-[2.5rem] mb-10 border-l-4 border-green-500 shadow-2xl">
+            <h2 class="text-lg font-black uppercase mb-6 italic text-green-500">Upload Training PDF</h2>
+            <div class="space-y-4">
+                <input type="text" id="pdfTitle" placeholder="Module Title (e.g. Data Entry Guide)" class="w-full p-4 bg-gray-800 rounded-2xl text-sm font-bold">
+                <textarea id="pdfDesc" placeholder="Brief Description..." class="w-full p-4 bg-gray-800 rounded-2xl text-sm font-bold h-20"></textarea>
+                
+                <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-600 border-dashed rounded-2xl cursor-pointer bg-gray-800/50 hover:bg-gray-800 transition">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-file-pdf text-2xl text-gray-400 mb-2"></i>
+                        <p class="text-xs text-gray-400 font-bold uppercase">Click to upload PDF</p>
+                    </div>
+                    <input id="pdfFile" type="file" class="hidden" accept="application/pdf" />
+                </label>
+
+                <button onclick="uploadTraining()" id="uploadBtn" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black uppercase italic tracking-widest hover:bg-green-500 transition shadow-xl">Publish Training</button>
+                <p id="uploadStatus" class="text-[10px] font-black uppercase text-center mt-2 text-green-400"></p>
+            </div>
+        </div>
+
         <div class="glass-card p-8 rounded-[2.5rem] mb-10 border-l-4 border-blue-500 shadow-2xl">
             <h2 class="text-lg font-black uppercase mb-6 italic text-blue-500">Manage Marketplace</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -53,9 +73,15 @@
             </div>
         </div>
 
-        <div class="glass-card p-8 rounded-[2.5rem] shadow-2xl">
-            <h2 class="text-lg font-black uppercase mb-6 italic text-gray-500">Live Items</h2>
-            <div id="admin-list" class="space-y-3"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass-card p-8 rounded-[2.5rem] shadow-2xl">
+                <h2 class="text-sm font-black uppercase mb-6 italic text-gray-500">Marketplace Items</h2>
+                <div id="admin-list" class="space-y-3"></div>
+            </div>
+            <div class="glass-card p-8 rounded-[2.5rem] shadow-2xl">
+                <h2 class="text-sm font-black uppercase mb-6 italic text-gray-500">Training Modules</h2>
+                <div id="training-list" class="space-y-3"></div>
+            </div>
         </div>
     </div>
 
@@ -64,6 +90,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", 
@@ -76,12 +103,13 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
-        // --- EMAILJS INITIALIZATION ---
         emailjs.init("bknDLORLRGE4fjaQU"); 
 
         const delay = ms => new Promise(res => setTimeout(res, ms));
 
+        // --- BROADCAST LOGIC ---
         window.sendBroadcast = async () => {
             const subject = document.getElementById('email-subject').value;
             const message = document.getElementById('broadcast-msg').value;
@@ -89,62 +117,59 @@
             const status = document.getElementById('broadcast-status');
 
             if (!subject || !message) return alert("Please fill the subject and message.");
-
             btn.disabled = true;
             btn.innerText = "PROCESSING...";
-            status.innerText = "Checking customer list...";
-            status.className = "text-blue-400 uppercase text-[10px] font-black text-center mt-2";
 
             try {
                 const querySnapshot = await getDocs(collection(db, "users"));
                 let sentCount = 0;
-                let skipCount = 0;
-                
                 for (const userDoc of querySnapshot.docs) {
                     let email = userDoc.data().email;
-                    
                     if (email) {
-                        // 1. Clean data: Remove spaces and make lowercase
                         email = email.trim().toLowerCase();
-
-                        // 2. Validate: Skip emails with typos like '.come' or missing '@'
-                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,4}$/;
-                        if (!emailRegex.test(email)) {
-                            console.warn("Skipping bad email address:", email);
-                            skipCount++;
-                            continue; 
-                        }
-
                         status.innerText = `Sending to: ${email}...`;
-                        
-                        try {
-                            // 3. Send to EmailJS - Make sure {{user_email}} is in your template!
-                            await emailjs.send("service_8l6ng22", "template_n1t3m08", {
-                                subject: subject,
-                                message: message,
-                                user_email: email, 
-                                admin_email: "contactsuportremoteworkings@gmail.com"
-                            });
-                            
-                            sentCount++;
-                            // 4. Safety delay to prevent blocking
-                            await delay(1500); 
-                        } catch (sendErr) {
-                            console.error("EmailJS rejection for:", email, sendErr);
-                        }
+                        await emailjs.send("service_8l6ng22", "template_n1t3m08", {
+                            subject: subject,
+                            message: message,
+                            user_email: email, 
+                            admin_email: "contactsuportremoteworkings@gmail.com"
+                        });
+                        sentCount++;
+                        await delay(1500); 
                     }
                 }
-                status.innerText = `SUCCESS: SENT TO ${sentCount} (SKIPPED ${skipCount} BAD EMAILS)`;
-                status.className = "text-green-400 uppercase text-[10px] font-black text-center mt-2";
+                status.innerText = `SUCCESS: SENT TO ${sentCount}`;
                 alert("Broadcast Complete!");
-            } catch (err) {
-                console.error("Database Error:", err);
-                status.innerText = "FAILED: DATABASE ERROR";
-                status.className = "text-red-500 uppercase text-[10px] font-black text-center mt-2";
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Send To All Workers";
-            }
+            } catch (err) { alert("Error: " + err.message); }
+            btn.disabled = false; btn.innerText = "Send To All Workers";
+        };
+
+        // --- TRAINING UPLOAD LOGIC ---
+        window.uploadTraining = async () => {
+            const file = document.getElementById('pdfFile').files[0];
+            const title = document.getElementById('pdfTitle').value;
+            const desc = document.getElementById('pdfDesc').value;
+            const status = document.getElementById('uploadStatus');
+            const btn = document.getElementById('uploadBtn');
+
+            if(!file || !title) return alert("Select a PDF and enter a title.");
+
+            btn.disabled = true;
+            btn.innerText = "UPLOADING...";
+            status.innerText = "Processing file...";
+
+            try {
+                const storageRef = ref(storage, 'training/' + Date.now() + "_" + file.name);
+                await uploadBytes(storageRef, file);
+                const url = await getDownloadURL(storageRef);
+
+                await addDoc(collection(db, "training_modules"), {
+                    title, description: desc, pdfUrl: url, createdAt: serverTimestamp()
+                });
+
+                alert("Module Published!");
+                location.reload();
+            } catch (e) { alert("Upload Failed: " + e.message); }
         };
 
         // --- MARKETPLACE LOGIC ---
@@ -152,110 +177,44 @@
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
             const tasks = document.getElementById('p-tasks').value;
-
-            if (!name || !price) return alert("Fill out the package name and price.");
-
+            if (!name || !price) return alert("Enter name and price.");
             try {
-                await addDoc(collection(db, "products"), {
-                    name,
-                    price: parseFloat(price),
-                    tasks,
-                    createdAt: serverTimestamp()
-                });
-                alert("Package Published!");
-                document.getElementById('p-name').value = "";
-                document.getElementById('p-price').value = "";
-                document.getElementById('p-tasks').value = "";
-            } catch (e) { alert("Firebase Error: " + e.message); }
+                await addDoc(collection(db, "products"), { name, price: parseFloat(price), tasks, createdAt: serverTimestamp() });
+                alert("Package Added!");
+            } catch (e) { alert(e.message); }
         };
 
+        // --- LIVE SYNC (MARKETPLACE) ---
         onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), (snapshot) => {
             const list = document.getElementById('admin-list');
             list.innerHTML = "";
             snapshot.forEach(docSnap => {
                 const p = docSnap.data();
-                const item = document.createElement('div');
-                item.className = "flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5";
-                item.innerHTML = `
-                    <div>
-                        <p class="font-black italic uppercase text-sm">${p.name}</p>
-                        <p class="text-[10px] text-blue-400 font-bold">$${p.price}</p>
-                    </div>
-                    <button onclick="deleteProduct('${docSnap.id}')" class="text-[9px] font-black uppercase text-red-500 bg-red-500/10 px-4 py-2 rounded-xl hover:bg-red-500 hover:text-white transition">Delete</button>
-                `;
-                list.appendChild(item);
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5";
+                div.innerHTML = `<div><p class="font-black italic uppercase text-[10px]">${p.name}</p><p class="text-[9px] text-blue-400">$${p.price}</p></div>
+                <button onclick="deleteDocById('products', '${docSnap.id}')" class="text-[8px] font-black bg-red-500/10 text-red-500 px-3 py-1 rounded-lg">Delete</button>`;
+                list.appendChild(div);
             });
         });
 
-        window.deleteProduct = async (id) => {
-            if (confirm("Delete this package?")) {
-                await deleteDoc(doc(db, "products", id));
-            }
-        };
-    <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-200 mt-10">
-    <h2 class="text-2xl font-black text-slate-800 mb-6">Upload New Training Module</h2>
-    
-    <div class="space-y-4">
-        <input type="text" id="pdfTitle" placeholder="Module Title (e.g., Advanced Data Entry)" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500">
-        <textarea id="pdfDesc" placeholder="Brief Description..." class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500"></textarea>
-        
-        <div class="flex items-center justify-center w-full">
-            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100">
-                <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                    <i class="fas fa-cloud-upload-alt text-2xl text-slate-400 mb-2"></i>
-                    <p class="text-sm text-slate-500 font-bold">Click to select PDF</p>
-                </div>
-                <input id="pdfFile" type="file" class="hidden" accept="application/pdf" />
-            </label>
-        </div>
-
-        <button id="uploadBtn" class="w-full bg-blue-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-blue-700 transition-all">
-            Publish Training Now
-        </button>
-        <p id="uploadStatus" class="text-center text-xs font-bold text-blue-600 hidden">Uploading... please wait.</p>
-    </div>
-</div>
-
-<script type="module">
-    import { auth, db } from "./firebase-config.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-    import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    const storage = getStorage();
-
-    document.getElementById('uploadBtn').addEventListener('click', async () => {
-        const file = document.getElementById('pdfFile').files[0];
-        const title = document.getElementById('pdfTitle').value;
-        const desc = document.getElementById('pdfDesc').value;
-        const status = document.getElementById('uploadStatus');
-
-        if(!file || !title) return alert("Please provide a title and select a file.");
-
-        status.classList.remove('hidden');
-        
-        try {
-            // 1. Upload to Storage
-            const storageRef = ref(storage, 'training/' + file.name);
-            await uploadBytes(storageRef, file);
-            const downloadURL = await getDownloadURL(storageRef);
-
-            // 2. Save Link to Firestore
-            await addDoc(collection(db, "training_modules"), {
-                title: title,
-                description: desc,
-                pdfUrl: downloadURL,
-                createdAt: serverTimestamp()
+        // --- LIVE SYNC (TRAININGS) ---
+        onSnapshot(query(collection(db, "training_modules"), orderBy("createdAt", "desc")), (snapshot) => {
+            const list = document.getElementById('training-list');
+            list.innerHTML = "";
+            snapshot.forEach(docSnap => {
+                const t = docSnap.data();
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5";
+                div.innerHTML = `<div><p class="font-black italic uppercase text-[10px]">${t.title}</p><p class="text-[9px] text-green-400 uppercase">PDF Active</p></div>
+                <button onclick="deleteDocById('training_modules', '${docSnap.id}')" class="text-[8px] font-black bg-red-500/10 text-red-500 px-3 py-1 rounded-lg">Delete</button>`;
+                list.appendChild(div);
             });
+        });
 
-            alert("Training Module Published Successfully!");
-            location.reload();
-        } catch (error) {
-            console.error(error);
-            alert("Upload failed. Check Firebase Storage rules.");
-        }
-    });
-</script>
+        window.deleteDocById = async (coll, id) => {
+            if (confirm("Confirm Deletion?")) await deleteDoc(doc(db, coll, id));
+        };
+    </script>
 </body>
 </html>
-
-
