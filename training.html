@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Center | Working Remotely</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        .training-card { background: white; transition: all 0.3s ease; border: 1px solid #e2e8f0; }
+        .training-card:hover { transform: translateY(-10px); shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border-color: #3b82f6; }
+        .premium-lock { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+    </style>
+</head>
+<body>
+
+    <nav class="bg-white border-b px-8 py-5 flex justify-between items-center sticky top-0 z-50">
+        <div class="text-xl font-black text-blue-800 uppercase italic">Working Remotely</div>
+        <a href="shop.html" class="text-sm font-bold text-slate-500 hover:text-blue-600">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Shop
+        </a>
+    </nav>
+
+    <header class="py-16 px-6 text-center bg-slate-900 text-white">
+        <h1 class="text-4xl font-extrabold mb-4">Resource Training Center</h1>
+        <p class="text-slate-400 max-w-2xl mx-auto">Access our foundational remote work modules for free. Start building your skills today before advancing to our Elite Trainer program.</p>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-6 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <div class="training-card p-8 rounded-[2rem]">
+                <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 text-2xl mb-6">
+                    <i class="fas fa-keyboard"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Data Entry Mastery</h3>
+                <p class="text-slate-500 text-sm mb-6 leading-relaxed">Learn the speed and accuracy techniques used by top-tier remote data specialists.</p>
+                <a href="training-files/data-entry-sample.pdf" target="_blank" class="block text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all">
+                    Read Module (Free)
+                </a>
+            </div>
+
+            <div class="training-card p-8 rounded-[2rem]">
+                <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center text-green-600 text-2xl mb-6">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Productivity Pro</h3>
+                <p class="text-slate-500 text-sm mb-6 leading-relaxed">Essential time-blocking strategies to double your output without burning out.</p>
+                <a href="training-files/time-management-sample.pdf" target="_blank" class="block text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all">
+                    Read Module (Free)
+                </a>
+            </div>
+
+            <div class="training-card p-8 rounded-[2rem]">
+                <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600 text-2xl mb-6">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Executive Scheduling</h3>
+                <p class="text-slate-500 text-sm mb-6 leading-relaxed">How to manage complex calendars for high-level global executives.</p>
+                <a href="training-files/calendar-management-sample.pdf" target="_blank" class="block text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all">
+                    Read Module (Free)
+                </a>
+            </div>
+
+        </div>
+
+        <div class="mt-20 premium-lock rounded-[3rem] p-12 text-center text-white relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="inline-block bg-yellow-500 text-black text-[10px] font-black px-4 py-1 rounded-full uppercase mb-6">Premium Access</div>
+                <h2 class="text-3xl md:text-5xl font-black mb-6">Unlock the Premium Trainer Program</h2>
+                <p class="text-slate-400 max-w-xl mx-auto mb-10">Ready for the deep dive? Access advanced scripts, high-ticket job lists, and 1-on-1 coaching for a one-time fee of $10.</p>
+                <button class="bg-white text-slate-900 px-10 py-5 rounded-2xl font-black uppercase text-sm hover:scale-105 transition-transform">
+                    Upgrade to Elite with Tasks Now ($10)
+                </button>
+                <p class="mt-6 text-xs text-slate-500 italic">Questions? Email us at contactsuportremoteworkings@gmail.com</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
