@@ -193,5 +193,69 @@
             }
         };
     </script>
+    <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-200 mt-10">
+    <h2 class="text-2xl font-black text-slate-800 mb-6">Upload New Training Module</h2>
+    
+    <div class="space-y-4">
+        <input type="text" id="pdfTitle" placeholder="Module Title (e.g., Advanced Data Entry)" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500">
+        <textarea id="pdfDesc" placeholder="Brief Description..." class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500"></textarea>
+        
+        <div class="flex items-center justify-center w-full">
+            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100">
+                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                    <i class="fas fa-cloud-upload-alt text-2xl text-slate-400 mb-2"></i>
+                    <p class="text-sm text-slate-500 font-bold">Click to select PDF</p>
+                </div>
+                <input id="pdfFile" type="file" class="hidden" accept="application/pdf" />
+            </label>
+        </div>
+
+        <button id="uploadBtn" class="w-full bg-blue-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-blue-700 transition-all">
+            Publish Training Now
+        </button>
+        <p id="uploadStatus" class="text-center text-xs font-bold text-blue-600 hidden">Uploading... please wait.</p>
+    </div>
+</div>
+
+<script type="module">
+    import { auth, db } from "./firebase-config.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+    import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const storage = getStorage();
+
+    document.getElementById('uploadBtn').addEventListener('click', async () => {
+        const file = document.getElementById('pdfFile').files[0];
+        const title = document.getElementById('pdfTitle').value;
+        const desc = document.getElementById('pdfDesc').value;
+        const status = document.getElementById('uploadStatus');
+
+        if(!file || !title) return alert("Please provide a title and select a file.");
+
+        status.classList.remove('hidden');
+        
+        try {
+            // 1. Upload to Storage
+            const storageRef = ref(storage, 'training/' + file.name);
+            await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(storageRef);
+
+            // 2. Save Link to Firestore
+            await addDoc(collection(db, "training_modules"), {
+                title: title,
+                description: desc,
+                pdfUrl: downloadURL,
+                createdAt: serverTimestamp()
+            });
+
+            alert("Training Module Published Successfully!");
+            location.reload();
+        } catch (error) {
+            console.error(error);
+            alert("Upload failed. Check Firebase Storage rules.");
+        }
+    });
+</script>
 </body>
 </html>
+
