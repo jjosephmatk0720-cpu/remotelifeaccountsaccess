@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | WORKING REMOOTELY HEADQUARTERS</title>
+    <title>Admin Panel | WORKING REMOTELY HEADQUARTERS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
@@ -22,7 +22,7 @@
         .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
         input, textarea, select { transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; background: #0f172a !important; }
         input:focus, textarea:focus, select:focus { border-color: #3b82f6 !important; outline: none; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
-        .tab-btn.active { border-bottom: 3px solid #3b82f6; color: #3b82f6; }
+        .status-pill { font-size: 8px; font-weight: 900; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
     </style>
 </head>
 <body class="p-6">
@@ -33,7 +33,17 @@
                 <h1 class="text-2xl font-black italic uppercase tracking-tighter text-blue-500">Jubilee Fortunes Admin</h1>
                 <p class="text-[9px] font-bold text-gray-500 uppercase tracking-[0.3em]">contactsuportremoteworkings@gmail.com</p>
             </div>
-            <a href="index.html" class="text-[10px] font-black uppercase bg-red-600/20 text-red-500 border border-red-500/30 px-6 py-2 rounded-xl hover:bg-red-600 hover:text-white transition">Secure Logout</a>
+            <div class="flex gap-3">
+                <a href="https://www.pesapal.com/dashboard" target="_blank" class="text-[10px] font-black uppercase bg-blue-600/20 text-blue-400 border border-blue-500/30 px-4 py-2 rounded-xl">Pesapal Login</a>
+                <a href="index.html" class="text-[10px] font-black uppercase bg-red-600/20 text-red-500 border border-red-500/30 px-6 py-2 rounded-xl hover:bg-red-600 hover:text-white transition">Exit</a>
+            </div>
+        </div>
+
+        <div class="mb-12">
+            <h2 class="text-[10px] font-black uppercase mb-4 italic text-yellow-500 tracking-widest border-b border-yellow-500/20 pb-2">Verification Center (Pending Payments)</h2>
+            <div id="payment-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <p class="text-[10px] text-gray-600 font-bold italic uppercase py-4">Scanning for new M-Pesa/Pesapal logs...</p>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
@@ -93,7 +103,7 @@
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp, query, orderBy, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", 
@@ -108,6 +118,48 @@
         const db = getFirestore(app);
 
         emailjs.init("bknDLORLRGE4fjaQU"); 
+
+        // --- NEW: VERIFICATION LOGIC ---
+        onSnapshot(query(collection(db, "payment_submissions"), orderBy("createdAt", "desc")), (snap) => {
+            const list = document.getElementById('payment-list');
+            list.innerHTML = "";
+            snap.forEach(d => {
+                const data = d.data();
+                if(data.status === "pending") {
+                    const div = document.createElement('div');
+                    div.className = "glass-card p-5 rounded-3xl border-l-4 border-yellow-500 flex flex-col gap-2";
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-[10px] font-black text-white">${data.userEmail}</p>
+                                <p class="text-[8px] font-bold text-gray-500 uppercase">${data.method} | $${data.amount}</p>
+                            </div>
+                            <span class="status-pill bg-yellow-600/20 text-yellow-500 italic">Pending</span>
+                        </div>
+                        <p class="text-[9px] font-bold text-blue-400">ITEM: ${data.itemName || 'Premium Access'}</p>
+                        <div class="flex gap-2 mt-2">
+                            <button onclick="approveUser('${d.id}', '${data.userEmail}')" class="bg-green-600 text-white px-4 py-2 rounded-xl font-black text-[9px] uppercase italic flex-1">Approve Premium</button>
+                            <button onclick="deleteItem('payment_submissions','${d.id}')" class="bg-red-600/10 text-red-500 px-3 rounded-xl"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                }
+            });
+        });
+
+        window.approveUser = async (subId, email) => {
+            if(confirm("Verify payment and unlock Premium for: " + email + "?")) {
+                try {
+                    // 1. Mark payment as approved
+                    await updateDoc(doc(db, "payment_submissions", subId), { status: "approved" });
+                    // 2. Unlock User's Premium Status
+                    await updateDoc(doc(db, "users", email), { isPremium: true });
+                    alert("SUCCESS: User is now PREMIUM!");
+                } catch (e) {
+                    alert("Error: Ensure user document exists in 'users' collection.");
+                }
+            }
+        };
 
         // --- BROADCAST LOGIC ---
         window.sendBroadcast = async () => {
@@ -137,7 +189,7 @@
             btn.disabled = false; btn.innerText = "Execute Broadcast";
         };
 
-        // --- TRAINING LOGIC (UPDATED WITH STATUS) ---
+        // --- TRAINING LOGIC ---
         window.addTrainingByLink = async () => {
             const title = document.getElementById('pdfTitle').value;
             const url = document.getElementById('pdfExternalUrl').value;
