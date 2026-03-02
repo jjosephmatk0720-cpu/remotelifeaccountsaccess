@@ -9,13 +9,17 @@
     <style>
         body { background:#0f172a; font-family:sans-serif; color:white; overflow-x:hidden;}
         .glass-card { background:rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px); transition: 0.3s ease;}
+        .glass-card:hover { border-color: #3b82f6; }
+        
+        /* 100+ USER ACTIVITY POPUP */
         .activity-popup {position:fixed; bottom:110px; left:20px; background:white; color:#0f172a; padding:12px 24px; border-radius:20px; font-weight:800; font-size:10px; display:none; z-index:1000; box-shadow:0 15px 40px rgba(0,0,0,0.6); border-left:5px solid #2563eb; animation:slideIn .5s ease-out;}
         @keyframes slideIn {from{transform:translateX(-100%); opacity:0;} to{transform:translateX(0); opacity:1;}}
+        
         .feedback-scroll {display:flex; overflow-x:auto; gap:15px; padding-bottom:20px; scrollbar-width:none;}
         .section-title { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; color: #64748b; margin-bottom: 20px; padding-left: 8px; border-left: 3px solid #3b82f6; }
         #cart-count {font-size:8px; position:absolute; top:-5px; right:-5px; background:red; color:white; border-radius:50%; width:14px; height:14px; display:flex; align-items:center; justify-content:center;}
-        .prem-tag { background: linear-gradient(to right, #eab308, #ca8a04); color: black; font-size: 7px; font-weight: 900; padding: 2px 6px; border-radius: 4px; }
-        .free-tag { background: #22c55e; color: white; font-size: 7px; font-weight: 900; padding: 2px 6px; border-radius: 4px; }
+        .prem-tag { background: linear-gradient(to right, #eab308, #ca8a04); color: black; font-size: 7px; font-weight: 900; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+        .free-tag { background: #22c55e; color: white; font-size: 7px; font-weight: 900; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
     </style>
 </head>
 
@@ -36,48 +40,58 @@
     </div>
 </nav>
 
+<div class="mb-12">
+    <h3 class="section-title">Remote Account Packages</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="market-list"></div>
+</div>
+
 <div class="mb-12 bg-white/5 p-8 rounded-[3rem] border border-white/10">
-    <h3 class="section-title text-yellow-500 border-yellow-500">Training & Tasks</h3>
+    <h3 class="section-title text-yellow-500 border-yellow-500">Training & Certification Hub</h3>
     <div class="relative mb-8">
         <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500"></i>
-        <input type="text" id="trainingSearch" onkeyup="filterTraining()" placeholder="Search Topics..." 
+        <input type="text" id="trainingSearch" onkeyup="filterTraining()" placeholder="Search Topics (e.g. Data Entry, Introduction)..." 
         class="w-full bg-slate-900 border border-white/10 p-5 pl-14 rounded-2xl text-sm font-bold focus:border-blue-500 outline-none transition">
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="training-list"></div>
 </div>
 
 <div class="mt-20 mb-10">
-    <h3 class="section-title text-green-500 border-green-500">Verified Feedbacks</h3>
+    <h3 class="section-title text-green-500 border-green-500">Global Worker Proof</h3>
     <div class="feedback-scroll">
         <div class="glass-card p-4 min-w-[280px] rounded-3xl border-l-4 border-green-500">
             <p class="text-[10px] font-black text-blue-400 uppercase">@Kevin_Omondi</p>
-            <p class="text-[11px] italic text-gray-300">"The $10 premium was worth it. Already got my first $200 task!"</p>
+            <p class="text-[11px] italic text-gray-300">"The $10 premium unlock was the best investment. Got my first task in 2 days!"</p>
             <div class="mt-2 text-[9px] font-bold text-green-500">PAID: $200.00 SUCCESS</div>
+        </div>
+        <div class="glass-card p-4 min-w-[280px] rounded-3xl border-l-4 border-green-500">
+            <p class="text-[10px] font-black text-blue-400 uppercase">@Sarah_C</p>
+            <p class="text-[11px] italic text-gray-300">"Payout received via M-Pesa. Jubilee Fortunes is 100% legit."</p>
+            <div class="mt-2 text-[9px] font-bold text-green-500">STATUS: PAID</div>
         </div>
     </div>
 </div>
 
 <div id="payment-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4">
     <div class="glass-card w-full max-w-md p-8 rounded-[3rem] border-t-4 border-yellow-500 relative text-center">
-        <button onclick="closePayment()" class="absolute top-6 right-6 text-gray-400"><i class="fas fa-times"></i></button>
+        <button onclick="closePayment()" class="absolute top-6 right-6 text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
         <h2 class="text-2xl font-black italic uppercase mb-2 text-yellow-500">Unlock Premium</h2>
-        <p class="text-[10px] text-gray-400 uppercase font-bold mb-8">Choose Payment Method ($10 / 1,350 KES)</p>
+        <p class="text-[10px] text-gray-400 uppercase font-bold mb-8 tracking-widest">Pay $10 (1,350 KES) for Lifetime Access</p>
         
         <div class="space-y-3 text-left mb-8">
             <div class="p-4 bg-green-600/10 border border-green-500/20 rounded-2xl flex justify-between items-center">
-                <p class="text-xs font-black uppercase text-green-500">M-Pesa Till: 123456</p>
-                <i class="fas fa-mobile-alt"></i>
+                <div><p class="text-[8px] font-black text-green-500 uppercase">M-Pesa Till (Buy Goods)</p><p class="text-xs font-black">TILL: [YOUR TILL]</p></div>
+                <i class="fas fa-mobile-alt text-green-500"></i>
             </div>
             <div class="p-4 bg-blue-600/10 border border-blue-500/20 rounded-2xl flex justify-between items-center">
-                <p class="text-xs font-black uppercase text-blue-400">Visa / Card Payment</p>
-                <i class="fab fa-cc-visa"></i>
+                <div><p class="text-[8px] font-black text-blue-500 uppercase">Visa / Master Card</p><p class="text-[10px] font-bold">Request Link via Tawk.to Chat</p></div>
+                <i class="fab fa-cc-visa text-blue-500"></i>
             </div>
-            <div class="p-4 bg-orange-600/10 border border-orange-500/20 rounded-2xl flex justify-between items-center">
-                <p class="text-[9px] font-black text-orange-500 uppercase">Crypto TRC20 (USDT)</p>
-                <i class="fab fa-bitcoin text-orange-500"></i>
+            <div class="p-4 bg-orange-600/10 border border-orange-500/20 rounded-2xl">
+                <p class="text-[8px] font-black text-orange-500 uppercase">Crypto TRC20 Address (USDT)</p>
+                <p class="text-[9px] font-mono break-all text-white">[YOUR ADDRESS]</p>
             </div>
         </div>
-        <button onclick="confirmPayment()" class="w-full bg-yellow-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic">Submit Payment Proof</button>
+        <button onclick="confirmPayment()" class="w-full bg-yellow-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic shadow-xl">Submit Payment Proof</button>
     </div>
 </div>
 
@@ -85,12 +99,24 @@
     <div class="flex justify-between items-center px-2">
         <div>
             <p id="promo-tag" class="text-[8px] font-black text-yellow-400 uppercase hidden">🔥 10% DISCOUNT APPLIED</p>
-            <p id="cart-summary" class="font-black italic uppercase text-sm"></p>
+            <p id="cart-summary" class="font-black italic uppercase text-sm text-white"></p>
         </div>
         <p id="cart-total" class="text-xl font-black text-white"></p>
     </div>
-    <button onclick="contactSupport()" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic">Checkout via WhatsApp</button>
+    <button onclick="contactSupport()" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic tracking-widest">Order via WhatsApp</button>
 </div>
+
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/697549464a0f82197e621807/1jfp2cf6e'; 
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -110,26 +136,50 @@ const db=getFirestore(app);
 let cart=[];
 let allTraining = [];
 
+// SYNC PRODUCTS
+onSnapshot(query(collection(db,"products"),orderBy("createdAt","desc")),(snap)=>{
+    const list=document.getElementById('market-list');
+    list.innerHTML="";
+    snap.forEach(doc=>{
+        const p=doc.data();
+        const div=document.createElement('div');
+        div.className="glass-card p-6 rounded-[2.5rem]";
+        div.innerHTML=`<h2 class="text-lg font-black italic uppercase leading-tight">${p.name}</h2>
+            <div class="flex justify-between items-center mt-6">
+                <span class="text-2xl font-black">$${p.price}</span>
+                <button onclick="addToCart('${p.name}',${p.price})" class="bg-blue-600 text-white px-6 py-2 rounded-full font-black uppercase text-[10px] italic">Add</button>
+            </div>`;
+        list.appendChild(div);
+    });
+});
+
+// SYNC TRAINING HUB
 onSnapshot(query(collection(db,"training_modules"),orderBy("createdAt","asc")),(snap)=>{
-    allTraining = []; snap.forEach(doc => allTraining.push(doc.data()));
+    allTraining = []; 
+    snap.forEach(doc => allTraining.push(doc.data()));
+    filterTraining();
 });
 
 window.filterTraining = () => {
     const term = document.getElementById('trainingSearch').value.toLowerCase();
     const list = document.getElementById('training-list');
-    list.innerHTML = "";
-    if (term.length < 1) return;
+    list.innerHTML = ""; // Clears existing items to prevent duplicates
+    
+    if (term.length < 1) { 
+        list.innerHTML = "<p class='col-span-full text-center py-10 text-[9px] font-bold text-gray-600 uppercase italic'>Type to search modules...</p>";
+        return; 
+    }
 
     allTraining.forEach(t => {
         if (t.title.toLowerCase().includes(term)) {
-            // Check if Admin set this specific one to Premium
             const isPremium = t.status === "premium"; 
             const div = document.createElement('div');
             div.className = `glass-card p-6 rounded-[2rem] border-l-4 ${isPremium ? 'border-yellow-500' : 'border-green-500'}`;
             div.innerHTML = `
                 <div class="mb-2"><span class="${isPremium?'prem-tag':'free-tag'}">${isPremium?'PREMIUM':'FREE'}</span></div>
-                <h2 class="text-sm font-black uppercase mb-4">${t.title}</h2>
-                <button onclick="${isPremium ? 'openPayment()' : `window.open('${t.pdfUrl}')`}" class="w-full py-3 rounded-xl font-black uppercase text-[9px] ${isPremium ? 'bg-yellow-600 text-white' : 'border border-green-500 text-green-500'}">
+                <h2 class="text-sm font-black uppercase mb-4 leading-tight">${t.title}</h2>
+                <button onclick="${isPremium ? 'openPayment()' : `window.open('${t.pdfUrl}')`}" 
+                    class="w-full py-3 rounded-xl font-black uppercase text-[9px] italic ${isPremium ? 'bg-yellow-600 text-white' : 'border border-green-500 text-green-500'}">
                     ${isPremium ? 'Unlock Topic & Tasks' : 'Download Free PDF'}
                 </button>`;
             list.appendChild(div);
@@ -137,42 +187,40 @@ window.filterTraining = () => {
     });
 };
 
-// CART LOGIC WITH 10% DISCOUNT
+// CART & DISCOUNT LOGIC
 window.addToCart=(name,price)=>{cart.push({name,price}); updateCartUI();};
 window.updateCartUI=()=>{
-    let total=cart.reduce((s,i)=>s+i.price,0);
-    if(cart.length >= 2){ total *= 0.9; document.getElementById('promo-tag').classList.remove('hidden'); }
-    else { document.getElementById('promo-tag').classList.add('hidden'); }
-    document.getElementById('cart-bar').classList.remove('hidden');
-    document.getElementById('cart-summary').innerText=`${cart.length} Selections`;
-    document.getElementById('cart-total').innerText=`$${total.toFixed(2)}`;
+    const count = cart.length;
+    document.getElementById('cart-count').innerText=count;
+    if(count > 0){
+        document.getElementById('cart-bar').classList.remove('hidden');
+        let total = cart.reduce((s,i)=>s+i.price,0);
+        if(count >= 2){ total *= 0.9; document.getElementById('promo-tag').classList.remove('hidden'); }
+        else { document.getElementById('promo-tag').classList.add('hidden'); }
+        document.getElementById('cart-summary').innerText=`${count} Selection(s)`;
+        document.getElementById('cart-total').innerText=`$${total.toFixed(2)}`;
+    }
 };
 
 window.openPayment = () => document.getElementById('payment-modal').classList.remove('hidden');
 window.closePayment = () => document.getElementById('payment-modal').classList.add('hidden');
-window.confirmPayment = () => window.open(`https://wa.me/18088572943?text=I paid $10 for Premium trinings and tasks.`,'_blank');
-window.contactSupport = () => window.open(`https://wa.me/18088572943?text=Order: ${cart.map(i=>i.name).join(", ")}`,'_blank');
+window.confirmPayment = () => window.open(`https://wa.me/18088572943?text=I've paid $10 for Premium Access.`,'_blank');
+window.contactSupport = () => window.open(`https://wa.me/18088572943?text=Order Checkout: ${cart.map(i=>i.name).join(", ")}`,'_blank');
 window.toggleCartDisplay = () => document.getElementById('cart-bar').classList.toggle('hidden');
 
-// 100+ USER ACTIVITY
+// 100+ USER LIVE ACTIVITY
+const users = ["User #2041", "Worker #8843", "Member #0092", "User #5521", "User #1109", "@Wambua_K", "@Mercy_Tasker", "Member #7721", "User #4401", "Worker #9920"];
+const logs = ["Earned $45.00 on Data Entry!", "Just Upgraded to Premium!", "Received $1,200 payout!", "Completed Training!", "Requested New Account.", "Certified as Annotator!", "Submitted task for $150 Payment."];
+
 setInterval(() => {
     const ticker = document.getElementById('activity-ticker');
     const msg = document.getElementById('activity-msg');
-    const logs = ["User #1920 earned $410", "Payout Sent to @W_Jane", "Member #5502 Joined Premium", "New Task Added by Admin"];
-    msg.innerHTML = logs[Math.floor(Math.random() * logs.length)];
+    const user = users[Math.floor(Math.random() * users.length)];
+    const log = logs[Math.floor(Math.random() * logs.length)];
+    msg.innerHTML = `<span class="text-blue-600">${user}</span> ${log}`;
     ticker.style.display = "block";
     setTimeout(() => { ticker.style.display = "none"; }, 5000);
-}, 12000);
-</script>
-
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true; s1.src='https://embed.tawk.to/f8415e23ad3f7ee2cf5b33a154fad7c96f46fabe';
-s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
+}, 8000);
 </script>
 </body>
 </html>
