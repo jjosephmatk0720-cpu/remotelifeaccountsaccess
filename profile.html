@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Account | Working Remote</title>
+    <title>My Account | WORKING REMOTELY HEADQUARTERS </title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body { 
             background: #0f172a; 
@@ -24,6 +25,7 @@
             max-width: 500px;
         }
         .progress-glow { box-shadow: 0 0 15px rgba(37, 99, 235, 0.5); }
+        .premium-border { border: 2px solid #fbbf24 !important; box-shadow: 0 0 20px rgba(251, 191, 36, 0.1); }
     </style>
 </head>
 <body id="main-body" class="p-4 min-h-screen">
@@ -34,10 +36,13 @@
     </div>
 
     <div class="text-center mb-8">
-        <div class="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-900 rounded-full mx-auto mb-3 flex items-center justify-center border-4 border-slate-800 shadow-xl">
+        <div id="avatar-bg" class="w-20 h-20 bg-gradient-to-tr from-blue-600 to-indigo-900 rounded-full mx-auto mb-3 flex items-center justify-center border-4 border-slate-800 shadow-xl transition-all">
             <span id="user-initial" class="text-3xl font-black uppercase">?</span>
         </div>
         <h2 id="user-email" class="text-[11px] font-bold text-slate-400 truncate px-4">Loading...</h2>
+        <div id="premium-tag" class="hidden mt-2">
+            <span class="bg-yellow-500 text-black text-[8px] font-black px-3 py-1 rounded-full uppercase italic">✨ Premium Member</span>
+        </div>
     </div>
 
     <div class="responsive-card p-6 rounded-[2.5rem] mb-4">
@@ -82,9 +87,17 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", authDomain: "remoteworkingacess.firebaseapp.com", projectId: "remoteworkingacess", storageBucket: "remoteworkingacess.firebasestorage.app", messagingSenderId: "953179052891", appId: "1:953179052891:web:8126924e32e9fb62f4987e" };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE", 
+            authDomain: "remoteworkingacess.firebaseapp.com", 
+            projectId: "remoteworkingacess", 
+            storageBucket: "remoteworkingacess.firebasestorage.app", 
+            messagingSenderId: "953179052891", 
+            appId: "1:953179052891:web:8126924e32e9fb62f4987e" 
+        };
+        
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -99,9 +112,23 @@
                 document.getElementById('user-email').innerText = user.email;
                 document.getElementById('user-initial').innerText = user.email[0];
                 document.getElementById('ref-link').innerText = `${window.location.origin}/index.html?ref=${user.uid}`;
+                
+                // 1. Check for Premium Status in real-time
+                onSnapshot(doc(db, "users", user.email), (snap) => {
+                    if(snap.exists() && snap.data().isPremium === true) {
+                        enablePremiumUI();
+                    }
+                });
+
                 fetchStats(user.uid);
             }
         });
+
+        function enablePremiumUI() {
+            document.getElementById('premium-tag').classList.remove('hidden');
+            document.getElementById('avatar-bg').classList.remove('from-blue-600', 'to-indigo-900');
+            document.getElementById('avatar-bg').classList.add('from-yellow-500', 'to-yellow-700', 'premium-border');
+        }
 
         async function fetchStats(uid) {
             try {
@@ -148,7 +175,7 @@
                     status: "pending",
                     createdAt: serverTimestamp()
                 });
-                alert("SUCCESS: Your withdrawal is pending approval. Working Remotely admin has been notified.");
+                alert("SUCCESS: Your withdrawal is pending approval. Jubilee Fortunes admin has been notified.");
             } catch (e) { alert("Error submitting request."); }
         };
 
@@ -162,11 +189,9 @@
 
     <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    Tawk_API.id = '6797549464a0f82197e62180';
-    Tawk_API.widgetId = '1jfp2cf6e';
     (function(){
     var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true; s1.src='https://embed.tawk.to/6797549464a0f82197e62180/1jfp2cf6e';
+    s1.async=true; s1.src='https://embed.tawk.to/697549464a0f82197e621807/1jfp2cf6e';
     s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
     s0.parentNode.insertBefore(s1,s0);
     })();
