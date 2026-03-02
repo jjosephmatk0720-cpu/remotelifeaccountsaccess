@@ -8,12 +8,15 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background:#0f172a; font-family:sans-serif; color:white; overflow-x:hidden;}
-        .glass-card { background:rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px); transition: transform 0.3s ease;}
-        .glass-card:hover { transform: translateY(-5px); border-color: #3b82f6; }
+        .glass-card { background:rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px); transition: 0.3s ease;}
+        .glass-card:hover { border-color: #3b82f6; background:rgba(255,255,255,0.05); }
         .activity-popup {position:fixed; bottom:30px; left:20px; background:white; color:#0f172a; padding:12px 24px; border-radius:20px; font-weight:800; font-size:11px; display:none; z-index:1000; box-shadow:0 15px 40px rgba(0,0,0,0.6); border-left:5px solid #2563eb; animation:slideIn .5s ease-out;}
         @keyframes slideIn {from{transform:translateX(-100%); opacity:0;} to{transform:translateX(0); opacity:1;}}
+        .feedback-scroll {display:flex; overflow-x:auto; gap:15px; padding-bottom:20px; scrollbar-width:none;}
+        .feedback-scroll::-webkit-scrollbar{display:none;}
         .section-title { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; color: #64748b; margin-bottom: 20px; padding-left: 8px; border-left: 3px solid #3b82f6; }
         #cart-count {font-size:8px; position:absolute; top:-5px; right:-5px; background:red; color:white; border-radius:50%; width:14px; height:14px; display:flex; align-items:center; justify-content:center;}
+        input::placeholder { color: #475569; }
     </style>
 </head>
 
@@ -24,10 +27,10 @@
 </div>
 
 <nav class="flex justify-between items-center mb-10 px-2">
-    <h1 class="text-xl font-black italic tracking-tighter text-blue-500">WORKING REMOTELY</h1>
-    <div class="flex items-center gap-3">
+    <h1 class="text-xl font-black italic tracking-tighter text-blue-500 uppercase">WORKING REMOTELY</h1>
+    <div class="flex items-center gap-4">
         <button onclick="toggleCartDisplay()" class="relative p-2 bg-gray-800 rounded-full border border-white/10">
-            <i class="fas fa-shopping-cart text-white text-xs"></i>
+            <i class="fas fa-shopping-basket text-white text-xs"></i>
             <span id="cart-count">0</span>
         </button>
         <a href="profile.html" class="text-[10px] font-black uppercase text-blue-400">Profile</a>
@@ -35,26 +38,86 @@
 </nav>
 
 <div class="mb-12">
-    <h3 class="section-title">Remote Work Packages</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="market-list"></div>
+    <div class="flex items-center gap-2 mb-4 pl-2">
+        <div class="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+        <h3 class="text-[10px] font-black uppercase text-green-400 tracking-widest">Verified Payouts & Certifications</h3>
+    </div>
+    <div class="feedback-scroll">
+        <div class="glass-card p-4 min-w-[250px] rounded-3xl">
+            <p class="text-[9px] font-black text-blue-400 mb-1">@Sarah_C</p>
+            <p class="text-[11px] italic">"Received $1,500 after completing my Annotation Premium Course!"</p>
+            <div class="mt-2 text-[9px] font-bold text-green-500">CERTIFIED: YES</div>
+        </div>
+        <div class="glass-card p-4 min-w-[250px] rounded-3xl">
+            <p class="text-[9px] font-black text-blue-400 mb-1">@David_K</p>
+            <p class="text-[11px] italic">"Premium training unlocked high-paying medical tasks for me."</p>
+            <div class="mt-2 text-[9px] font-bold text-green-500">PAID: $850.00</div>
+        </div>
+    </div>
 </div>
 
 <div class="mb-12">
-    <h3 class="section-title text-green-500 border-green-500">Training & Certification Hub</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="training-list"></div>
+    <h3 class="section-title">Remote Account Packages</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="market-list"></div>
+</div>
+
+<div class="mb-12 bg-blue-600/5 p-8 rounded-[3rem] border border-blue-500/10">
+    <h3 class="section-title text-blue-500 border-blue-500">Training & Certification Hub</h3>
+    
+    <div class="relative mb-8">
+        <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500"></i>
+        <input type="text" id="trainingSearch" onkeyup="filterTraining()" placeholder="Search (Data Entry, Annotation, Medical...)" 
+        class="w-full bg-slate-900 border border-white/10 p-5 pl-14 rounded-2xl text-sm font-bold focus:border-blue-500 outline-none transition">
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="training-list">
+        </div>
+
+    <div id="premium-upsell" class="hidden mt-10 p-6 rounded-3xl bg-yellow-500/10 border border-yellow-500/30 text-center">
+        <p class="text-xs font-black text-yellow-500 uppercase mb-2">Want to learn more topics?</p>
+        <p class="text-[11px] text-gray-400 mb-4">Join Premium Training to access advanced topics, earn certificates, and qualify for Paid Tasks.</p>
+        <button onclick="openPayment()" class="bg-yellow-600 text-white px-8 py-3 rounded-full font-black uppercase text-[10px] italic shadow-lg">Upgrade to Premium ($10)</button>
+    </div>
+</div>
+
+<div id="payment-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-md p-8 rounded-[3rem] border-t-4 border-yellow-500 relative text-center">
+        <button onclick="closePayment()" class="absolute top-6 right-6 text-gray-400"><i class="fas fa-times"></i></button>
+        
+        <h2 class="text-2xl font-black italic uppercase mb-2 text-yellow-500">Unlock Premium</h2>
+        <p class="text-[10px] text-gray-400 uppercase font-bold mb-8 tracking-widest">Pay $10 (approx. 1,350 KES) for Lifetime Access</p>
+
+        <div class="space-y-4 text-left">
+            <div class="p-4 bg-green-600/10 border border-green-500/20 rounded-2xl flex items-center justify-between">
+                <div>
+                    <p class="text-[9px] font-black text-green-500 uppercase">M-Pesa Till (Buy Goods)</p>
+                    <p class="text-lg font-black italic">TILL: [YOUR TILL HERE]</p>
+                </div>
+                <i class="fas fa-mobile-alt text-green-500 text-xl"></i>
+            </div>
+
+            <div class="p-4 bg-orange-600/10 border border-orange-500/20 rounded-2xl">
+                <p class="text-[9px] font-black text-orange-500 uppercase mb-1">TRC20 Address (USDT)</p>
+                <p class="text-[9px] font-mono break-all bg-black/40 p-3 rounded-lg">[YOUR CRYPTO ADDRESS HERE]</p>
+            </div>
+            
+            <p class="text-[9px] text-gray-500 text-center font-bold italic">Visa/MasterCard payment link available via WhatsApp</p>
+        </div>
+
+        <button onclick="confirmPayment()" class="w-full mt-8 bg-yellow-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic tracking-widest shadow-xl">
+            Submit Payment Proof
+        </button>
+    </div>
 </div>
 
 <div id="cart-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-md glass-card p-5 rounded-[2.5rem] flex flex-col gap-3 hidden z-50 shadow-2xl border-t-2 border-blue-500">
     <div class="flex justify-between items-center px-2">
-        <div>
-            <p id="promo-tag" class="text-[8px] font-black text-yellow-400 uppercase hidden">🔥 10% OFF APPLIED</p>
-            <p id="cart-summary" class="font-black italic uppercase text-sm"></p>
-        </div>
+        <p id="cart-summary" class="font-black italic uppercase text-sm"></p>
         <p id="cart-total" class="text-xl font-black text-white"></p>
     </div>
     <div class="flex gap-2">
         <button onclick="clearCart()" class="w-1/4 bg-red-600/20 text-red-500 py-4 rounded-2xl font-black uppercase text-[10px]">Clear</button>
-        <button onclick="contactSupport()" class="w-3/4 bg-green-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic tracking-widest shadow-lg">Order via WhatsApp</button>
+        <button onclick="contactSupport()" class="w-3/4 bg-green-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic tracking-widest">Order via WhatsApp</button>
     </div>
 </div>
 
@@ -74,44 +137,66 @@ const firebaseConfig={
 const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
 let cart=[];
+let allTraining = [];
 
-// SYNC MARKETPLACE
+// SYNC PRODUCTS
 onSnapshot(query(collection(db,"products"),orderBy("createdAt","desc")),(snap)=>{
     const list=document.getElementById('market-list'); list.innerHTML="";
     snap.forEach(doc=>{
         const p=doc.data();
-        const card=document.createElement('div');
-        card.className="glass-card p-6 rounded-[2rem]";
-        card.innerHTML=`<p class="text-[10px] font-black text-blue-400 uppercase mb-1">Account Package</p>
-            <h2 class="text-xl font-black italic uppercase mb-2">${p.name}</h2>
-            <p class="text-gray-400 text-[11px] mb-6 font-medium">${p.tasks||'Verified Remote Access'}</p>
-            <div class="flex justify-between items-center">
+        const div=document.createElement('div');
+        div.className="glass-card p-6 rounded-[2rem]";
+        div.innerHTML=`<p class="text-[9px] font-black text-blue-400 uppercase mb-1">Official Package</p>
+            <h2 class="text-xl font-black italic uppercase mb-2 leading-none">${p.name}</h2>
+            <div class="flex justify-between items-center mt-6">
                 <span class="text-2xl font-black">$${p.price}</span>
-                <button onclick="addToCart('${p.name}',${p.price})" class="bg-blue-600 text-white px-5 py-2 rounded-full font-black uppercase text-[9px] italic">Add</button>
+                <button onclick="addToCart('${p.name}',${p.price})" class="bg-blue-600 text-white px-6 py-2 rounded-full font-black uppercase text-[10px] italic">Add</button>
             </div>`;
-        list.appendChild(card);
+        list.appendChild(div);
     });
 });
 
-// SYNC TRAINING (2 FREE, OTHERS PREMIUM)
+// SYNC TRAINING
 onSnapshot(query(collection(db,"training_modules"),orderBy("createdAt","asc")),(snap)=>{
-    const list=document.getElementById('training-list'); list.innerHTML="";
-    let i=0;
-    snap.forEach(doc=>{
-        const t=doc.data(); i++;
-        const isPrem = i > 2;
-        const color = isPrem ? "yellow-500" : "green-500";
-        const card=document.createElement('div');
-        card.className=`glass-card p-6 rounded-[2rem] border-l-4 border-${color}`;
-        card.innerHTML=`<div class="flex justify-between mb-4"><span class="text-[8px] font-black bg-${color} text-black px-2 py-0.5 rounded uppercase">${isPrem?'Premium':'Free'}</span></div>
-            <h2 class="text-lg font-black italic uppercase mb-2">${t.title}</h2>
-            <p class="text-gray-400 text-[10px] mb-6">${t.description||'Official Guide'}</p>
-            ${isPrem ? `<button onclick="buyPrem('${t.title}')" class="w-full bg-yellow-600 text-white py-3 rounded-xl font-black uppercase text-[9px] italic shadow-lg">Unlock Certification ($10)</button>` : 
-            `<a href="${t.pdfUrl}" target="_blank" class="block text-center border border-green-500 text-green-500 py-3 rounded-xl font-black uppercase text-[9px] italic">Download Free</a>`} `;
-        list.appendChild(card);
-    });
+    allTraining = [];
+    snap.forEach(doc => allTraining.push(doc.data()));
+    filterTraining();
 });
 
+window.filterTraining = () => {
+    const searchTerm = document.getElementById('trainingSearch').value.toLowerCase();
+    const list = document.getElementById('training-list');
+    const upsell = document.getElementById('premium-upsell');
+    list.innerHTML = "";
+    
+    if (searchTerm.length < 1) {
+        list.innerHTML = `<p class="col-span-full text-center text-gray-500 text-[10px] font-bold uppercase py-10 tracking-widest italic">Type to search for training topics...</p>`;
+        upsell.classList.add('hidden');
+        return;
+    }
+
+    let foundCount = 0;
+    allTraining.forEach((t, index) => {
+        if (t.title.toLowerCase().includes(searchTerm)) {
+            foundCount++;
+            const isPrem = index > 2; // Everything after first 3 is premium
+            const color = isPrem ? "yellow-500" : "green-500";
+            const div = document.createElement('div');
+            div.className = `glass-card p-6 rounded-[2rem] border-l-4 border-${color}`;
+            div.innerHTML = `
+                <span class="text-[8px] font-black bg-${color} text-black px-2 py-0.5 rounded uppercase">${isPrem ? 'Premium' : 'Free'} Access</span>
+                <h2 class="text-lg font-black italic uppercase mt-3 mb-2 leading-tight">${t.title}</h2>
+                <button onclick="${isPrem ? 'openPayment()' : `window.open('${t.pdfUrl}')`}" 
+                    class="w-full ${isPrem ? 'bg-yellow-600' : 'border border-green-500 text-green-500'} py-3 rounded-xl font-black uppercase text-[9px] italic mt-4">
+                    ${isPrem ? 'Continue to Download & Request Tasks' : 'Download Free PDF'}
+                </button>`;
+            list.appendChild(div);
+        }
+    });
+    if (foundCount > 0) upsell.classList.remove('hidden');
+};
+
+// ACTIONS
 window.addToCart=(name,price)=>{cart.push({name,price}); updateCartUI();};
 window.clearCart=()=>{cart=[]; updateCartUI(); document.getElementById('cart-bar').classList.add('hidden');};
 window.updateCartUI=()=>{
@@ -119,22 +204,41 @@ window.updateCartUI=()=>{
     if(count>0){
         document.getElementById('cart-bar').classList.remove('hidden');
         let total=cart.reduce((s,i)=>s+i.price,0);
-        if(count>=2){ total*=0.9; document.getElementById('promo-tag').classList.remove('hidden'); }
         document.getElementById('cart-summary').innerText=`${count} Package(s)`;
         document.getElementById('cart-total').innerText=`$${total.toFixed(2)}`;
     }
 };
 
-window.buyPrem=(title)=>{
-    window.open(`https://wa.me/18608968455?text=I want to pay $10 for Premium Training and Certification: [${title}]`,'_blank');
+window.openPayment = () => document.getElementById('payment-modal').classList.remove('hidden');
+window.closePayment = () => document.getElementById('payment-modal').classList.add('hidden');
+window.confirmPayment = () => {
+    const msg = "Hello WORKING REMOTELY, I have paid $10 for Premium Training. Please verify my payment proof.";
+    window.open(`https://wa.me/18088572943?text=${encodeURIComponent(msg)}`, '_blank');
 };
 
-window.contactSupport=()=>{
+window.contactSupport = () => {
     const items=cart.map(i=>i.name).join(", ");
-    window.open(`https://wa.me/18608968455?text=Order: ${items}`,'_blank');
+    window.open(`https://wa.me/18608968455?text=I want to order: ${items}`, '_blank');
 };
 
-window.toggleCartDisplay=()=>{document.getElementById('cart-bar').classList.toggle('hidden');};
+window.toggleCartDisplay = () => document.getElementById('cart-bar').classList.toggle('hidden');
+
+// ACTIVITY TRACKER
+const names = ["Liam M.", "Sarah W.", "John D.", "Mercy K.", "Ben O."];
+const events = [
+    (n) => `User ${n} just started Data Entry Training!`,
+    (n) => `User ${n} upgraded to Premium Certification!`,
+    (n) => `User ${n} earned a certificate in Medical Systems!`,
+    (n) => `User ${n} received payment for Annotation Tasks!`
+];
+
+setInterval(() => {
+    const ticker = document.getElementById('activity-ticker');
+    const msg = document.getElementById('activity-msg');
+    msg.innerHTML = events[Math.floor(Math.random() * events.length)](names[Math.floor(Math.random() * names.length)]);
+    ticker.style.display = "block";
+    setTimeout(() => { ticker.style.display = "none"; }, 4000);
+}, 8000);
 </script>
 </body>
 </html>
