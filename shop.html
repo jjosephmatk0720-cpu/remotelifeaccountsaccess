@@ -15,7 +15,6 @@
         .activity-popup {position:fixed; bottom:110px; left:20px; background:white; color:#0f172a; padding:12px 24px; border-radius:20px; font-weight:800; font-size:10px; display:none; z-index:1000; box-shadow:0 15px 40px rgba(0,0,0,0.6); border-left:5px solid #2563eb; animation:slideIn .5s ease-out;}
         @keyframes slideIn {from{transform:translateX(-100%); opacity:0;} to{transform:translateX(0); opacity:1;}}
         
-        .feedback-scroll {display:flex; overflow-x:auto; gap:15px; padding-bottom:20px; scrollbar-width:none;}
         .section-title { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; color: #64748b; margin-bottom: 20px; padding-left: 8px; border-left: 3px solid #3b82f6; }
         #cart-count {font-size:8px; position:absolute; top:-5px; right:-5px; background:red; color:white; border-radius:50%; width:14px; height:14px; display:flex; align-items:center; justify-content:center;}
         .prem-tag { background: linear-gradient(to right, #eab308, #ca8a04); color: black; font-size: 7px; font-weight: 900; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
@@ -59,9 +58,15 @@
     <div class="glass-card w-full max-w-md p-8 rounded-[3rem] border-t-4 border-yellow-500 relative text-center">
         <button onclick="closePayment()" class="absolute top-6 right-6 text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
         <h2 class="text-2xl font-black italic uppercase mb-2 text-yellow-500">Unlock Premium</h2>
-        <p class="text-[10px] text-gray-400 uppercase font-bold mb-8 tracking-widest">Pay $10 (1,350 KES) for Lifetime Access</p>
+        <p id="modal-sub-desc" class="text-[10px] text-gray-400 uppercase font-bold mb-8 tracking-widest">Pay $10 (1,350 KES) for Lifetime Access</p>
         
-        <div class="space-y-3 text-left mb-8">
+        <button onclick="triggerPesapal()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic shadow-xl mb-4 flex items-center justify-center gap-2">
+            <i class="fas fa-bolt"></i> Pay via M-Pesa (Instant STK)
+        </button>
+
+        <div class="relative flex py-3 items-center"><div class="flex-grow border-t border-white/10"></div><span class="mx-3 text-[8px] text-gray-600 font-black uppercase tracking-widest">Or Manual Payment</span><div class="flex-grow border-t border-white/10"></div></div>
+
+        <div class="space-y-3 text-left mb-8 mt-4">
             <div class="p-4 bg-green-600/10 border border-green-500/20 rounded-2xl flex justify-between items-center">
                 <div><p class="text-[8px] font-black text-green-500 uppercase">M-Pesa Till (Buy Goods)</p><p class="text-xs font-black">TILL: [YOUR TILL]</p></div>
                 <i class="fas fa-mobile-alt text-green-500"></i>
@@ -71,7 +76,7 @@
                 <p class="text-[9px] font-mono break-all text-white">[YOUR ADDRESS]</p>
             </div>
         </div>
-        <button onclick="confirmPayment()" class="w-full bg-yellow-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic shadow-xl">Submit Payment Proof</button>
+        <button onclick="confirmManualPayment()" class="w-full bg-yellow-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic shadow-xl">Submit Payment Proof</button>
     </div>
 </div>
 
@@ -100,7 +105,8 @@ s0.parentNode.insertBefore(s1,s0);
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, query, orderBy, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig={
     apiKey:"AIzaSyBmZC9gaj68vd-tWHqgf9H0pYZBvVHhnPE",
@@ -113,10 +119,13 @@ const firebaseConfig={
 
 const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
+const auth=getAuth(app);
 let cart=[];
 let allTraining = [];
+let activePrice = 10;
+let activeItemName = "Premium Access";
 
-// --- FIREBASE SYNC (Restored) ---
+// --- FIREBASE SYNC ---
 onSnapshot(query(collection(db,"products"),orderBy("createdAt","desc")),(snap)=>{
     const list=document.getElementById('market-list');
     list.innerHTML="";
@@ -155,13 +164,48 @@ window.filterTraining = () => {
             div.innerHTML = `
                 <div class="mb-2"><span class="${isPremium?'prem-tag':'free-tag'}">${isPremium?'PREMIUM':'FREE'}</span></div>
                 <h2 class="text-sm font-black uppercase mb-4 leading-tight">${t.title}</h2>
-                <button onclick="${isPremium ? 'openPayment()' : `window.open('${t.pdfUrl}')`}" 
+                <button onclick="${isPremium ? `openPayment('${t.title}', 10)` : `window.open('${t.pdfUrl}')`}" 
                     class="w-full py-3 rounded-xl font-black uppercase text-[9px] italic ${isPremium ? 'bg-yellow-600 text-white' : 'border border-green-500 text-green-500'}">
                     ${isPremium ? 'Unlock Topic & Tasks' : 'Download Free PDF'}
                 </button>`;
             list.appendChild(div);
         }
     });
+};
+
+// --- PAYMENT INTEGRATION ---
+window.openPayment = (name, price) => {
+    activeItemName = name || "Premium Access";
+    activePrice = price || 10;
+    document.getElementById('modal-sub-desc').innerText = `Pay $${activePrice} for ${activeItemName}`;
+    document.getElementById('payment-modal').classList.remove('hidden');
+};
+
+window.triggerPesapal = () => {
+    const email = auth.currentUser?.email || "guest@jubileefortunes.com";
+    const key = "s3w7f0y67pRN3qlwRq0dRB3R1iFkfp8f";
+    const url = `https://www.pesapal.com/checkout/pay?guid=${key}&amt=${activePrice}&desc=${activeItemName}&email=${email}`;
+    
+    // Auto-Notify Admin
+    submitPaymentLog("Pesapal-Automated");
+    window.location.href = url;
+};
+
+async function submitPaymentLog(method) {
+    if(!auth.currentUser) return;
+    await addDoc(collection(db, "payment_submissions"), {
+        userEmail: auth.currentUser.email,
+        method: method,
+        itemName: activeItemName,
+        amount: activePrice,
+        status: "pending",
+        createdAt: serverTimestamp()
+    });
+}
+
+window.confirmManualPayment = async () => {
+    await submitPaymentLog("Manual/Crypto");
+    window.open(`https://wa.me/18088572943?text=I've paid $${activePrice} for ${activeItemName}.`,'_blank');
 };
 
 // --- CART LOGIC ---
@@ -179,13 +223,11 @@ window.updateCartUI=()=>{
     }
 };
 
-window.openPayment = () => document.getElementById('payment-modal').classList.remove('hidden');
 window.closePayment = () => document.getElementById('payment-modal').classList.add('hidden');
-window.confirmPayment = () => window.open(`https://wa.me/18088572943?text=I've paid $10 for Premium Access.`,'_blank');
 window.contactSupport = () => window.open(`https://wa.me/18088572943?text=Order Checkout: ${cart.map(i=>i.name).join(", ")}`,'_blank');
 window.toggleCartDisplay = () => document.getElementById('cart-bar').classList.toggle('hidden');
 
-// --- 100+ NON-REPEATING ACTIVITY ENGINE ---
+// --- 100+ NON-REPEATING ACTIVITY ENGINE (FULLY RESTORED) ---
 const userPool = [
     "Alice W.","Brian K.","Catherine M.","David O.","Esther J.","Francis P.","Chepkoech L.","Hogochukwu S.","Irene T.","John B.",
     "Kevin M.","Lilian N.","Michael C.","Nancy G.","Oscar R.","Phyllis D.","Quentin V.","Rose K.","Samuel T.","Trina L.",
@@ -219,7 +261,6 @@ function showActivity() {
     const ticker = document.getElementById('activity-ticker');
     const msg = document.getElementById('activity-msg');
     
-    // Cycle logic
     if (userIndex >= shuffledUsers.length) {
         shuffledUsers = [...userPool].sort(() => Math.random() - 0.5);
         userIndex = 0;
@@ -232,16 +273,12 @@ function showActivity() {
     ticker.style.display = "block";
     
     userIndex++;
-
-    setTimeout(() => { ticker.style.display = "none"; }, 6000); // Popup stays for 6 seconds
+    setTimeout(() => { ticker.style.display = "none"; }, 6000);
 }
 
-// 1 Minute Interval (60,000ms)
 setInterval(showActivity, 60000);
-// Start first one after 5 seconds
 setTimeout(showActivity, 5000);
 
 </script>
 </body>
 </html>
-
