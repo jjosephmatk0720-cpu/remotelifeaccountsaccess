@@ -10,11 +10,8 @@
         body { background:#0f172a; font-family:sans-serif; color:white; overflow-x:hidden;}
         .glass-card { background:rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px); transition: 0.3s ease;}
         .glass-card:hover { border-color: #3b82f6; }
-        
-        /* IMPROVED ACTIVITY POPUP */
         .activity-popup {position:fixed; bottom:110px; left:20px; background:white; color:#0f172a; padding:12px 24px; border-radius:20px; font-weight:800; font-size:10px; display:none; z-index:1000; box-shadow:0 15px 40px rgba(0,0,0,0.6); border-left:5px solid #2563eb; animation:slideIn .5s ease-out;}
         @keyframes slideIn {from{transform:translateX(-100%); opacity:0;} to{transform:translateX(0); opacity:1;}}
-        
         .section-title { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; color: #64748b; margin-bottom: 20px; padding-left: 8px; border-left: 3px solid #3b82f6; }
         #cart-count {font-size:8px; position:absolute; top:-5px; right:-5px; background:red; color:white; border-radius:50%; width:14px; height:14px; display:flex; align-items:center; justify-content:center;}
         .prem-tag { background: linear-gradient(to right, #eab308, #ca8a04); color: black; font-size: 7px; font-weight: 900; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
@@ -29,7 +26,7 @@
 </div>
 
 <nav class="flex justify-between items-center mb-10 px-2">
-    <h1 class="text-xl font-black italic tracking-tighter text-blue-500 uppercase">WORKING REMOTELY</h1>
+    <h1 class="text-xl font-black italic tracking-tighter text-blue-500 uppercase text-shadow-lg">JUBILEE FORTUNES</h1>
     <div class="flex items-center gap-4">
         <button onclick="toggleCartDisplay()" class="relative p-2 bg-gray-800 rounded-full border border-white/10">
             <i class="fas fa-shopping-cart text-white text-xs"></i>
@@ -49,7 +46,7 @@
     <div class="relative mb-8">
         <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500"></i>
         <input type="text" id="trainingSearch" onkeyup="filterTraining()" placeholder="Search Topics..." 
-        class="w-full bg-slate-900 border border-white/10 p-5 pl-14 rounded-2xl text-sm font-bold focus:border-blue-500 outline-none transition">
+        class="w-full bg-slate-900 border border-white/10 p-5 pl-14 rounded-2xl text-sm font-bold focus:border-blue-500 outline-none transition text-white">
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="training-list"></div>
 </div>
@@ -57,26 +54,26 @@
 <div id="payment-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4">
     <div class="glass-card w-full max-w-md p-8 rounded-[3rem] border-t-4 border-yellow-500 relative text-center">
         <button onclick="closePayment()" class="absolute top-6 right-6 text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
-        <h2 class="text-2xl font-black italic uppercase mb-2 text-yellow-500">Unlock Premium</h2>
-        <p id="modal-sub-desc" class="text-[10px] text-gray-400 uppercase font-bold mb-8 tracking-widest">Pay $10 (1,350 KES) for Lifetime Access</p>
+        <h2 class="text-2xl font-black italic uppercase mb-2 text-yellow-500">Secure Checkout</h2>
+        <p id="modal-sub-desc" class="text-[10px] text-gray-400 uppercase font-bold mb-8 tracking-widest">Select Payment Method</p>
         
         <button onclick="triggerPesapal()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic shadow-xl mb-4 flex items-center justify-center gap-2">
             <i class="fas fa-bolt"></i> Pay via M-Pesa (Instant STK)
         </button>
 
-        <div class="relative flex py-3 items-center"><div class="flex-grow border-t border-white/10"></div><span class="mx-3 text-[8px] text-gray-600 font-black uppercase tracking-widest">Or Manual Payment</span><div class="flex-grow border-t border-white/10"></div></div>
+        <div class="relative flex py-3 items-center"><div class="flex-grow border-t border-white/10"></div><span class="mx-3 text-[8px] text-gray-600 font-black uppercase tracking-widest">Manual Options</span><div class="flex-grow border-t border-white/10"></div></div>
 
-        <div class="space-y-3 text-left mb-8 mt-4">
+        <div class="space-y-3 text-left mb-6 mt-4">
             <div class="p-4 bg-green-600/10 border border-green-500/20 rounded-2xl flex justify-between items-center">
                 <div><p class="text-[8px] font-black text-green-500 uppercase">M-Pesa Till (Buy Goods)</p><p class="text-xs font-black">TILL: [400440]</p></div>
                 <i class="fas fa-mobile-alt text-green-500"></i>
             </div>
             <div class="p-4 bg-orange-600/10 border border-orange-500/20 rounded-2xl">
-                <p class="text-[8px] font-black text-orange-500 uppercase">Crypto TRC20 Address (USDT)</p>
-                <p class="text-[9px] font-mono break-all text-white">[YYUaajSDAEaWxYDQbNxZiTOMewpomXGyOaW]</p>
+                <p class="text-[8px] font-black text-orange-500 uppercase">Crypto TRC20 (USDT)</p>
+                <p class="text-[9px] font-mono break-all text-white">YYUaajSDAEaWxYDQbNxZiTOMewpomXGyOaW</p>
             </div>
         </div>
-        <button onclick="confirmManualPayment()" class="w-full bg-yellow-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic shadow-xl">Submit Payment Proof</button>
+        <button onclick="confirmManualPayment()" class="w-full bg-yellow-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic">Submit Payment Proof</button>
     </div>
 </div>
 
@@ -88,20 +85,8 @@
         </div>
         <p id="cart-total" class="text-xl font-black text-white"></p>
     </div>
-    <button onclick="contactSupport()" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic tracking-widest">Order via WhatsApp</button>
+    <button onclick="openPaymentFromCart()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs italic tracking-widest">Proceed to Checkout</button>
 </div>
-
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/697549464a0f82197e621807/1jfp2cf6e'; 
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -122,10 +107,10 @@ const db=getFirestore(app);
 const auth=getAuth(app);
 let cart=[];
 let allTraining = [];
-let activePrice = 10;
-let activeItemName = "Premium Access";
+let activePrice = 0;
+let activeItemName = "";
 
-// --- FIREBASE SYNC ---
+// --- MARKET SYNC ---
 onSnapshot(query(collection(db,"products"),orderBy("createdAt","desc")),(snap)=>{
     const list=document.getElementById('market-list');
     list.innerHTML="";
@@ -142,74 +127,8 @@ onSnapshot(query(collection(db,"products"),orderBy("createdAt","desc")),(snap)=>
     });
 });
 
-onSnapshot(query(collection(db,"training_modules"),orderBy("createdAt","asc")),(snap)=>{
-    allTraining = []; 
-    snap.forEach(doc => allTraining.push(doc.data()));
-    filterTraining();
-});
-
-window.filterTraining = () => {
-    const term = document.getElementById('trainingSearch').value.toLowerCase();
-    const list = document.getElementById('training-list');
-    list.innerHTML = "";
-    if (term.length < 1) { 
-        list.innerHTML = "<p class='col-span-full text-center py-10 text-[9px] font-bold text-gray-600 uppercase italic'>Type to search modules...</p>";
-        return; 
-    }
-    allTraining.forEach(t => {
-        if (t.title.toLowerCase().includes(term)) {
-            const isPremium = t.status === "premium"; 
-            const div = document.createElement('div');
-            div.className = `glass-card p-6 rounded-[2rem] border-l-4 ${isPremium ? 'border-yellow-500' : 'border-green-500'}`;
-            div.innerHTML = `
-                <div class="mb-2"><span class="${isPremium?'prem-tag':'free-tag'}">${isPremium?'PREMIUM':'FREE'}</span></div>
-                <h2 class="text-sm font-black uppercase mb-4 leading-tight">${t.title}</h2>
-                <button onclick="${isPremium ? `openPayment('${t.title}', 10)` : `window.open('${t.pdfUrl}')`}" 
-                    class="w-full py-3 rounded-xl font-black uppercase text-[9px] italic ${isPremium ? 'bg-yellow-600 text-white' : 'border border-green-500 text-green-500'}">
-                    ${isPremium ? 'Unlock Topic & Tasks' : 'Download Free PDF'}
-                </button>`;
-            list.appendChild(div);
-        }
-    });
-};
-
-// --- PAYMENT INTEGRATION ---
-window.openPayment = (name, price) => {
-    activeItemName = name || "Premium Access";
-    activePrice = price || 10;
-    document.getElementById('modal-sub-desc').innerText = `Pay $${activePrice} for ${activeItemName}`;
-    document.getElementById('payment-modal').classList.remove('hidden');
-};
-
-window.triggerPesapal = () => {
-    const email = auth.currentUser?.email || "guest@jubileefortunes.com";
-    const key = "s3w7f0y67pRN3qlwRq0dRB3R1iFkfp8f";
-    const url = `https://www.pesapal.com/checkout/pay?guid=${key}&amt=${activePrice}&desc=${activeItemName}&email=${email}`;
-    
-    // Auto-Notify Admin
-    submitPaymentLog("Pesapal-Automated");
-    window.location.href = url;
-};
-
-async function submitPaymentLog(method) {
-    if(!auth.currentUser) return;
-    await addDoc(collection(db, "payment_submissions"), {
-        userEmail: auth.currentUser.email,
-        method: method,
-        itemName: activeItemName,
-        amount: activePrice,
-        status: "pending",
-        createdAt: serverTimestamp()
-    });
-}
-
-window.confirmManualPayment = async () => {
-    await submitPaymentLog("Manual/Crypto");
-    window.open(`https://wa.me/18088572943?text=I've paid $${activePrice} for ${activeItemName}.`,'_blank');
-};
-
 // --- CART LOGIC ---
-window.addToCart=(name,price)=>{cart.push({name,price}); updateCartUI();};
+window.addToCart=(name,price)=>{ cart.push({name,price}); updateCartUI(); };
 window.updateCartUI=()=>{
     const count = cart.length;
     document.getElementById('cart-count').innerText=count;
@@ -218,27 +137,89 @@ window.updateCartUI=()=>{
         let total = cart.reduce((s,i)=>s+i.price,0);
         if(count >= 2){ total *= 0.9; document.getElementById('promo-tag').classList.remove('hidden'); }
         else { document.getElementById('promo-tag').classList.add('hidden'); }
+        activePrice = total.toFixed(2);
+        activeItemName = cart.map(i => i.name).join(", ");
         document.getElementById('cart-summary').innerText=`${count} Selection(s)`;
-        document.getElementById('cart-total').innerText=`$${total.toFixed(2)}`;
+        document.getElementById('cart-total').innerText=`$${activePrice}`;
     }
 };
 
+window.openPaymentFromCart = () => {
+    document.getElementById('modal-sub-desc').innerText = `Checkout: $${activePrice}`;
+    document.getElementById('payment-modal').classList.remove('hidden');
+};
+
+// --- TRAINING SYNC ---
+onSnapshot(query(collection(db,"training_modules"),orderBy("createdAt","asc")),(snap)=>{
+    allTraining = []; snap.forEach(doc => allTraining.push(doc.data()));
+    filterTraining();
+});
+
+window.filterTraining = () => {
+    const term = document.getElementById('trainingSearch').value.toLowerCase();
+    const list = document.getElementById('training-list');
+    list.innerHTML = "";
+    if (term.length < 1) { list.innerHTML = "<p class='col-span-full text-center py-10 text-[9px] font-bold text-gray-600 uppercase italic'>Type to search...</p>"; return; }
+    allTraining.forEach(t => {
+        if (t.title.toLowerCase().includes(term)) {
+            const isPremium = t.status === "premium"; 
+            const div = document.createElement('div');
+            div.className = `glass-card p-6 rounded-[2rem] border-l-4 ${isPremium ? 'border-yellow-500' : 'border-green-500'}`;
+            div.innerHTML = `
+                <div class="mb-2"><span class="${isPremium?'prem-tag':'free-tag'}">${isPremium?'PREMIUM':'FREE'}</span></div>
+                <h2 class="text-sm font-black uppercase mb-4 leading-tight">${t.title}</h2>
+                <button onclick="${isPremium ? `openPremiumSingle('${t.title}', 10)` : `window.open('${t.pdfUrl}')`}" 
+                    class="w-full py-3 rounded-xl font-black uppercase text-[9px] italic ${isPremium ? 'bg-yellow-600 text-white' : 'border border-green-500 text-green-500'}">
+                    ${isPremium ? 'Unlock' : 'Open'}
+                </button>`;
+            list.appendChild(div);
+        }
+    });
+};
+
+window.openPremiumSingle = (name, price) => {
+    activeItemName = name; activePrice = price;
+    document.getElementById('modal-sub-desc').innerText = `Pay $${activePrice} for ${activeItemName}`;
+    document.getElementById('payment-modal').classList.remove('hidden');
+};
+
+// --- PAYMENT ACTIONS ---
+window.triggerPesapal = async () => {
+    const email = auth.currentUser?.email || "guest@jubileefortunes.com";
+    const phone = prompt("Enter M-Pesa Number (254...):");
+    if(!phone) return;
+    await submitPaymentLog("M-Pesa STK");
+    window.location.href = `https://www.pesapal.com/checkout/pay?guid=s3w7f0y67pRN3qlwRq0dRB3R1iFkfp8f&amt=${activePrice}&desc=${activeItemName}&email=${email}`;
+};
+
+async function submitPaymentLog(method) {
+    if(!auth.currentUser) return;
+    await addDoc(collection(db, "payment_submissions"), {
+        userEmail: auth.currentUser.email, method: method, itemName: activeItemName,
+        amount: activePrice, status: "pending", createdAt: serverTimestamp()
+    });
+}
+
+window.confirmManualPayment = async () => {
+    await submitPaymentLog("Manual/Crypto/Till");
+    window.open(`https://wa.me/18088572943?text=I've paid $${activePrice} for ${activeItemName}.`,'_blank');
+};
+
 window.closePayment = () => document.getElementById('payment-modal').classList.add('hidden');
-window.contactSupport = () => window.open(`https://wa.me/18088572943?text=Order Checkout: ${cart.map(i=>i.name).join(", ")}`,'_blank');
 window.toggleCartDisplay = () => document.getElementById('cart-bar').classList.toggle('hidden');
 
-// --- 100+ NON-REPEATING ACTIVITY ENGINE (FULLY RESTORED) ---
+// --- FULL 100+ USER ACTIVITY ENGINE (RESTORED) ---
 const userPool = [
-    "Alice W.","Brian K.","Catherine M.","David O.","Esther J.","Francis P.","Chepkoech L.","Hogochukwu S.","Irene T.","John B.",
+    "Alice Moraa.","Brian K.","Catherine M.","David O.","Esther J.","Francis P.","Chepkoech L.","Hogochukwu S.","Irene T.","John B.",
     "Kevin M.","Lilian N.","Michael C.","Nancy G.","Oscar R.","Phyllis D.","Quentin V.","Rose K.","Samuel T.","Trina L.",
     "Kamau E.","Winnie A.","Xavier M.","Yvonne Z.","Zack O.","Abigael F.","Ben J.","Clare W.","Danielle K.","Elias P.",
-    "Faith G.","George M.","Hope S.","Isaac L.","Joy R.","Kelvin B.","Lucy C.","Mark N.","Noel W.","Olive K.",
-    "Peter T.","Queen E.","Osotsi A.","Stacy M.","Thomas D.","JELAGAT P.","Valerie G.","William O.","Xena R.","Yusuf S.",
+    "Faith G.","George M.","Kipkurui S.","Isaac L.","Joyline R.","Kelvin B.","Lucy C.","Mark Nderitu.","Noel W.","Olive K.",
+    "Peter T.","Queen E.","Osotsi A.","Stacy M.","Thomas D.","JELAGAT P.","Valerie G.","William O.","Xena Yegon.","Yusuf S.",
     "@James_Dev","@Mercy_K","@Tech_Otieno","@Sarah_J","@M_Omondi","@Kenyatta_W","@Ruto_M","@Mama_Amira","@King_Cyrus","@Nanok c",
-    "User_992","User_102","User_884","User_341","User_667","User_221","User_450","User_118","User_709","User_505",
+    "User_992","User_102","User_884","User_341","Mikel_M","User_221","User_450","User_118","User_709","User_505",
     "Worker_12","Worker_88","Worker_45","Worker_33","Worker_21","Worker_09","Worker_76","Worker_54","Worker_91","Worker_62",
     "Member_404","Member_200","Member_500","Member_301","Member_101","Member_909","Member_707","Member_606","Member_808","Member_100",
-    "Alpha_9","Beta_4","Gamma_1","Delta_8","Omega_0","Zeta_3","Theta_7","Sigma_5","Epsilon_2","Lambda_6"
+    "Musa_9","Beta_4","Gamket_1","Desaa_8","Omeka_0","Zeyari_3","Theta_7","Wigma_5","Epsilomon_2","Olaminde_6"
 ];
 
 const activityPool = [
@@ -260,26 +241,21 @@ let userIndex = 0;
 function showActivity() {
     const ticker = document.getElementById('activity-ticker');
     const msg = document.getElementById('activity-msg');
-    
     if (userIndex >= shuffledUsers.length) {
         shuffledUsers = [...userPool].sort(() => Math.random() - 0.5);
         userIndex = 0;
     }
-
     const currentUser = shuffledUsers[userIndex];
     const currentActivity = activityPool[Math.floor(Math.random() * activityPool.length)];
-    
     msg.innerHTML = `<span class="text-blue-600">${currentUser}</span> ${currentActivity}`;
     ticker.style.display = "block";
-    
     userIndex++;
     setTimeout(() => { ticker.style.display = "none"; }, 6000);
 }
 
-setInterval(showActivity, 60000);
+setInterval(showActivity, 35000);
 setTimeout(showActivity, 5000);
 
 </script>
 </body>
 </html>
-
