@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | WORKING REMOTELY</title>
+    <title>Admin Panel | WORKING REMOOTELY HEADQUARTERS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
@@ -18,58 +18,72 @@
     </script>
 
     <style>
-        body { background: #0f172a; font-family: sans-serif; color: white; }
+        body { background: #020617; font-family: sans-serif; color: white; }
         .glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
-        input, textarea { transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.05) !important; color: white; }
-        input:focus, textarea:focus { border-color: #3b82f6 !important; background: rgba(30, 41, 59, 1) !important; outline: none; }
+        input, textarea, select { transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; background: #0f172a !important; }
+        input:focus, textarea:focus, select:focus { border-color: #3b82f6 !important; outline: none; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
+        .tab-btn.active { border-bottom: 3px solid #3b82f6; color: #3b82f6; }
     </style>
 </head>
 <body class="p-6">
 
-    <div class="max-w-4xl mx-auto pb-20">
+    <div class="max-w-5xl mx-auto pb-20">
         <div class="flex justify-between items-center mb-10">
-            <h1 class="text-2xl font-black italic uppercase tracking-tighter text-blue-500">WORKING REMOTELY Admin</h1>
-            <a href="index.html" class="text-xs font-bold uppercase bg-white text-black px-4 py-2 rounded-full hover:bg-blue-500 hover:text-white transition">Exit Panel</a>
+            <div>
+                <h1 class="text-2xl font-black italic uppercase tracking-tighter text-blue-500">Jubilee Fortunes Admin</h1>
+                <p class="text-[9px] font-bold text-gray-500 uppercase tracking-[0.3em]">contactsuportremoteworkings@gmail.com</p>
+            </div>
+            <a href="index.html" class="text-[10px] font-black uppercase bg-red-600/20 text-red-500 border border-red-500/30 px-6 py-2 rounded-xl hover:bg-red-600 hover:text-white transition">Secure Logout</a>
         </div>
 
-        <div class="glass-card p-8 rounded-[2.5rem] mb-10 border-l-4 border-yellow-500 shadow-2xl">
-            <h2 class="text-lg font-black uppercase mb-2 italic text-yellow-500">Bulk Email Broadcast</h2>
-            <p class="text-[10px] text-gray-400 mb-6 uppercase font-bold tracking-widest">Sending via contactsuportremoteworkings@gmail.com</p>
-            <div class="space-y-4">
-                <input type="text" id="email-subject" placeholder="Promotion Subject" class="w-full p-4 bg-gray-800 rounded-2xl text-sm font-bold">
-                <textarea id="broadcast-msg" placeholder="Type your promotion message here..." class="w-full p-4 bg-gray-800 rounded-2xl text-sm font-bold h-32"></textarea>
-                <button onclick="sendBroadcast()" id="broadcast-btn" class="w-full bg-yellow-500 text-black py-4 rounded-2xl font-black uppercase italic tracking-widest shadow-lg hover:bg-yellow-400 transition">Send To All Workers</button>
-                <p id="broadcast-status" class="text-[10px] font-black uppercase text-center mt-2"></p>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+            
+            <div class="glass-card p-8 rounded-[2.5rem] border-t-4 border-yellow-500 shadow-2xl lg:col-span-1">
+                <h2 class="text-sm font-black uppercase mb-6 italic text-yellow-500"><i class="fas fa-bullhorn mr-2"></i>Email Workers</h2>
+                <div class="space-y-4">
+                    <input type="text" id="email-subject" placeholder="Promotion Subject" class="w-full p-4 rounded-2xl text-xs font-bold">
+                    <textarea id="broadcast-msg" placeholder="Message content..." class="w-full p-4 rounded-2xl text-xs font-bold h-32"></textarea>
+                    <button onclick="sendBroadcast()" id="broadcast-btn" class="w-full bg-yellow-600 text-white py-4 rounded-2xl font-black uppercase italic text-[10px] shadow-lg hover:bg-yellow-500 transition">Execute Broadcast</button>
+                    <p id="broadcast-status" class="text-[9px] font-black uppercase text-center mt-2 text-gray-400"></p>
+                </div>
+            </div>
+
+            <div class="glass-card p-8 rounded-[2.5rem] border-t-4 border-green-500 shadow-2xl lg:col-span-1">
+                <h2 class="text-sm font-black uppercase mb-6 italic text-green-500"><i class="fas fa-graduation-cap mr-2"></i>Training Hub</h2>
+                <div class="space-y-4">
+                    <input type="text" id="pdfTitle" placeholder="Module Title" class="w-full p-4 rounded-2xl text-xs font-bold">
+                    <input type="text" id="pdfExternalUrl" placeholder="Vercel PDF/Task Link" class="w-full p-4 rounded-2xl text-xs font-bold">
+                    
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[9px] font-black uppercase text-gray-500 ml-2">Access Level</label>
+                        <select id="trainStatus" class="w-full p-4 rounded-2xl text-xs font-bold cursor-pointer">
+                            <option value="free">FREE (Public)</option>
+                            <option value="premium">PREMIUM ($10 Required)</option>
+                        </select>
+                    </div>
+                    
+                    <button onclick="addTrainingByLink()" id="addBtn" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black uppercase italic text-[10px] hover:bg-green-500 transition shadow-xl">Publish Module</button>
+                </div>
+            </div>
+
+            <div class="glass-card p-8 rounded-[2.5rem] border-t-4 border-blue-500 shadow-2xl lg:col-span-1">
+                <h2 class="text-sm font-black uppercase mb-6 italic text-blue-500"><i class="fas fa-shopping-bag mr-2"></i>Marketplace</h2>
+                <div class="space-y-4">
+                    <input type="text" id="p-name" placeholder="Package Name" class="w-full p-4 rounded-2xl text-xs font-bold">
+                    <input type="number" id="p-price" placeholder="Price (USD)" class="w-full p-4 rounded-2xl text-xs font-bold">
+                    <textarea id="p-tasks" placeholder="Package brief..." class="w-full p-4 rounded-2xl text-xs font-bold h-24"></textarea>
+                    <button onclick="addProduct()" class="w-full bg-blue-600 p-4 rounded-2xl font-black uppercase italic text-[10px] hover:bg-blue-500 transition shadow-xl">List Package</button>
+                </div>
             </div>
         </div>
 
-        <div class="glass-card p-8 rounded-[2.5rem] mb-10 border-l-4 border-green-500 shadow-2xl">
-            <h2 class="text-lg font-black uppercase mb-6 italic text-green-500">Link New Training PDF</h2>
-            <div class="space-y-4">
-                <input type="text" id="pdfTitle" placeholder="Module Title (e.g. Data Entry Guide)" class="w-full p-4 bg-gray-800 rounded-2xl text-sm font-bold">
-                <textarea id="pdfDesc" placeholder="Brief Description..." class="w-full p-4 bg-gray-800 rounded-2xl text-sm font-bold h-20"></textarea>
-                <input type="text" id="pdfExternalUrl" placeholder="Vercel PDF Link (https://...)" class="w-full p-4 bg-gray-800 rounded-2xl text-sm font-bold border-2 border-blue-500/30">
-                <button onclick="addTrainingByLink()" id="addBtn" class="w-full bg-green-600 text-white py-4 rounded-2xl font-black uppercase italic tracking-widest hover:bg-green-500 transition shadow-xl">Publish to Training Page</button>
-            </div>
-        </div>
-
-        <div class="glass-card p-8 rounded-[2.5rem] mb-10 border-l-4 border-blue-500 shadow-2xl">
-            <h2 class="text-lg font-black uppercase mb-6 italic text-blue-500">Manage Marketplace</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" id="p-name" placeholder="Package Name" class="p-4 bg-gray-800 rounded-2xl text-sm font-bold">
-                <input type="number" id="p-price" placeholder="Price (USD)" class="p-4 bg-gray-800 rounded-2xl text-sm font-bold">
-                <textarea id="p-tasks" placeholder="Package Description" class="p-4 bg-gray-800 rounded-2xl text-sm font-bold md:col-span-2 h-24"></textarea>
-                <button onclick="addProduct()" class="md:col-span-2 bg-blue-600 p-4 rounded-2xl font-black uppercase italic tracking-widest hover:bg-blue-500 transition shadow-xl">Add Package</button>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="glass-card p-8 rounded-[2.5rem] shadow-2xl">
-                <h2 class="text-xs font-black uppercase mb-6 italic text-gray-500">Live Marketplace</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="glass-card p-8 rounded-[3rem]">
+                <h2 class="text-[10px] font-black uppercase mb-6 italic text-blue-500 tracking-widest border-b border-white/5 pb-2">Active Products</h2>
                 <div id="admin-list" class="space-y-3"></div>
             </div>
-            <div class="glass-card p-8 rounded-[2.5rem] shadow-2xl">
-                <h2 class="text-xs font-black uppercase mb-6 italic text-gray-500">Live Trainings</h2>
+            <div class="glass-card p-8 rounded-[3rem]">
+                <h2 class="text-[10px] font-black uppercase mb-6 italic text-green-500 tracking-widest border-b border-white/5 pb-2">Training Modules</h2>
                 <div id="training-list" class="space-y-3"></div>
             </div>
         </div>
@@ -117,24 +131,25 @@
                         await new Promise(r => setTimeout(r, 1500));
                     }
                 }
-                status.innerText = `SUCCESS: SENT TO ${count}`;
+                status.innerText = `SUCCESS: SENT TO ${count} WORKERS`;
                 alert("Broadcast Complete!");
             } catch (err) { alert(err.message); }
-            btn.disabled = false; btn.innerText = "Send To All Workers";
+            btn.disabled = false; btn.innerText = "Execute Broadcast";
         };
 
-        // --- TRAINING LINK LOGIC ---
+        // --- TRAINING LOGIC (UPDATED WITH STATUS) ---
         window.addTrainingByLink = async () => {
             const title = document.getElementById('pdfTitle').value;
-            const desc = document.getElementById('pdfDesc').value;
             const url = document.getElementById('pdfExternalUrl').value;
-            if(!title || !url) return alert("Enter title and Vercel link.");
+            const status = document.getElementById('trainStatus').value;
+            if(!title || !url) return alert("Enter title and link.");
             try {
                 await addDoc(collection(db, "training_modules"), {
-                    title, description: desc, pdfUrl: url, createdAt: serverTimestamp()
+                    title, pdfUrl: url, status: status, createdAt: serverTimestamp()
                 });
-                alert("Training Published!");
-                location.reload();
+                alert("Module Successfully Published!");
+                document.getElementById('pdfTitle').value = "";
+                document.getElementById('pdfExternalUrl').value = "";
             } catch (e) { alert(e.message); }
         };
 
@@ -146,7 +161,9 @@
             if (!name || !price) return alert("Enter name and price.");
             try {
                 await addDoc(collection(db, "products"), { name, price: parseFloat(price), tasks, createdAt: serverTimestamp() });
-                alert("Package Added!");
+                alert("Product Package Added!");
+                document.getElementById('p-name').value = "";
+                document.getElementById('p-price').value = "";
             } catch (e) { alert(e.message); }
         };
 
@@ -157,8 +174,8 @@
                 const p = d.data();
                 const div = document.createElement('div');
                 div.className = "flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5";
-                div.innerHTML = `<div><p class="font-black italic uppercase text-[10px]">${p.name}</p><p class="text-[9px] text-blue-400">$${p.price}</p></div>
-                <button onclick="deleteItem('products','${d.id}')" class="text-[8px] font-black text-red-500">Delete</button>`;
+                div.innerHTML = `<div><p class="font-black italic uppercase text-[10px]">${p.name}</p><p class="text-[9px] text-blue-400 font-bold">$${p.price}</p></div>
+                <button onclick="deleteItem('products','${d.id}')" class="text-[8px] font-black text-red-500 uppercase">Remove</button>`;
                 list.appendChild(div);
             });
         });
@@ -169,14 +186,14 @@
                 const t = d.data();
                 const div = document.createElement('div');
                 div.className = "flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5";
-                div.innerHTML = `<div><p class="font-black italic uppercase text-[10px]">${t.title}</p><p class="text-[9px] text-green-400">PDF Linked</p></div>
-                <button onclick="deleteItem('training_modules','${d.id}')" class="text-[8px] font-black text-red-500">Delete</button>`;
+                div.innerHTML = `<div><p class="font-black italic uppercase text-[10px]">${t.title}</p><p class="text-[8px] font-black ${t.status === 'premium' ? 'text-yellow-500' : 'text-green-500'} uppercase">${t.status}</p></div>
+                <button onclick="deleteItem('training_modules','${d.id}')" class="text-[8px] font-black text-red-500 uppercase">Remove</button>`;
                 list.appendChild(div);
             });
         });
 
         window.deleteItem = async (c, id) => {
-            if(confirm("Confirm Delete?")) await deleteDoc(doc(db, c, id));
+            if(confirm("Permanently delete this item?")) await deleteDoc(doc(db, c, id));
         };
     </script>
 </body>
