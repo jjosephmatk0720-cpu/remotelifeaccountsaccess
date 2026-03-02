@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketplace | WORKING REMOTELY</title>
+    <title>Marketplace | WORKING REMOTELY HEADQUARTERS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -11,7 +11,7 @@
         .glass-card { background:rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px); transition: 0.3s ease;}
         .glass-card:hover { border-color: #3b82f6; }
         
-        /* 100+ USER ACTIVITY POPUP */
+        /* IMPROVED ACTIVITY POPUP */
         .activity-popup {position:fixed; bottom:110px; left:20px; background:white; color:#0f172a; padding:12px 24px; border-radius:20px; font-weight:800; font-size:10px; display:none; z-index:1000; box-shadow:0 15px 40px rgba(0,0,0,0.6); border-left:5px solid #2563eb; animation:slideIn .5s ease-out;}
         @keyframes slideIn {from{transform:translateX(-100%); opacity:0;} to{transform:translateX(0); opacity:1;}}
         
@@ -49,26 +49,10 @@
     <h3 class="section-title text-yellow-500 border-yellow-500">Training & Certification Hub</h3>
     <div class="relative mb-8">
         <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500"></i>
-        <input type="text" id="trainingSearch" onkeyup="filterTraining()" placeholder="Search Topics (e.g. Data Entry, Introduction)..." 
+        <input type="text" id="trainingSearch" onkeyup="filterTraining()" placeholder="Search Topics..." 
         class="w-full bg-slate-900 border border-white/10 p-5 pl-14 rounded-2xl text-sm font-bold focus:border-blue-500 outline-none transition">
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="training-list"></div>
-</div>
-
-<div class="mt-20 mb-10">
-    <h3 class="section-title text-green-500 border-green-500">Global Worker Proof</h3>
-    <div class="feedback-scroll">
-        <div class="glass-card p-4 min-w-[280px] rounded-3xl border-l-4 border-green-500">
-            <p class="text-[10px] font-black text-blue-400 uppercase">@Kevin_Omondi</p>
-            <p class="text-[11px] italic text-gray-300">"The $10 premium unlock was the best investment. Got my first task in 2 days!"</p>
-            <div class="mt-2 text-[9px] font-bold text-green-500">PAID: $200.00 SUCCESS</div>
-        </div>
-        <div class="glass-card p-4 min-w-[280px] rounded-3xl border-l-4 border-green-500">
-            <p class="text-[10px] font-black text-blue-400 uppercase">@Sarah_C</p>
-            <p class="text-[11px] italic text-gray-300">"Payout received via M-Pesa. Jubilee Fortunes is 100% legit."</p>
-            <div class="mt-2 text-[9px] font-bold text-green-500">STATUS: PAID</div>
-        </div>
-    </div>
 </div>
 
 <div id="payment-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4">
@@ -81,10 +65,6 @@
             <div class="p-4 bg-green-600/10 border border-green-500/20 rounded-2xl flex justify-between items-center">
                 <div><p class="text-[8px] font-black text-green-500 uppercase">M-Pesa Till (Buy Goods)</p><p class="text-xs font-black">TILL: [YOUR TILL]</p></div>
                 <i class="fas fa-mobile-alt text-green-500"></i>
-            </div>
-            <div class="p-4 bg-blue-600/10 border border-blue-500/20 rounded-2xl flex justify-between items-center">
-                <div><p class="text-[8px] font-black text-blue-500 uppercase">Visa / Master Card</p><p class="text-[10px] font-bold">Request Link via Tawk.to Chat</p></div>
-                <i class="fab fa-cc-visa text-blue-500"></i>
             </div>
             <div class="p-4 bg-orange-600/10 border border-orange-500/20 rounded-2xl">
                 <p class="text-[8px] font-black text-orange-500 uppercase">Crypto TRC20 Address (USDT)</p>
@@ -136,7 +116,7 @@ const db=getFirestore(app);
 let cart=[];
 let allTraining = [];
 
-// SYNC PRODUCTS
+// --- FIREBASE SYNC (Restored) ---
 onSnapshot(query(collection(db,"products"),orderBy("createdAt","desc")),(snap)=>{
     const list=document.getElementById('market-list');
     list.innerHTML="";
@@ -153,7 +133,6 @@ onSnapshot(query(collection(db,"products"),orderBy("createdAt","desc")),(snap)=>
     });
 });
 
-// SYNC TRAINING HUB
 onSnapshot(query(collection(db,"training_modules"),orderBy("createdAt","asc")),(snap)=>{
     allTraining = []; 
     snap.forEach(doc => allTraining.push(doc.data()));
@@ -163,13 +142,11 @@ onSnapshot(query(collection(db,"training_modules"),orderBy("createdAt","asc")),(
 window.filterTraining = () => {
     const term = document.getElementById('trainingSearch').value.toLowerCase();
     const list = document.getElementById('training-list');
-    list.innerHTML = ""; // Clears existing items to prevent duplicates
-    
+    list.innerHTML = "";
     if (term.length < 1) { 
         list.innerHTML = "<p class='col-span-full text-center py-10 text-[9px] font-bold text-gray-600 uppercase italic'>Type to search modules...</p>";
         return; 
     }
-
     allTraining.forEach(t => {
         if (t.title.toLowerCase().includes(term)) {
             const isPremium = t.status === "premium"; 
@@ -187,7 +164,7 @@ window.filterTraining = () => {
     });
 };
 
-// CART & DISCOUNT LOGIC
+// --- CART LOGIC ---
 window.addToCart=(name,price)=>{cart.push({name,price}); updateCartUI();};
 window.updateCartUI=()=>{
     const count = cart.length;
@@ -208,19 +185,62 @@ window.confirmPayment = () => window.open(`https://wa.me/18088572943?text=I've p
 window.contactSupport = () => window.open(`https://wa.me/18088572943?text=Order Checkout: ${cart.map(i=>i.name).join(", ")}`,'_blank');
 window.toggleCartDisplay = () => document.getElementById('cart-bar').classList.toggle('hidden');
 
-// 100+ USER LIVE ACTIVITY
-const users = ["User #2041", "Worker #8843", "Member #0092", "User #5521", "User #1109", "@Wambua_K", "@Mercy_Tasker", "Member #7721", "User #4401", "Worker #9920"];
-const logs = ["Earned $45.00 on Data Entry!", "Just Upgraded to Premium!", "Received $1,200 payout!", "Completed Training!", "Requested New Account.", "Certified as Annotator!", "Submitted task for $150 Payment."];
+// --- 100+ NON-REPEATING ACTIVITY ENGINE ---
+const userPool = [
+    "Alice W.","Brian K.","Catherine M.","David O.","Esther J.","Francis P.","Grace L.","Henry S.","Irene T.","John B.",
+    "Kevin M.","Lilian N.","Michael C.","Nancy G.","Oscar R.","Phyllis D.","Quentin V.","Rose K.","Samuel T.","Trina L.",
+    "Victor E.","Winnie A.","Xavier M.","Yvonne Z.","Zack O.","Abigael F.","Ben J.","Clare W.","Danielle K.","Elias P.",
+    "Faith G.","George M.","Hope S.","Isaac L.","Joy R.","Kelvin B.","Lucy C.","Mark N.","Noel W.","Olive K.",
+    "Peter T.","Queen E.","Robert A.","Stacy M.","Thomas D.","Ursula P.","Valerie G.","William O.","Xena R.","Yusuf S.",
+    "@James_Dev","@Mercy_K","@Tech_Otieno","@Sarah_Jubilee","@M_Omondi","@Kenyatta_W","@Ruto_M","@Mama_Amira","@King_Cyrus","@Nairobian",
+    "User_992","User_102","User_884","User_341","User_667","User_221","User_450","User_118","User_709","User_505",
+    "Worker_12","Worker_88","Worker_45","Worker_33","Worker_21","Worker_09","Worker_76","Worker_54","Worker_91","Worker_62",
+    "Member_404","Member_200","Member_500","Member_301","Member_101","Member_909","Member_707","Member_606","Member_808","Member_100",
+    "Alpha_9","Beta_4","Gamma_1","Delta_8","Omega_0","Zeta_3","Theta_7","Sigma_5","Epsilon_2","Lambda_6"
+];
 
-setInterval(() => {
+const activityPool = [
+    "just earned $65.00 on a Data Entry Task!",
+    "withdrew $150.00 via M-Pesa successfully.",
+    "joined the Premium Data Annotation Training.",
+    "purchased a Crowdsurf Account Package.",
+    "referred a new member and earned a $5 bonus!",
+    "completed the Medical Virtual Assistant certification.",
+    "upgraded to Lifetime Premium Access.",
+    "just started a high-paying Transcription task.",
+    "received a $400.00 payout via USDT TRC20.",
+    "unlocked the 'Introduction to Remote Work' Free PDF."
+];
+
+let shuffledUsers = [...userPool].sort(() => Math.random() - 0.5);
+let userIndex = 0;
+
+function showActivity() {
     const ticker = document.getElementById('activity-ticker');
     const msg = document.getElementById('activity-msg');
-    const user = users[Math.floor(Math.random() * users.length)];
-    const log = logs[Math.floor(Math.random() * logs.length)];
-    msg.innerHTML = `<span class="text-blue-600">${user}</span> ${log}`;
+    
+    // Cycle logic
+    if (userIndex >= shuffledUsers.length) {
+        shuffledUsers = [...userPool].sort(() => Math.random() - 0.5);
+        userIndex = 0;
+    }
+
+    const currentUser = shuffledUsers[userIndex];
+    const currentActivity = activityPool[Math.floor(Math.random() * activityPool.length)];
+    
+    msg.innerHTML = `<span class="text-blue-600">${currentUser}</span> ${currentActivity}`;
     ticker.style.display = "block";
-    setTimeout(() => { ticker.style.display = "none"; }, 5000);
-}, 8000);
+    
+    userIndex++;
+
+    setTimeout(() => { ticker.style.display = "none"; }, 6000); // Popup stays for 6 seconds
+}
+
+// 1 Minute Interval (60,000ms)
+setInterval(showActivity, 60000);
+// Start first one after 5 seconds
+setTimeout(showActivity, 5000);
+
 </script>
 </body>
 </html>
