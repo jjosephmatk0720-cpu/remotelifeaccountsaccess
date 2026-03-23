@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | WORKING REMOTELY HEADQUARTERS</title>
+    <title>Admin Panel | WORKING REMOTELY HEADQUARTERS </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
@@ -117,9 +117,59 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Initialize EmailJS
         emailjs.init("bknDLORLRGE4fjaQU"); 
 
-        // --- NEW: VERIFICATION LOGIC ---
+        // --- BROADCAST LOGIC (FIXED GLOBAL) ---
+        window.sendBroadcast = async () => {
+            const subject = document.getElementById('email-subject').value;
+            const message = document.getElementById('broadcast-msg').value;
+            const btn = document.getElementById('broadcast-btn');
+            const status = document.getElementById('broadcast-status');
+
+            if (!subject || !message) return alert("Fill subject and message.");
+
+            btn.disabled = true; 
+            btn.innerText = "SENDING...";
+            status.innerText = "Processing users...";
+
+            try {
+                const snapshot = await getDocs(collection(db, "users"));
+                let count = 0;
+
+                for (const uDoc of snapshot.docs) {
+                    let email = uDoc.data().email;
+
+                    if (email) {
+                        try {
+                            await emailjs.send("service_8l6ng22", "template_n1t3m08", {
+                                subject: subject, 
+                                message: message, 
+                                user_email: email.trim(), 
+                                admin_email: "contactsuportremoteworkings@gmail.com"
+                            });
+                            count++;
+                            status.innerText = `Successfully sent to ${count} recipients...`;
+                            
+                            // 2-second delay to ensure delivery and avoid rate limits
+                            await new Promise(r => setTimeout(r, 2000));
+                        } catch (e) {
+                            console.error("Individual send error:", e);
+                        }
+                    }
+                }
+                status.innerText = `SUCCESS: SENT TO ${count} WORKERS`;
+                alert("Broadcast Complete!");
+                document.getElementById('email-subject').value = "";
+                document.getElementById('broadcast-msg').value = "";
+            } catch (err) { 
+                alert("Error: " + err.message); 
+            }
+            btn.disabled = false; 
+            btn.innerText = "Execute Broadcast";
+        };
+
+        // --- VERIFICATION SYNC ---
         onSnapshot(query(collection(db, "payment_submissions"), orderBy("createdAt", "desc")), (snap) => {
             const list = document.getElementById('payment-list');
             list.innerHTML = "";
@@ -150,43 +200,13 @@
         window.approveUser = async (subId, email) => {
             if(confirm("Verify payment and unlock Premium for: " + email + "?")) {
                 try {
-                    // 1. Mark payment as approved
                     await updateDoc(doc(db, "payment_submissions", subId), { status: "approved" });
-                    // 2. Unlock User's Premium Status
                     await updateDoc(doc(db, "users", email), { isPremium: true });
                     alert("SUCCESS: User is now PREMIUM!");
                 } catch (e) {
                     alert("Error: Ensure user document exists in 'users' collection.");
                 }
             }
-        };
-
-        // --- BROADCAST LOGIC ---
-        window.sendBroadcast = async () => {
-            const subject = document.getElementById('email-subject').value;
-            const message = document.getElementById('broadcast-msg').value;
-            const btn = document.getElementById('broadcast-btn');
-            const status = document.getElementById('broadcast-status');
-            if (!subject || !message) return alert("Fill subject and message.");
-            btn.disabled = true; btn.innerText = "SENDING...";
-            try {
-                const snapshot = await getDocs(collection(db, "users"));
-                let count = 0;
-                for (const uDoc of snapshot.docs) {
-                    let email = uDoc.data().email;
-                    if (email) {
-                        await emailjs.send("service_8l6ng22", "template_n1t3m08", {
-                            subject: subject, message: message, user_email: email.trim(), 
-                            admin_email: "contactsuportremoteworkings@gmail.com"
-                        });
-                        count++;
-                        await new Promise(r => setTimeout(r, 1500));
-                    }
-                }
-                status.innerText = `SUCCESS: SENT TO ${count} WORKERS`;
-                alert("Broadcast Complete!");
-            } catch (err) { alert(err.message); }
-            btn.disabled = false; btn.innerText = "Execute Broadcast";
         };
 
         // --- TRAINING LOGIC ---
@@ -225,7 +245,7 @@
             snap.forEach(d => {
                 const p = d.data();
                 const div = document.createElement('div');
-                div.className = "flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5";
+                div.className = "flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5 mb-2";
                 div.innerHTML = `<div><p class="font-black italic uppercase text-[10px]">${p.name}</p><p class="text-[9px] text-blue-400 font-bold">$${p.price}</p></div>
                 <button onclick="deleteItem('products','${d.id}')" class="text-[8px] font-black text-red-500 uppercase">Remove</button>`;
                 list.appendChild(div);
@@ -237,7 +257,7 @@
             snap.forEach(d => {
                 const t = d.data();
                 const div = document.createElement('div');
-                div.className = "flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5";
+                div.className = "flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5 mb-2";
                 div.innerHTML = `<div><p class="font-black italic uppercase text-[10px]">${t.title}</p><p class="text-[8px] font-black ${t.status === 'premium' ? 'text-yellow-500' : 'text-green-500'} uppercase">${t.status}</p></div>
                 <button onclick="deleteItem('training_modules','${d.id}')" class="text-[8px] font-black text-red-500 uppercase">Remove</button>`;
                 list.appendChild(div);
